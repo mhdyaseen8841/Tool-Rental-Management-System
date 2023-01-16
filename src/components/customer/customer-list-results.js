@@ -16,11 +16,48 @@ import {
   Typography
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
-
+import FadeMenu from '../more-items-btn';
+import FullScreenDialog from './add-customer';
 export const CustomerListResults = ({ customers, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [open, setOpen] = useState(true);
+  const [addDialog, setDialog] = useState();
+
+  const handleClose = () => {
+    setDialog();
+  };
+
+const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+  console.log(data);
+  setOpen(true);
+  const add = (data) => {
+    console.log(data);
+    setDialog(); 
+  };
+  setDialog(() => (
+    
+    <FullScreenDialog
+      onClose={handleClose}
+      open={open}
+       submit={add}
+       updated={upd}
+       button={button}
+       data={data}
+    />
+  ));
+};
+
+
+
+
+
+
+
+
+
+
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -63,7 +100,9 @@ export const CustomerListResults = ({ customers, ...rest }) => {
   };
 
   return (
+    
     <Card {...rest}>
+        {addDialog}
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }}>
           <Table>
@@ -95,6 +134,9 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                 <TableCell>
                   Registration date
                 </TableCell>
+                <TableCell>
+                   Actions
+                  </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -143,6 +185,9 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                   </TableCell>
                   <TableCell>
                     {format(customer.createdAt, 'dd/MM/yyyy')}
+                  </TableCell>
+                  <TableCell>
+                  <FadeMenu  callback={()=>{deleteUser(cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:'yaseen',mobile:'7445',email:'y@gmail.com',address:'puthukkadan house'})}/>
                   </TableCell>
                 </TableRow>
               ))}

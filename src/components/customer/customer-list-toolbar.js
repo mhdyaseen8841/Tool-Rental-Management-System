@@ -10,8 +10,44 @@ import {
 import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
+import { useState, useEffect } from 'react';
+import FullScreenDialog from './add-customer';
+export const CustomerListToolbar = (props) => 
+{
 
-export const CustomerListToolbar = (props) => (
+  const [open, setOpen] = useState(true);
+
+  const [addDialog, setDialog] = useState();
+
+  const handleClose = () => {
+    setDialog();
+  };
+
+const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+  setOpen(true);
+  const add = (data) => {
+    console.log(data);
+    setDialog();
+
+
+  
+
+    
+  };
+  setDialog(() => (
+    <FullScreenDialog
+      onClose={handleClose}
+      open={open}
+       submit={add}
+       updated={upd}
+       button={button}
+       data={data}
+    />
+  ));
+};
+
+
+return(
   <Box {...props}>
     <Box
       sx={{
@@ -22,6 +58,7 @@ export const CustomerListToolbar = (props) => (
         m: -1
       }}
     >
+       {addDialog}
       <Typography
         sx={{ m: 1 }}
         variant="h4"
@@ -29,21 +66,11 @@ export const CustomerListToolbar = (props) => (
         Customers
       </Typography>
       <Box sx={{ m: 1 }}>
-        <Button
-          startIcon={(<UploadIcon fontSize="small" />)}
-          sx={{ mr: 1 }}
-        >
-          Import
-        </Button>
-        <Button
-          startIcon={(<DownloadIcon fontSize="small" />)}
-          sx={{ mr: 1 }}
-        >
-          Export
-        </Button>
+        
         <Button
           color="primary"
           variant="contained"
+          onClick={handleAdd}
         >
           Add Customers
         </Button>
@@ -76,3 +103,4 @@ export const CustomerListToolbar = (props) => (
     </Box>
   </Box>
 );
+            }
