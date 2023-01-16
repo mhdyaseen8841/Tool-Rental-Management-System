@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AuthGuard } from './auth-guard';
 import { DashboardNavbar } from './dashboard-navbar';
 import { DashboardSidebar } from './dashboard-sidebar';
-
+import { useRouter } from 'next/router';
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   flex: '1 1 auto',
@@ -18,6 +18,14 @@ const DashboardLayoutRoot = styled('div')(({ theme }) => ({
 export const DashboardLayout = (props) => {
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+  const router=useRouter()
+  useEffect(() => {
+    if(!sessionStorage.getItem("uid")){
+      router.push('/login')
+    }
+    }, [])
+
 
   return (
     <AuthGuard>
