@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useEffect } from 'react';
 import { Box, Container, Grid } from '@mui/material';
 import { Budget } from '../components/dashboard/budget';
 import { LatestOrders } from '../components/dashboard/latest-orders';
@@ -9,8 +10,12 @@ import { TotalCustomers } from '../components/dashboard/total-customers';
 import { TotalProfit } from '../components/dashboard/total-profit';
 import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../components/dashboard-layout';
+import { useRouter } from 'next/router';
+const Page = () => {
+const router=useRouter()
 
-const Page = () => (
+
+  return(
   <>
     <Head>
       <title>
@@ -106,7 +111,7 @@ const Page = () => (
     </Box>
   </>
 );
-
+    }
 Page.getLayout = (page) => (
   <DashboardLayout>
     {page}
