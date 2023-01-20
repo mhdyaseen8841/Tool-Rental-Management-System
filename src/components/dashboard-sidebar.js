@@ -28,6 +28,11 @@ const items = [
     title: 'Customers'
   },
   {
+    href: '/stocks',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'Stocks'
+  },
+  {
     href: '/products',
     icon: (<ShoppingBagIcon fontSize="small" />),
     title: 'Products'
