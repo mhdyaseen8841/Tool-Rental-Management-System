@@ -18,7 +18,8 @@ import {
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-stocks';
-export const StockListResults = ({ customers, ...rest }) => {
+
+export const StockListResults = ({ stocks, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -50,20 +51,11 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 };
 
 
-
-
-
-
-
-
-
-
-
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
+      newSelectedCustomerIds = stocks.map((stocks) => stocks.itemId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -110,11 +102,11 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
+                    checked={selectedCustomerIds.length === stocks.length}
                     color="primary"
                     indeterminate={
                       selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < customers.length
+                      && selectedCustomerIds.length < stocks.length
                     }
                     onChange={handleSelectAll}
                   />
@@ -123,33 +115,31 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                   Name
                 </TableCell>
                 <TableCell>
-                  Email
+                  Monthly Rent
                 </TableCell>
                 <TableCell>
-                  Location
+                  Daily Rent
                 </TableCell>
                 <TableCell>
-                  Phone
+                  Total Stocks
                 </TableCell>
-                <TableCell>
-                  Registration date
-                </TableCell>
+               
                 <TableCell>
                    Actions
                   </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {stocks.slice(0, limit).map((stocks) => (
                 <TableRow
                   hover
-                  key={customer.id}
-                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                  key={stocks.id}
+                  selected={selectedCustomerIds.indexOf(stocks.id) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.id)}
+                      checked={selectedCustomerIds.indexOf(stocks.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, stocks.id)}
                       value="true"
                     />
                   </TableCell>
@@ -161,31 +151,30 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                       }}
                     >
                       <Avatar
-                        src={customer.avatarUrl}
+                        src={""}
                         sx={{ mr: 2 }}
                       >
-                        {getInitials(customer.name)}
+                        {/* {getInitials(customer.name)} */}
                       </Avatar>
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {stocks.iName}
                       </Typography>
                     </Box>
                   </TableCell>
+                  
                   <TableCell>
-                    {customer.email}
+                    {stocks.mRent}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {stocks.dRent}
                   </TableCell>
                   <TableCell>
-                    {customer.phone}
+                    {stocks.tstock}
                   </TableCell>
-                  <TableCell>
-                    {format(customer.createdAt, 'dd/MM/yyyy')}
-                  </TableCell>
+                 
                   <TableCell>
                   <FadeMenu  callback={()=>{deleteUser(cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:'yaseen',mobile:'7445',email:'y@gmail.com',address:'puthukkadan house'})}/>
                   </TableCell>
@@ -197,7 +186,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={stocks.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}

@@ -10,12 +10,13 @@ import requestPost from '../../serviceWorker'
 
 const Page = () => {
 
+ 
   const [stocks, setStocks] = useState([{}])
 
 useEffect(() => {
   let data=  {
     "type" : "SP_CALL",
-    "requestId" : 1100005,
+    "requestId" : 1200005,
     request: {
    }
 }

@@ -27,7 +27,7 @@ export default function FullScreenDialog(details) {
 
 
   const getBase64 = (file) => {
-    console.log('');
+    console.log('sdfafasfsa');
     return new Promise((resolve) => {
       // Make new FileReader
       const reader = new FileReader();
@@ -40,6 +40,7 @@ export default function FullScreenDialog(details) {
         let baseURL = '';
         baseURL = reader.result;
         // console.log(baseURL);
+        console.log(baseURL);
         resolve(baseURL);
       };
     });
@@ -63,7 +64,11 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-     
+      getBase64(files).then((res)=>{
+        imgbase64(res)
+        console.log(imgbase64)
+      })
+
       onAdd();
     }
   });
