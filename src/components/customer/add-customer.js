@@ -11,20 +11,45 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import FileUpload from 'react-material-file-upload';
+
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import { Box } from '@mui/system';
-
+import Input from '@mui/material/Input';
 
 
 export default function FullScreenDialog(details) {
     console.log('heehehe');
   console.log(details.data);
+  const [files, setFiles] = useState([]);
+  const [imgbase64, setimgbase64] = useState('');
+
+
+  const getBase64 = (file) => {
+    console.log('');
+    return new Promise((resolve) => {
+      // Make new FileReader
+      const reader = new FileReader();
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+        // console.log('Called', reader);
+        let baseURL = '';
+        baseURL = reader.result;
+        // console.log(baseURL);
+        resolve(baseURL);
+      };
+    });
+  };
+
   const [update, setUpdate] = useState(details.updated);
   const validSchema = Yup.object().shape({
     CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
     Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
-    Email: Yup.string().email("Invalid Format").matches(/^\S/, 'Whitespace is not allowed'),
+    AltMobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Altnum is required'),
     Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Address is required'),
   });
 
@@ -33,7 +58,7 @@ export default function FullScreenDialog(details) {
     initialValues: {
       CustomerName: update ? details.data.name :'',
       Mobnum: update ? details.data.mobile : '',
-      Email: update ? details.data.email : '',
+      AltMobnum : update ? details.data.mobile : '',
       Address: update ? details.data.address : '',
     },
     validationSchema: validSchema,
@@ -80,17 +105,6 @@ export default function FullScreenDialog(details) {
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Typography variant="h4">CUSTOMER DETAILS</Typography>
             
-            <TextField
-           
-              fullWidth
-              type="text"
-              label="Mobile Number"
-              variant="outlined"
-              value={details.update ? details.data.name : ''}
-              {...getFieldProps('Mobnum')}
-              error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-              helperText={touched.Mobnum && errors.Mobnum || alertMsg}
-            />
             {}
             <TextField
               fullWidth
@@ -102,14 +116,27 @@ export default function FullScreenDialog(details) {
               helperText={touched.CustomerName && errors.CustomerName}
             />
             <TextField
-              fullWidth
-              type="text"
-              label="Email"
-              variant="outlined"
-              {...getFieldProps('Email')}
-              error={Boolean(touched.Email && errors.Email)}
-              helperText={touched.Email && errors.Email}
-            />
+           
+           fullWidth
+           type="text"
+           label="Mobile Number"
+           variant="outlined"
+           value={details.update ? details.data.name : ''}
+           {...getFieldProps('Mobnum')}
+           error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
+           helperText={touched.Mobnum && errors.Mobnum || alertMsg}
+         />
+         <TextField
+           
+           fullWidth
+           type="text"
+           label="Alternative Number"
+           variant="outlined"
+           value={details.update ? details.data.name : ''}
+           {...getFieldProps('AltMobnum')}
+           error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
+           helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
+         />
             <TextField
               fullWidth
               type="text"
@@ -119,7 +146,8 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
-           
+          
+          <FileUpload value={files} onChange={setFiles} />
             
           </Stack>
         </Container>

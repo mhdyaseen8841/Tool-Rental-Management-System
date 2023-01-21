@@ -22,19 +22,19 @@ export default function FullScreenDialog(details) {
   console.log(details.data);
   const [update, setUpdate] = useState(details.updated);
   const validSchema = Yup.object().shape({
-    CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
-    Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
-    Email: Yup.string().email("Invalid Format").matches(/^\S/, 'Whitespace is not allowed'),
-    Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Address is required'),
+    ItemName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
+    MonthlyRent: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Monthly Rent is required'),
+    DailyRent: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Daily Rent is required'),
+    Stock: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Stock is required'),
   });
 
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
-      CustomerName: update ? details.data.name :'',
-      Mobnum: update ? details.data.mobile : '',
-      Email: update ? details.data.email : '',
-      Address: update ? details.data.address : '',
+      ItemName: update ? details.data.name :'',
+      MonthlyRent: update ? details.data.monthlyRent : '',
+      DailyRent: update ? details.data.dailyRent : '',
+      Stock: update ? details.data.stock : '',
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
@@ -81,44 +81,49 @@ export default function FullScreenDialog(details) {
             <Typography variant="h4">STOCK DETAILS</Typography>
             
             <TextField
+              fullWidth
+              type="text"
+              label="Item Name"
+              variant="outlined"
+              {...getFieldProps('CustomerName')}
+              error={Boolean(touched.ItemName && errors.ItemName)}
+              helperText={touched.ItemName && errors.ItemName}
+            />
+            <TextField
            
               fullWidth
               type="text"
-              label="Mobile Number"
+              label="Monthly Rent"
               variant="outlined"
               value={details.update ? details.data.name : ''}
-              {...getFieldProps('Mobnum')}
-              error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-              helperText={touched.Mobnum && errors.Mobnum || alertMsg}
+              {...getFieldProps('Monthly Rent')}
+              error={Boolean(touched.MonthlyRent && errors.MonthlyRent || alertMsg)}
+              helperText={touched.MonthlyRent && errors.MonthlyRent || alertMsg}
             />
-            {}
-            <TextField
-              fullWidth
-              type="text"
-              label="Customer Name"
-              variant="outlined"
-              {...getFieldProps('CustomerName')}
-              error={Boolean(touched.CustomerName && errors.CustomerName)}
-              helperText={touched.CustomerName && errors.CustomerName}
-            />
-            <TextField
-              fullWidth
-              type="text"
-              label="Email"
-              variant="outlined"
-              {...getFieldProps('Email')}
-              error={Boolean(touched.Email && errors.Email)}
-              helperText={touched.Email && errors.Email}
-            />
-            <TextField
-              fullWidth
-              type="text"
-              label="Address"
-              variant="outlined"
-              {...getFieldProps('Address')}
-              error={Boolean(touched.Address && errors.Address)}
-              helperText={touched.Address && errors.Address}
-            />
+          
+            
+          <TextField
+           
+           fullWidth
+           type="text"
+           label="Daily Rent"
+           variant="outlined"
+           value={details.update ? details.data.name : ''}
+           {...getFieldProps('Daily Rent')}
+           error={Boolean(touched.DailyRent && errors.DailyRent || alertMsg)}
+           helperText={touched.DailyRent && errors.DailyRent || alertMsg}
+         />
+           <TextField
+           
+           fullWidth
+           type="text"
+           label="Stock"
+           variant="outlined"
+           value={details.update ? details.data.name : ''}
+           {...getFieldProps('Stock')}
+           error={Boolean(touched.Stock && errors.Stock || alertMsg)}
+           helperText={touched.Stock && errors.Stock || alertMsg}
+         />
            
             
           </Stack>

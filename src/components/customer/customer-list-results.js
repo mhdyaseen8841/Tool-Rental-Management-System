@@ -63,7 +63,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
+      newSelectedCustomerIds = customers.map((customer) => customer.cId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -123,16 +123,13 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                   Name
                 </TableCell>
                 <TableCell>
-                  Email
+                  Mobile Number
                 </TableCell>
                 <TableCell>
-                  Location
+                  Alternative number
                 </TableCell>
                 <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Registration date
+                  Address
                 </TableCell>
                 <TableCell>
                    Actions
@@ -143,13 +140,13 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               {customers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.id}
-                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                  key={customer.cId}
+                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.id)}
+                      checked={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                      onChange={(event) => handleSelectOne(event, customer.cId)}
                       value="true"
                     />
                   </TableCell>
@@ -170,22 +167,20 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {customer.cName}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.email}
+                    {customer.mobile}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {customer.alterMobile}
                   </TableCell>
                   <TableCell>
-                    {customer.phone}
+                    {customer.address}
                   </TableCell>
-                  <TableCell>
-                    {format(customer.createdAt, 'dd/MM/yyyy')}
-                  </TableCell>
+                
                   <TableCell>
                   <FadeMenu  callback={()=>{deleteUser(cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:'yaseen',mobile:'7445',email:'y@gmail.com',address:'puthukkadan house'})}/>
                   </TableCell>
@@ -207,6 +202,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     </Card>
   );
 };
+
 
 CustomerListResults.propTypes = {
   customers: PropTypes.array.isRequired
