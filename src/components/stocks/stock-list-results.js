@@ -17,8 +17,8 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
-export const CustomerListResults = ({ customers, ...rest }) => {
+import FullScreenDialog from './add-stocks';
+export const StockListResults = ({ customers, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -208,6 +208,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   );
 };
 
-CustomerListResults.propTypes = {
+StockListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };

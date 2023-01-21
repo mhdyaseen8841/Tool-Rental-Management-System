@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { ChartBar as ChartBarIcon } from '../icons/chart-bar';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { Cog as CogIcon } from '../icons/cog';
 import { Lock as LockIcon } from '../icons/lock';
 import { Selector as SelectorIcon } from '../icons/selector';
@@ -29,7 +30,7 @@ const items = [
   },
   {
     href: '/stocks',
-    icon: (<UsersIcon fontSize="small" />),
+    icon: (<InventoryIcon fontSize="small" />),
     title: 'Stocks'
   },
   {

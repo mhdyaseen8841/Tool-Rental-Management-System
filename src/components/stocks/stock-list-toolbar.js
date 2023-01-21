@@ -11,8 +11,8 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-customer';
-export const CustomerListToolbar = (props) => 
+import FullScreenDialog from './add-stocks';
+export const StockListToolbar = (props) => 
 {
 
   const [open, setOpen] = useState(true);
@@ -30,10 +30,10 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     setDialog();
 
 
-  
-
     
   };
+
+  
   setDialog(() => (
     <FullScreenDialog
       onClose={handleClose}
@@ -63,7 +63,7 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-        Customers
+        Stocks
       </Typography>
       <Box sx={{ m: 1 }}>
         
@@ -72,7 +72,7 @@ return(
           variant="contained"
           onClick={handleAdd}
         >
-          Add Customers
+          Add Stocks
         </Button>
       </Box>
     </Box>

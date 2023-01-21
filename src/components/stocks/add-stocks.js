@@ -68,7 +68,7 @@ export default function FullScreenDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add Customer
+              Add Stock
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
@@ -78,7 +78,7 @@ export default function FullScreenDialog(details) {
         <Container maxWidth="sm">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">CUSTOMER DETAILS</Typography>
+            <Typography variant="h4">STOCK DETAILS</Typography>
             
             <TextField
            
