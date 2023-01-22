@@ -1,30 +1,32 @@
 import Head from 'next/head';
-import { useEffect,useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Box, Container } from '@mui/material';
-import { CustomerListResults } from '../components/customer/customer-list-results';
-import { CustomerListToolbar } from '../components/customer/customer-list-toolbar';
+import { StockListResults } from "../components/stocks/stock-list-results";
+import { StockListToolbar } from "../components/stocks/stock-list-toolbar";
+
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
+
+
 const Page = () => {
 
-
-
-  const [customers, setCustomers] = useState([{}])
+ 
+  const [stocks, setStocks] = useState([{}])
 
 useEffect(() => {
   let data=  {
     "type" : "SP_CALL",
-    "requestId" : 1100005,
+    "requestId" : 1200005,
     request: {
    }
 }
 
   requestPost(data).then((res)=>{
     if(res.errorcode ==0){
-      setCustomers([{}])
+      setStocks([{}])
     }else{
       console.log(res);
-      setCustomers(res.result)
+      setStocks(res.result)
     }
    
   })
@@ -32,7 +34,9 @@ useEffect(() => {
 }, [])
 
 
-return(
+
+
+  return(
   <>
     <Head>
       <title>
@@ -47,16 +51,15 @@ return(
       }}
     >
       <Container maxWidth={false}>
-        <CustomerListToolbar />
+        <StockListToolbar />
         <Box sx={{ mt: 3 }}>
-          <CustomerListResults customers={customers} />
+          <StockListResults stocks={stocks} />
         </Box>
       </Container>
     </Box>
   </>
 );
     }
-
 Page.getLayout = (page) => (
   <DashboardLayout>
     {page}

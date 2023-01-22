@@ -17,8 +17,9 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
-export const CustomerListResults = ({ customers, ...rest }) => {
+import FullScreenDialog from './add-stocks';
+
+export const StockListResults = ({ stocks, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -50,20 +51,11 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 };
 
 
-
-
-
-
-
-
-
-
-
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.cId);
+      newSelectedCustomerIds = stocks.map((stocks) => stocks.itemId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -110,11 +102,11 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
+                    checked={selectedCustomerIds.length === stocks.length}
                     color="primary"
                     indeterminate={
                       selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < customers.length
+                      && selectedCustomerIds.length < stocks.length
                     }
                     onChange={handleSelectAll}
                   />
@@ -123,30 +115,31 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                   Name
                 </TableCell>
                 <TableCell>
-                  Mobile Number
+                  Monthly Rent
                 </TableCell>
                 <TableCell>
-                  Alternative number
+                  Daily Rent
                 </TableCell>
                 <TableCell>
-                  Address
+                  Total Stocks
                 </TableCell>
+               
                 <TableCell>
                    Actions
                   </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {stocks.slice(0, limit).map((stocks) => (
                 <TableRow
                   hover
-                  key={customer.cId}
-                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                  key={stocks.id}
+                  selected={selectedCustomerIds.indexOf(stocks.id) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.cId) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.cId)}
+                      checked={selectedCustomerIds.indexOf(stocks.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, stocks.id)}
                       value="true"
                     />
                   </TableCell>
@@ -158,29 +151,30 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                       }}
                     >
                       <Avatar
-                        src={customer.avatarUrl}
+                        src={""}
                         sx={{ mr: 2 }}
                       >
-                        {getInitials(customer.name)}
+                        {/* {getInitials(customer.name)} */}
                       </Avatar>
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.cName}
+                        {stocks.iName}
                       </Typography>
                     </Box>
                   </TableCell>
+                  
                   <TableCell>
-                    {customer.mobile}
+                    {stocks.mRent}
                   </TableCell>
                   <TableCell>
-                    {customer.alterMobile}
+                    {stocks.dRent}
                   </TableCell>
                   <TableCell>
-                    {customer.address}
+                    {stocks.tstock}
                   </TableCell>
-                
+                 
                   <TableCell>
                   <FadeMenu  callback={()=>{deleteUser(cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:'yaseen',mobile:'7445',email:'y@gmail.com',address:'puthukkadan house'})}/>
                   </TableCell>
@@ -192,7 +186,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={stocks.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
@@ -203,7 +197,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   );
 };
 
-
-CustomerListResults.propTypes = {
+StockListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };
