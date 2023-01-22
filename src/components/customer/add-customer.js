@@ -10,6 +10,8 @@ import { Stack, Container, Typography, TextField, Checkbox, Alert } from '@mui/m
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Radio from '@mui/material/Radio';
+import Compressor from 'compressorjs';
+
 import RadioGroup from '@mui/material/RadioGroup';
 import FileUpload from 'react-material-file-upload';
 
@@ -20,14 +22,18 @@ import Input from '@mui/material/Input';
 
 
 export default function FullScreenDialog(details) {
-    console.log('heehehe');
+ 
   console.log(details.data);
-  const [files, setFiles] = useState([]);
+  const [update, setUpdate] = useState(details.updated);
+  const [files, setFiles] = useState();
+  const [doc,setDoc]= useState(update?details.data.proof:'');
   const [imgbase64, setimgbase64] = useState('');
+  const [imgPreview, setImgPreview] = useState();
 
 
   const getBase64 = (file) => {
-    console.log('sdfafasfsa');
+
+    console.log(file);
     return new Promise((resolve) => {
       // Make new FileReader
       const reader = new FileReader();
@@ -39,14 +45,43 @@ export default function FullScreenDialog(details) {
         // console.log('Called', reader);
         let baseURL = '';
         baseURL = reader.result;
-        // console.log(baseURL);
         console.log(baseURL);
+        setDoc(baseURL)
         resolve(baseURL);
       };
     });
   };
 
-  const [update, setUpdate] = useState(details.updated);
+  
+
+  const handleFileChange = event => {
+    setFiles(event)
+    console.log(event[0]);
+     const fileObj = event && event[0];
+     if (!fileObj) {
+         return;
+     }
+    
+ 
+     setImgPreview(URL.createObjectURL(event[0]))
+     new Compressor(event[0], {      
+       quality: 0.6,
+       success: (compressedResult) => {
+           getBase64(compressedResult).then((result) => {
+               setimgbase64(result);
+              
+               setImgPreview();
+ 
+              
+             }).catch((err) => {
+             console.log("error", err);
+           })
+       },
+     });
+   }
+ 
+
+
   const validSchema = Yup.object().shape({
     CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
     Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
@@ -64,21 +99,17 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      getBase64(files).then((res)=>{
-        imgbase64(res)
-        console.log(imgbase64)
-      })
+      console.log("filesss");
+      details.submit(values,doc)
+     
 
-      onAdd();
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
 
   
 
-  const onAdd = () => {
- 
-  };
+  
   
   const alertTimeOut = () => {
     setTimeout(() => {
@@ -89,16 +120,17 @@ export default function FullScreenDialog(details) {
     formik.resetForm();
     details.onClose();
   };
+ 
   return (
     <div>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
-        <AppBar sx={{ position: 'relative' }}>
+        <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add Customer
+              {details.button} CUSTOMER
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
@@ -151,9 +183,26 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
-          
-          <FileUpload value={files} onChange={setFiles} />
             
+          { doc ? 
+         <img
+        
+          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"  }}
+          src={`${doc}`}
+          role="presentation"
+          alt="no network"
+        />
+       :  
+       <Typography variant="subtitle2" sx={{cursor: "pointer"}}
+     >
+        No Image
+      </Typography>
+
+         }
+
+          <FileUpload value={files} onChange={handleFileChange} />
+
+          
           </Stack>
         </Container>
       </Dialog>

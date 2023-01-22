@@ -11,7 +11,7 @@ const Page = () => {
 
   const [customers, setCustomers] = useState([{}])
 
-useEffect(() => {
+function getCustomer(){
   let data=  {
     "type" : "SP_CALL",
     "requestId" : 1100005,
@@ -28,7 +28,11 @@ useEffect(() => {
     }
    
   })
- 
+}
+
+useEffect(() => {
+
+ getCustomer()
 }, [])
 
 
@@ -47,9 +51,9 @@ return(
       }}
     >
       <Container maxWidth={false}>
-        <CustomerListToolbar />
+        <CustomerListToolbar  getdata={getCustomer} />
         <Box sx={{ mt: 3 }}>
-          <CustomerListResults customers={customers} />
+          <CustomerListResults customers={customers} getdata={getCustomer} />
         </Box>
       </Container>
     </Box>

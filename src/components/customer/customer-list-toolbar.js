@@ -12,6 +12,7 @@ import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
 import FullScreenDialog from './add-customer';
+import requestPost from '../../../serviceWorker'
 export const CustomerListToolbar = (props) => 
 {
 
@@ -25,15 +26,44 @@ export const CustomerListToolbar = (props) =>
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
-  const add = (data) => {
+
+  const add = (data,file) => {
+    console.log("customer file");
     console.log(data);
+    console.log(file);
+    
+   let req={
+      "type" : "SP_CALL",
+      "requestId" : 1100001,
+      request: {
+       "name":data.customerName,
+       "mobile" : data.Mobnum,
+       "address" : data.Address,
+       "altermobile" : data.AltMobnum,
+ "proof" : file
+     }
+}
+
+
+requestPost(req).then((res)=>{
+  if(res.errorcode ==0){
     setDialog();
+    console.log(error);
+            console.log('No internet connection found. App is running in offline mode.');
+  }else{
+    props.getdata()
+    setDialog();
+  }
+ 
+})
 
 
-  
 
     
+
   };
+
+
   setDialog(() => (
     <FullScreenDialog
       onClose={handleClose}

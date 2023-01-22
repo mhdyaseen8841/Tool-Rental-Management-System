@@ -25,6 +25,7 @@
     "@zalter/identity-js": "1.2.1",
     "axios": "^1.2.3",
     "chart.js": "3.9.1",
+    "compressorjs": "^1.1.1",
     "date-fns": "2.29.3",
     "formik": "2.2.9",
     "material-ui-dropzone": "^3.5.0",
