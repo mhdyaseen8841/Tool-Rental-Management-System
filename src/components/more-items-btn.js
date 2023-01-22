@@ -55,7 +55,7 @@ export default function FadeMenu(props) {
         TransitionComponent={Fade}
       >
         <MenuItem onClick={edituser}>Edit</MenuItem>
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
+        <MenuItem onClick={deletereq}>Delete</MenuItem>
       </Menu>
     </div>
   );
