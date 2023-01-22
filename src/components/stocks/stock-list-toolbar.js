@@ -26,7 +26,7 @@ export const StockListToolbar = (props) =>
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
   const add = (data) => {
-    console.log(data);
+  
     setDialog();
 
 

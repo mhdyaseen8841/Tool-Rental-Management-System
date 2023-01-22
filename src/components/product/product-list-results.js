@@ -18,11 +18,11 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from './add-product';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
+export const ProductListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -193,7 +193,7 @@ let cid= data.cid;
                   key={customer.cId}
                   selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
                 >
-                
+                 
                   <TableCell>
                     <Box
                       sx={{
@@ -201,13 +201,7 @@ let cid= data.cid;
                         display: 'flex'
                       }}
                     >
-                      <Avatar
-                        
-                        sx={{ mr: 2 }}
-                        
-                      >
-                        {getInitials(customer.cName)}
-                      </Avatar>
+                     
                       <Typography
                         color="textPrimary"
                         variant="body1"
@@ -249,6 +243,6 @@ let cid= data.cid;
 };
 
 
-CustomerListResults.propTypes = {
+ProductListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };
