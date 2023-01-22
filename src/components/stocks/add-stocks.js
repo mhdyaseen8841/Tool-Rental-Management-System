@@ -18,8 +18,7 @@ import { Box } from '@mui/system';
 
 
 export default function FullScreenDialog(details) {
-    console.log('heehehe');
-  console.log(details.data);
+    
   const [update, setUpdate] = useState(details.updated);
   const validSchema = Yup.object().shape({
     ItemName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),

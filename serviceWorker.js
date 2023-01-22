@@ -7,6 +7,7 @@ const requestPost = async (data)=>{
     
     const response = await axios.post(ServiceURL,data)
     console.log(response);
+    // alert("Error Occured From Server")
     return response.data
 }
 

@@ -28,21 +28,20 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
   const add = (data,file) => {
-    console.log("customer file");
-    console.log(data);
-    console.log(file);
+   console.log(data);
     
    let req={
       "type" : "SP_CALL",
       "requestId" : 1100001,
       request: {
-       "name":data.customerName,
+       "name":data.CustomerName,
        "mobile" : data.Mobnum,
        "address" : data.Address,
        "altermobile" : data.AltMobnum,
  "proof" : file
      }
 }
+
 
 
 requestPost(req).then((res)=>{

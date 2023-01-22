@@ -22,7 +22,7 @@ export default function FullScreenDialog(details) {
   const [update, setUpdate] = useState(details.updated);
   const [files, setFiles] = useState();
   const [doc,setDoc]= useState(update?details.data.proof:'');
-
+  const [imgbase64, setimgbase64] = useState('');
   const [imgPreview, setImgPreview] = useState();
 
 
@@ -63,7 +63,7 @@ export default function FullScreenDialog(details) {
        quality: 0.6,
        success: (compressedResult) => {
            getBase64(compressedResult).then((result) => {
-               
+               setimgbase64(result);
               
                setImgPreview();
  

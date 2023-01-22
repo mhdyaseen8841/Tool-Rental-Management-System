@@ -25,7 +25,7 @@ useEffect(() => {
     if(res.errorcode ==0){
       setStocks([{}])
     }else{
-      console.log(res);
+     
       setStocks(res.result)
     }
    

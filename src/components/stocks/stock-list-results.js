@@ -31,10 +31,10 @@ export const StockListResults = ({ stocks, ...rest }) => {
   };
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log(data);
+  
   setOpen(true);
   const add = (data) => {
-    console.log(data);
+    
     setDialog(); 
   };
   setDialog(() => (
@@ -100,17 +100,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCustomerIds.length === stocks.length}
-                    color="primary"
-                    indeterminate={
-                      selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < stocks.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
+               
                 <TableCell>
                   Name
                 </TableCell>
@@ -136,13 +126,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                   key={stocks.id}
                   selected={selectedCustomerIds.indexOf(stocks.id) !== -1}
                 >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedCustomerIds.indexOf(stocks.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, stocks.id)}
-                      value="true"
-                    />
-                  </TableCell>
+                  
                   <TableCell>
                     <Box
                       sx={{
@@ -150,12 +134,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                         display: 'flex'
                       }}
                     >
-                      <Avatar
-                        src={""}
-                        sx={{ mr: 2 }}
-                      >
-                        {/* {getInitials(customer.name)} */}
-                      </Avatar>
+                     
                       <Typography
                         color="textPrimary"
                         variant="body1"
