@@ -200,7 +200,7 @@ export default function FullScreenDialog(details) {
 
          }
 
-          <FileUpload value={files} onChange={handleFileChange} />
+          <FileUpload accept="image/*" value={files} onChange={handleFileChange} />
 
           
           </Stack>
