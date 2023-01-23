@@ -185,23 +185,7 @@ export default function FullScreenDialog(details) {
            helperText={touched.Stock && errors.Stock || alertMsg}
          />
 
-{ doc ? 
-         <img
-        
-          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"  }}
-          src={`${doc}`}
-          role="presentation"
-          alt="no network"
-        />
-       :  
-       <Typography variant="subtitle2" sx={{cursor: "pointer"}}
-     >
-        No Image
-      </Typography>
 
-         }
-
-          <FileUpload value={files} onChange={handleFileChange} />
 
            
             
