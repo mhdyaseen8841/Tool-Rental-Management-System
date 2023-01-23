@@ -29,9 +29,9 @@ const items = [
     title: 'Customers'
   },
   {
-    href: '/stocks',
+    href: '/items',
     icon: (<InventoryIcon fontSize="small" />),
-    title: 'Stocks'
+    title: 'Items'
   },
   {
     href: '/products',

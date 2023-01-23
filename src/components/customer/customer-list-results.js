@@ -59,6 +59,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
   }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+  console.log('Editttttttttttt')
   console.log(data);
   setOpen(true);
 let cid= data.cid;
@@ -108,12 +109,6 @@ let cid= data.cid;
     />
   ));
 };
-
-
-
-
-
-
 
 
 

@@ -11,8 +11,9 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-stocks';
-export const StockListToolbar = (props) => 
+import FullScreenDialog from './add-item';
+import requestPost from '../../../serviceWorker'
+export const ItemListToolbar = (props) => 
 {
 
   const [open, setOpen] = useState(true);
@@ -25,9 +26,36 @@ export const StockListToolbar = (props) =>
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
-  const add = (data) => {
+  const add = (data,file) => {
+    console.log("stocksssssssssssssssssss");
     console.log(data);
+    console.log(file);
+    
+   let req={
+    "type" : "SP_CALL",
+    "requestId" : 1200001,
+    request: {
+     "itemName": data.ItemName,
+     "monthly": data.MonthlyRent,
+     "daily": data.DailyRent,
+     "stock": data.Stock,
+     "proof" : file
+   }
+}
+
+
+
+requestPost(req).then((res)=>{
+  if(res.errorcode ==0){
     setDialog();
+    console.log(error);
+            console.log('No internet connection found. App is running in offline mode.');
+  }else{
+    props.getdata()
+    setDialog();
+  }
+ 
+})
 
 
     
@@ -63,7 +91,7 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-        Stocks
+        Items
       </Typography>
       <Box sx={{ m: 1 }}>
         
@@ -72,7 +100,7 @@ return(
           variant="contained"
           onClick={handleAdd}
         >
-          Add Stocks
+          Add Items
         </Button>
       </Box>
     </Box>

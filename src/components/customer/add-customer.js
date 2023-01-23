@@ -22,8 +22,9 @@ import Input from '@mui/material/Input';
 
 
 export default function FullScreenDialog(details) {
- 
+ console.log("detailssssssss test")
   console.log(details.data);
+  console.log("detailssssssss endsssssssssssssssssssssssssssss")
   const [update, setUpdate] = useState(details.updated);
   const [files, setFiles] = useState();
   const [doc,setDoc]= useState(update?details.data.proof:'');
