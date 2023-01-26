@@ -128,7 +128,7 @@ export default function FullScreenDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add Items
+            {details.button} Items
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}

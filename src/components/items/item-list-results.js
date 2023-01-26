@@ -18,6 +18,7 @@ import {
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-item';
+import FullScreenDialogUpdate from './update-item';
 import requestPost from '../../../serviceWorker'
 
 export const ItemListResults = ({ items,getdata, ...rest }) => {
@@ -33,19 +34,11 @@ export const ItemListResults = ({ items,getdata, ...rest }) => {
   
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log('Checkkkkkkk edittttttttttttttt');
-  console.log(data);
   setOpen(true);
-  console.log('tems idddddddddddddddddddddddddddddd')
-  console.log(data.itemId)
   let itemId= data.itemId;
   
-
+  const add = (data) => {
   
-  const add = (data,file) => {
-    console.log('final dataaaaaaaaaaaaaaaaaaaaaaaa')
-console.log(data)
-    
     let req={
       "type" : "SP_CALL",
       "requestId" : 1200002,
@@ -55,7 +48,7 @@ console.log(data)
        "monthly":data.MonthlyRent,
        "daily":data.DailyRent,
        "stock":data.Stock,
-       "proof":file
+       
      }
 }
 
@@ -75,11 +68,64 @@ setDialog();
 
   };
 
-
-
   setDialog(() => (
     
     <FullScreenDialog
+      onClose={handleClose}
+      open={open}
+       submit={add}
+       updated={upd}
+       button={button}
+       data={data}
+    />
+  ));
+};
+
+
+const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
+
+  console.log(data);
+  setOpen(true);
+  console.log('tems idddddddddddddddddddddddddddddd')
+  console.log(data.itemId)
+  let itemId= data.itemId;
+  
+
+  
+  const add = (data) => {
+    console.log('final dataaaaaaaaaaaaaaaaaaaaaaaa')
+console.log(data)
+
+    let req={
+      "type" : "SP_CALL",
+      "requestId" : 1300001,
+      request: {
+  "itemId": itemId,
+    "qty": data.StockNumber,
+    "status": data.Status,
+     }
+}
+
+
+requestPost(req).then((res)=>{
+  if(res.errorcode ==0){
+    
+    console.log(error);
+            console.log('No internet connection found. App is running in offline mode.');
+  }else{
+    getdata()
+    
+  }
+
+setDialog(); 
+});
+
+
+  };
+
+  setDialog(() => (
+    
+    <FullScreenDialogUpdate
       onClose={handleClose}
       open={open}
        submit={add}
@@ -216,7 +262,7 @@ setDialog();
                   </TableCell>
                  
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
+                  <FadeMenu  callback={()=>{deleteUser(cId)}} updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
                   </TableCell>
                   
                 </TableRow>
