@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const ServiceURL = 'https://54ff-111-92-81-134.in.ngrok.io/tools/src/API/'
+const ServiceURL = 'https://6512-111-92-72-183.in.ngrok.io/tools/src/API/'
 
 const requestPost = async (data)=>{
     
