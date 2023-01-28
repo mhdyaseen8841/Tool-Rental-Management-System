@@ -20,8 +20,7 @@ import Compressor from 'compressorjs';
 
 
 export default function FullScreenDialog(details) {
-    console.log('heehehe');
-  console.log(details.data);
+    
   const [update, setUpdate] = useState(details.updated);
 
   const [files, setFiles] = useState();

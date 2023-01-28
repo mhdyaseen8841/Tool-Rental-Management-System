@@ -28,9 +28,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
   const add = (data,file) => {
-    console.log("customer file");
-    console.log(data);
-    console.log(file);
+   console.log(data);
     
    let req={
       "type" : "SP_CALL",
@@ -43,6 +41,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
  "proof" : file
      }
 }
+
 
 
 requestPost(req).then((res)=>{

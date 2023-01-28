@@ -23,7 +23,7 @@ function getCustomer(){
     if(res.errorcode ==0){
       setCustomers([{}])
     }else{
-      console.log(res);
+    
       setCustomers(res.result)
     }
    

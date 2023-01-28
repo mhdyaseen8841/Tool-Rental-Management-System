@@ -236,12 +236,7 @@ setDialog();
                         display: 'flex'
                       }}
                     >
-                      <Avatar
-                        src={""}
-                        sx={{ mr: 2 }}
-                      >
-                        {/* {getInitials(customer.name)} */}
-                      </Avatar>
+                     
                       <Typography
                         color="textPrimary"
                         variant="body1"

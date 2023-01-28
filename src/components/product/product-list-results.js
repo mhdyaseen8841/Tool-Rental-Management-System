@@ -18,11 +18,11 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from './add-product';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
+export const ProductListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -59,7 +59,6 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
   }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log('Editttttttttttt')
   console.log(data);
   setOpen(true);
 let cid= data.cid;
@@ -109,6 +108,12 @@ let cid= data.cid;
     />
   ));
 };
+
+
+
+
+
+
 
 
 
@@ -188,7 +193,7 @@ let cid= data.cid;
                   key={customer.cId}
                   selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
                 >
-                
+                 
                   <TableCell>
                     <Box
                       sx={{
@@ -196,13 +201,7 @@ let cid= data.cid;
                         display: 'flex'
                       }}
                     >
-                      <Avatar
-                        
-                        sx={{ mr: 2 }}
-                        
-                      >
-                        {getInitials(customer.cName)}
-                      </Avatar>
+                     
                       <Typography
                         color="textPrimary"
                         variant="body1"
@@ -222,7 +221,7 @@ let cid= data.cid;
                   </TableCell>
                 
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
                   </TableCell>
                 </TableRow>
               ))}
@@ -244,6 +243,6 @@ let cid= data.cid;
 };
 
 
-CustomerListResults.propTypes = {
+ProductListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };

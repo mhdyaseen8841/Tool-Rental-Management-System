@@ -26,7 +26,7 @@ const Login = () => {
         .required('Password is required')
     }),
     onSubmit: (res) => {
-      console.log(res)
+     
       sessionStorage.setItem('uid',1)
       Router
         .push('/')
