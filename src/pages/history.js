@@ -15,18 +15,20 @@ const Page = () => {
 
 
   const [customers, setCustomers] = useState([{}])
-let cId='';
+  const [cId, setCid] = useState('');
+  
+
   function getCustomer(){
 
     if(router.query){
-        cId = router.query.cId;
+      setCid( router.query.cId)
     }
         
     let data=  {
       "type" : "SP_CALL",
    "requestId" : 1400005,
        request: {
- "cId":cId
+ "cId":router.query.cId
       }
 }
 
@@ -36,7 +38,8 @@ let cId='';
       if(res.result[0] ==null){
         setCustomers([{}])
       }else{
-      
+        console.log("hehehe haha");
+        console.log(router.query.cName);
         setCustomers(res.result)
       }
      
@@ -68,7 +71,7 @@ router.push('/')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer} cId={cId} />
+        <HistoryListToolbar  getdata={getCustomer} cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
           <HistoryListResults customers={customers} getdata={getCustomer} />
         </Box>

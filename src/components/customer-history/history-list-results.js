@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-history';
+import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
@@ -34,54 +34,26 @@ export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   };
 
 
-  const deleteUser = (cid)=>{
-    let del = {
-      "type" : "SP_CALL",
-      "requestId" : 1100003,
-      request: {
-       "cId": cid
-     }
-    }
-    requestPost(del).then((res)=>{
-      if(res.errorcode ==0){
-        
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
-      }else{
-        getdata()
-        
-      }
-     
-    })
+  
 
 
-
-
-  }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   console.log(data);
   setOpen(true);
-let cid= data.cid;
 
-  const add = (data,file) => {
+
+  const add = (data) => {
    
 
     let req={
       "type" : "SP_CALL",
-      "requestId" : 1100002,
-      request: {
-        "cId":cid,
-       "name":data.CustomerName,
-       "mobile" : data.Mobnum,
-       "address" : data.Address,
-       "altermobile" : data.AltMobnum,
- "proof" : file
-     }
+      "requestId" : 1400002,
+      request: data
     }
     
     requestPost(req).then((res)=>{
       if(res.errorcode ==0){
-        
+        let error="error happend"
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
       }else{
@@ -221,7 +193,7 @@ let cid= data.cid;
                   </TableCell>
                 
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.hId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.item,date:customer.date,rate:customer.rate,qty:customer.qty})}/>
+                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
                   </TableCell>
                 </TableRow>
               ))}

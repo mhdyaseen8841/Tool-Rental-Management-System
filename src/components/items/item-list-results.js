@@ -257,7 +257,7 @@ setDialog();
                   </TableCell>
                  
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(cId)}} updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
+                  <FadeMenu   updateItem={(e)=>handleUPDATE(true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
                   </TableCell>
                   
                 </TableRow>

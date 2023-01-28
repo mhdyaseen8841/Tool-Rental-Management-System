@@ -27,6 +27,7 @@
     "chart.js": "3.9.1",
     "compressorjs": "^1.1.1",
     "date-fns": "2.29.3",
+    "dayjs": "^1.11.7",
     "formik": "2.2.9",
     "material-ui-dropzone": "^3.5.0",
     "next": "12.3.0",

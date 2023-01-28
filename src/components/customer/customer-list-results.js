@@ -203,7 +203,7 @@ let cid= data.cid;
                       >
                         {getInitials(customer.cName)}
                       </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}`}>
+                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}`}>
                       <Typography
                         color="textPrimary"
                         variant="body1"
