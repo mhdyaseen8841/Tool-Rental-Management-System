@@ -85,7 +85,7 @@ export default function FullScreenDialogUpdate(details) {
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Typography variant="h4">ITEM UPDATE</Typography>
-            
+          
             <TextField
               fullWidth
               type="text"
@@ -119,11 +119,11 @@ export default function FullScreenDialogUpdate(details) {
     // value={value}
     // onChange={handleChange}
   >
-    <FormControlLabel {...getFieldProps('Status')} value="1" error={Boolean(touched.Status && errors.Status || alertMsg)}
-           helperText={touched.Status && errors.Status || alertMsg} control={<Radio />} label="+" />
+     {Boolean(touched.Status && errors.Status || alertMsg)}
+    {touched.Status && errors.Status || alertMsg} 
+    <FormControlLabel {...getFieldProps('Status')} value="1" label="+" control={<Radio />} />
 
-    <FormControlLabel {...getFieldProps('Status')} value="0" error={Boolean(touched.Status && errors.Status || alertMsg)}
-           helperText={touched.Status && errors.Status || alertMsg} control={<Radio />} label="-" />
+    <FormControlLabel {...getFieldProps('Status')} value="0" label="-" control={<Radio />} />
   </RadioGroup>
 </FormControl>
 

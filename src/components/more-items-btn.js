@@ -60,8 +60,8 @@ export default function FadeMenu(props) {
       >
         <MenuItem onClick={edituser}>Edit</MenuItem>
         { props.updateItem ?  <MenuItem onClick={updateitem}>Update</MenuItem> : '' }
-        <MenuItem onClick={deletereq}>Delete</MenuItem>
-        {/* { props.delete ? <MenuItem onClick={deletereq}>Delete</MenuItem> : '' } */}
+        { props.updateItem ?  '' :  <MenuItem onClick={deletereq}>Delete</MenuItem> }
+
 
       </Menu>
     </div>
