@@ -59,6 +59,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
   }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+  console.log('Editttttttttttt')
   console.log(data);
   setOpen(true);
 let cid= data.cid;
@@ -108,12 +109,6 @@ let cid= data.cid;
     />
   ));
 };
-
-
-
-
-
-
 
 
 
@@ -229,7 +224,7 @@ let cid= data.cid;
                   </TableCell>
                 
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
                   </TableCell>
                 </TableRow>
               ))}

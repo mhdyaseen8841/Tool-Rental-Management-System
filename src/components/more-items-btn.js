@@ -22,6 +22,10 @@ export default function FadeMenu(props) {
       setIsOpen(false);
       props.editUser();
     }
+    const updateitem = ()=>{
+      setIsOpen(false);
+      props.updateItem();
+    }
 
 
     const [anchorEl, setAnchorEl] = useState(null)
@@ -55,7 +59,10 @@ export default function FadeMenu(props) {
         TransitionComponent={Fade}
       >
         <MenuItem onClick={edituser}>Edit</MenuItem>
-        <MenuItem onClick={deletereq}>Delete</MenuItem>
+        { props.updateItem ?  <MenuItem onClick={updateitem}>Update</MenuItem> : '' }
+        { props.updateItem ?  '' :  <MenuItem onClick={deletereq}>Delete</MenuItem> }
+
+
       </Menu>
     </div>
   );

@@ -17,9 +17,11 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-stocks';
+import FullScreenDialog from './add-item';
+import FullScreenDialogUpdate from './update-item';
+import requestPost from '../../../serviceWorker'
 
-export const StockListResults = ({ stocks, ...rest }) => {
+export const ItemListResults = ({ items,getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -29,17 +31,101 @@ export const StockListResults = ({ stocks, ...rest }) => {
   const handleClose = () => {
     setDialog();
   };
+  
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  
   setOpen(true);
+  let itemId= data.itemId;
+  
   const add = (data) => {
+  
+    let req={
+      "type" : "SP_CALL",
+      "requestId" : 1200002,
+      request: {
+       "itemId":itemId,
+       "itemName":data.ItemName,
+       "monthly":data.MonthlyRent,
+       "daily":data.DailyRent,
+       "stock":data.Stock,
+       
+     }
+}
+
+requestPost(req).then((res)=>{
+  if(res.errorcode ==0){
     
-    setDialog(); 
+    console.log(error);
+            console.log('No internet connection found. App is running in offline mode.');
+  }else{
+    getdata()
+    
+  }
+
+setDialog(); 
+});
+
+
   };
+
   setDialog(() => (
     
     <FullScreenDialog
+      onClose={handleClose}
+      open={open}
+       submit={add}
+       updated={upd}
+       button={button}
+       data={data}
+    />
+  ));
+};
+
+
+const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
+
+  console.log(data);
+  setOpen(true);
+  console.log('tems idddddddddddddddddddddddddddddd')
+  console.log(data.itemId)
+  let itemId= data.itemId;
+  
+
+  
+  const add = (data) => {
+    console.log('final dataaaaaaaaaaaaaaaaaaaaaaaa')
+console.log(data)
+
+    let req={
+      "type" : "SP_CALL",
+      "requestId" : 1300001,
+      request: {
+  "itemId": itemId,
+    "qty": data.StockNumber,
+    "status": data.Status,
+     }
+}
+
+
+requestPost(req).then((res)=>{
+  if(res.errorcode ==0){
+    
+    console.log(error);
+            console.log('No internet connection found. App is running in offline mode.');
+  }else{
+    getdata()
+    
+  }
+
+setDialog(); 
+});
+
+
+  };
+
+  setDialog(() => (
+    
+    <FullScreenDialogUpdate
       onClose={handleClose}
       open={open}
        submit={add}
@@ -55,7 +141,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = stocks.map((stocks) => stocks.itemId);
+      newSelectedCustomerIds = items.map((items) => items.itemId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -100,7 +186,17 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
           <Table>
             <TableHead>
               <TableRow>
-               
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedCustomerIds.length === items.length}
+                    color="primary"
+                    indeterminate={
+                      selectedCustomerIds.length > 0
+                      && selectedCustomerIds.length < items.length
+                    }
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
                 <TableCell>
                   Name
                 </TableCell>
@@ -120,13 +216,19 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {stocks.slice(0, limit).map((stocks) => (
+              {items.slice(0, limit).map((items) => (
                 <TableRow
                   hover
-                  key={stocks.id}
-                  selected={selectedCustomerIds.indexOf(stocks.id) !== -1}
+                  key={items.itemId}
+                  selected={selectedCustomerIds.indexOf(items.itemId) !== -1}
                 >
-                  
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedCustomerIds.indexOf(items.itemId) !== -1}
+                      onChange={(event) => handleSelectOne(event, items.itemId)}
+                      value="true"
+                    />
+                  </TableCell>
                   <TableCell>
                     <Box
                       sx={{
@@ -139,24 +241,25 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                         color="textPrimary"
                         variant="body1"
                       >
-                        {stocks.iName}
+                        {items.iName}
                       </Typography>
                     </Box>
                   </TableCell>
                   
                   <TableCell>
-                    {stocks.mRent}
+                    {items.mRent}
                   </TableCell>
                   <TableCell>
-                    {stocks.dRent}
+                    {items.dRent}
                   </TableCell>
                   <TableCell>
-                    {stocks.tstock}
+                    {items.tstock}
                   </TableCell>
                  
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:'yaseen',mobile:'7445',email:'y@gmail.com',address:'puthukkadan house'})}/>
+                  <FadeMenu  callback={()=>{deleteUser(cId)}} updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
                   </TableCell>
+                  
                 </TableRow>
               ))}
             </TableBody>
@@ -165,7 +268,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={stocks.length}
+        count={items.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
@@ -176,6 +279,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   );
 };
 
-StockListResults.propTypes = {
+ItemListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };

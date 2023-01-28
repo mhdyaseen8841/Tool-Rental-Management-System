@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { useState,useEffect } from 'react';
 import { Box, Container } from '@mui/material';
-import { StockListResults } from "../components/stocks/stock-list-results";
-import { StockListToolbar } from "../components/stocks/stock-list-toolbar";
+import { ItemListResults } from "../components/items/item-list-results";
+import { ItemListToolbar } from "../components/items/item-list-toolbar";
 
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
@@ -11,27 +11,32 @@ import requestPost from '../../serviceWorker'
 const Page = () => {
 
  
-  const [stocks, setStocks] = useState([{}])
+  const [items, setItems] = useState([{}])
 
-useEffect(() => {
-  let data=  {
-    "type" : "SP_CALL",
-    "requestId" : 1200005,
-    request: {
-   }
+  function getItems(){
+    let data=  {
+      "type" : "SP_CALL",
+      "requestId" : 1200005,
+      request: {
+     }
 }
 
   requestPost(data).then((res)=>{
     if(res.result[0] ==null){
-      setStocks([{}])
+      setItems([{}])
     }else{
-     
-      setStocks(res.result)
+      console.log(res);
+      setItems(res.result)
     }
    
   })
- 
-}, [])
+}
+  useEffect(() => {
+
+    getItems()
+   }, [])
+   
+
 
 
 
@@ -51,9 +56,9 @@ useEffect(() => {
       }}
     >
       <Container maxWidth={false}>
-        <StockListToolbar />
+        <ItemListToolbar getdata={getItems}/>
         <Box sx={{ mt: 3 }}>
-          <StockListResults stocks={stocks} />
+          <ItemListResults items={items} getdata={getItems} />
         </Box>
       </Container>
     </Box>

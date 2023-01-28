@@ -14,12 +14,71 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import { Box } from '@mui/system';
+import FileUpload from 'react-material-file-upload';
+import Compressor from 'compressorjs';
 
 
 
 export default function FullScreenDialog(details) {
     
   const [update, setUpdate] = useState(details.updated);
+
+  const [files, setFiles] = useState();
+  const [doc,setDoc]= useState(update?details.data.proof:'');
+  const [imgbase64, setimgbase64] = useState('');
+  const [imgPreview, setImgPreview] = useState();
+
+
+  const getBase64 = (file) => {
+
+    console.log(file);
+    return new Promise((resolve) => {
+      // Make new FileReader
+      const reader = new FileReader();
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+        // console.log('Called', reader);
+        let baseURL = '';
+        baseURL = reader.result;
+        console.log(baseURL);
+        setDoc(baseURL)
+        resolve(baseURL);
+      };
+    });
+  };
+
+  
+
+  const handleFileChange = event => {
+    setFiles(event)
+    console.log(event[0]);
+     const fileObj = event && event[0];
+     if (!fileObj) {
+         return;
+     }
+    
+ 
+     setImgPreview(URL.createObjectURL(event[0]))
+     new Compressor(event[0], {      
+       quality: 0.6,
+       success: (compressedResult) => {
+           getBase64(compressedResult).then((result) => {
+               setimgbase64(result);
+              
+               setImgPreview();
+ 
+              
+             }).catch((err) => {
+             console.log("error", err);
+           })
+       },
+     });
+   }
+
+
   const validSchema = Yup.object().shape({
     ItemName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
     MonthlyRent: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Monthly Rent is required'),
@@ -31,14 +90,15 @@ export default function FullScreenDialog(details) {
   const formik = useFormik({
     initialValues: {
       ItemName: update ? details.data.name :'',
-      MonthlyRent: update ? details.data.monthlyRent : '',
-      DailyRent: update ? details.data.dailyRent : '',
-      Stock: update ? details.data.stock : '',
+      MonthlyRent: update ? details.data.mRent : '',
+      DailyRent: update ? details.data.dRent : '',
+      Stock: update ? details.data.tStock : '',
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-     
-      onAdd();
+      console.log("filesss");
+      console.log(values)
+      details.submit(values,doc)
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
@@ -67,7 +127,7 @@ export default function FullScreenDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add Stock
+            {details.button} Items
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
@@ -77,14 +137,14 @@ export default function FullScreenDialog(details) {
         <Container maxWidth="sm">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">STOCK DETAILS</Typography>
+            <Typography variant="h4">ITEM DETAILS</Typography>
             
             <TextField
               fullWidth
               type="text"
-              label="Item Name"
+              label="Stock Name"
               variant="outlined"
-              {...getFieldProps('CustomerName')}
+              {...getFieldProps('ItemName')}
               error={Boolean(touched.ItemName && errors.ItemName)}
               helperText={touched.ItemName && errors.ItemName}
             />
@@ -95,7 +155,7 @@ export default function FullScreenDialog(details) {
               label="Monthly Rent"
               variant="outlined"
               value={details.update ? details.data.name : ''}
-              {...getFieldProps('Monthly Rent')}
+              {...getFieldProps('MonthlyRent')}
               error={Boolean(touched.MonthlyRent && errors.MonthlyRent || alertMsg)}
               helperText={touched.MonthlyRent && errors.MonthlyRent || alertMsg}
             />
@@ -108,7 +168,7 @@ export default function FullScreenDialog(details) {
            label="Daily Rent"
            variant="outlined"
            value={details.update ? details.data.name : ''}
-           {...getFieldProps('Daily Rent')}
+           {...getFieldProps('DailyRent')}
            error={Boolean(touched.DailyRent && errors.DailyRent || alertMsg)}
            helperText={touched.DailyRent && errors.DailyRent || alertMsg}
          />
@@ -123,6 +183,9 @@ export default function FullScreenDialog(details) {
            error={Boolean(touched.Stock && errors.Stock || alertMsg)}
            helperText={touched.Stock && errors.Stock || alertMsg}
          />
+
+
+
            
             
           </Stack>
