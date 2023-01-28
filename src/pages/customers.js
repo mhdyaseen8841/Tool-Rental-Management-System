@@ -20,7 +20,7 @@ function getCustomer(){
 }
 
   requestPost(data).then((res)=>{
-    if(res.errorcode ==0){
+    if(res.result[0] ==null){
       setCustomers([{}])
     }else{
     
@@ -40,7 +40,7 @@ return(
   <>
     <Head>
       <title>
-        Customers | Material Kit
+        Customers | TRMS
       </title>
     </Head>
     <Box

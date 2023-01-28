@@ -18,11 +18,11 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-product';
+import FullScreenDialog from './add-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const ProductListResults = ({ customers,getdata, ...rest  }) => {
+export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -170,16 +170,16 @@ let cid= data.cid;
               <TableRow>
                 
                 <TableCell>
-                  Name
+                  Item
                 </TableCell>
                 <TableCell>
-                  Mobile Number
+                 Date
                 </TableCell>
                 <TableCell>
-                  Alternative number
+                  Rate
                 </TableCell>
                 <TableCell>
-                  Address
+                  Quantity
                 </TableCell>
                 <TableCell>
                    Actions
@@ -190,8 +190,8 @@ let cid= data.cid;
               {customers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.cId}
-                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                  key={customer.hId}
+                  selected={selectedCustomerIds.indexOf(customer.hId) !== -1}
                 >
                  
                   <TableCell>
@@ -206,22 +206,22 @@ let cid= data.cid;
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.cName}
+                        {customer.item}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.mobile}
+                    {customer.date}
                   </TableCell>
                   <TableCell>
-                    {customer.alterMobile}
+                    {customer.rate}
                   </TableCell>
                   <TableCell>
-                    {customer.address}
+                    {customer.qty}
                   </TableCell>
                 
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+                  <FadeMenu  callback={()=>{deleteUser(customer.hId)}} editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.item,date:customer.date,rate:customer.rate,qty:customer.qty})}/>
                   </TableCell>
                 </TableRow>
               ))}
@@ -243,6 +243,6 @@ let cid= data.cid;
 };
 
 
-ProductListResults.propTypes = {
+HistoryListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };

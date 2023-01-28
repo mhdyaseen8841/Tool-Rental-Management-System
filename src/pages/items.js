@@ -22,8 +22,8 @@ const Page = () => {
 }
 
   requestPost(data).then((res)=>{
-    if(res.errorcode ==0){
-      setItems([{}])
+    if(res.result[0] ==null){
+      setStocks([{}])
     }else{
       console.log(res);
       setItems(res.result)

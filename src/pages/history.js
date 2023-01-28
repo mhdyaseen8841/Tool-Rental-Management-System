@@ -2,26 +2,38 @@ import Head from 'next/head';
 import { Box, Container, Grid, Pagination } from '@mui/material';
 import { useEffect,useState } from 'react';
 
-import { ProductListResults } from '../components/product/product-list-results';
-import { ProductListToolbar } from '../components/product/product-list-toolbar';
+import { HistoryListResults } from '../components/customer-history/history-list-results';
+import { HistoryListToolbar } from '../components/customer-history/history-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 
+import { useRouter } from 'next/router';
 const Page = () => {
+
+ 
+  const router = useRouter();
 
 
   const [customers, setCustomers] = useState([{}])
-
+let cId='';
   function getCustomer(){
+
+    if(router.query){
+        cId = router.query.cId;
+    }
+        
     let data=  {
       "type" : "SP_CALL",
-      "requestId" : 1100005,
-      request: {
-     }
-  }
+   "requestId" : 1400005,
+       request: {
+ "cId":cId
+      }
+}
+
+  
   
     requestPost(data).then((res)=>{
-      if(res.errorcode ==0){
+      if(res.result[0] ==null){
         setCustomers([{}])
       }else{
       
@@ -32,6 +44,10 @@ const Page = () => {
   }
   
   useEffect(() => {
+
+    if(!router.query.cId){
+router.push('/')
+    }
   
    getCustomer()
   }, [])
@@ -41,7 +57,7 @@ const Page = () => {
   <>
     <Head>
       <title>
-        Products | Material Kit
+      History | TRMS
       </title>
     </Head>
     <Box
@@ -52,9 +68,9 @@ const Page = () => {
       }}
     >
       <Container maxWidth={false}>
-        <ProductListToolbar  getdata={getCustomer} />
+        <HistoryListToolbar  getdata={getCustomer} cId={cId} />
         <Box sx={{ mt: 3 }}>
-          <ProductListResults customers={customers} getdata={getCustomer} />
+          <HistoryListResults customers={customers} getdata={getCustomer} />
         </Box>
       </Container>
     </Box>
