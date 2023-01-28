@@ -22,7 +22,7 @@ useEffect(() => {
 }
 
   requestPost(data).then((res)=>{
-    if(res.errorcode ==0){
+    if(res.result[0] ==null){
       setStocks([{}])
     }else{
      

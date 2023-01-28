@@ -11,9 +11,9 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-product';
+import FullScreenDialog from './add-history';
 import requestPost from '../../../serviceWorker'
-export const ProductListToolbar = (props) => 
+export const HistoryListToolbar = (props) => 
 {
 
   const [open, setOpen] = useState(true);
@@ -27,21 +27,21 @@ export const ProductListToolbar = (props) =>
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
-  const add = (data,file) => {
+  const add = (items,note,status) => {
    
     
     
    let req={
-      "type" : "SP_CALL",
-      "requestId" : 1100001,
-      request: {
-       "name":data.customerName,
-       "mobile" : data.Mobnum,
-       "address" : data.Address,
-       "altermobile" : data.AltMobnum,
- "proof" : file
-     }
+    "type" : "SP_CALL",
+ "requestId" : 1400001,
+     request: {
+"cId":props.cId,
+"status":1,
+"note" :note,
+"items":items
+    }
 }
+
 
 
 requestPost(req).then((res)=>{
@@ -92,7 +92,7 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-         Product Management
+         CUSTOMER NAME
       </Typography>
       <Box sx={{ m: 1 }}>
         
@@ -101,7 +101,7 @@ return(
           variant="contained"
           onClick={handleAdd}
         >
-          Add Customers
+          Add History
         </Button>
       </Box>
     </Box>

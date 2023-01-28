@@ -34,9 +34,9 @@ const items = [
     title: 'Stocks'
   },
   {
-    href: '/products',
+    href: '/history',
     icon: (<ShoppingBagIcon fontSize="small" />),
-    title: 'Products'
+    title: 'history'
   },
   {
     href: '/account',

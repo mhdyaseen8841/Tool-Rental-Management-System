@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-
+import Link from 'next/link';
 import {
   Avatar,
   Box,
@@ -208,12 +208,14 @@ let cid= data.cid;
                       >
                         {getInitials(customer.cName)}
                       </Avatar>
+                      <Link href={`/history/?cId=${customer.cId}`}>
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.cName}
+                         {customer.cName} 
                       </Typography>
+                      </Link>
                     </Box>
                   </TableCell>
                   <TableCell>
