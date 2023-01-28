@@ -23,7 +23,7 @@ const Page = () => {
 
   requestPost(data).then((res)=>{
     if(res.result[0] ==null){
-      setStocks([{}])
+      setItems([{}])
     }else{
       console.log(res);
       setItems(res.result)
