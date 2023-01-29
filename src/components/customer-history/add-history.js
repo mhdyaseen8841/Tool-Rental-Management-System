@@ -98,6 +98,7 @@ export default function FullScreenDialog(details) {
      console.log("submitttttttttttttttttttttttttttttttttt");
     console.log(selectedItems);
     let shouldBreak = false;
+    setQtyError('');
     [...Array(noOfRows)].map((elementInArray, ind) => {
 
 
@@ -154,7 +155,15 @@ if(selectedItems[ind]){
 console.log(itemsArr);
 
 if(qterr===false){
+if(itemsArr.length === 0){
+console.log("array null");
+setQtyError('Add atleast one item')
+setqtErr(true)
+}else{
+  setQtyError('')
+  setqtErr(false)
   details.submit(itemsArr,notes,1)
+}
 }
 
     }
