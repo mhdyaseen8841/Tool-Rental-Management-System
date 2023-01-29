@@ -49,6 +49,8 @@ export default function FullScreenDialog(details) {
   const [update, setUpdate] = useState(details.updated);
   const [noOfRows, setNoOfRows] = useState(1);
   const [items, setItems] = useState([]);
+  const [qtyerror, setQtyError] = useState('');
+  const [qterr,setqtErr]=useState(false);
   const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ""))
 // const [itemsArr,setItemsArr]=useState([{}])
   useEffect(() => {
@@ -66,8 +68,8 @@ export default function FullScreenDialog(details) {
       if(res.result[0] ==null){
         setItems([{}])
       }else{
-        setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId } }));
-        
+        setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
+        console.log(items);
       }
      
     })
@@ -77,8 +79,7 @@ export default function FullScreenDialog(details) {
 
 
   const validSchema = Yup.object().shape({
-    Notes: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Note is required'),
-
+   
   });
 
   const [alertMsg, setAlert] = useState();
@@ -88,29 +89,74 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      console.log(values.Notes)
+      
+      let notes="";
+      if(values.Notes){
+        notes=values.Notes;
+      }
       let itemsArr = []
      console.log("submitttttttttttttttttttttttttttttttttt");
     console.log(selectedItems);
-   
+    let shouldBreak = false;
     [...Array(noOfRows)].map((elementInArray, ind) => {
 
+
+      if (shouldBreak) {
+        return;
+      }
+
+  console.log("gfgfgs");
       if (selectedItems[ind] !== "") {
        console.log(ind);
 if(selectedItems[ind]){
-          itemsArr.push({
-            "itemId":selectedItems[ind],
-            "qty": document.getElementById(`qty${ind}`).value,
+  let aqty=  items.find(obj => obj.itemId === selectedItems[ind]);
+  console.log("qtyyyyyyyyyyyyyyyyyyyy");
+  console.log(aqty);
+  const element = document.getElementById(`qty${ind}`);
+  if(element){
+    if((aqty.astock < element.value)  ){
+    
+        setQtyError(aqty.label+' Out of stock!, available stock is only '+aqty.astock)
+        setqtErr(true)
+        shouldBreak = true;
+        return;
+      
+      console.log("out of stock");
+    }else if(parseInt(element.value) <= 0){
 
-          })
+        setQtyError('enter '+ aqty.label+' quantity greater than zero')
+        setqtErr(true)
+        shouldBreak = true;
+        return;
+    }
+    
+    else{
+      setQtyError('')
+      setqtErr(false)
+
+      itemsArr.push({
+        "itemId":selectedItems[ind],
+        "qty":element.value,
+  
+      })
+  
+      console.log("heyheyhey");
+    }
+}
+  
+          
 }
 
 
       }
-     
+    
     })
 console.log(itemsArr);
-details.submit(itemsArr,values.Notes,1)
+
+if(qterr===false){
+  details.submit(itemsArr,notes,1)
+}
+
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
@@ -184,8 +230,8 @@ onChange={(event) => {
                       </FormControl>
                       
                       <FormControl>
-                        <OutlinedInput type='number' id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}  />
-                        
+                        <OutlinedInput type='number' id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}   />
+                       
                       </FormControl>
                       </Stack>
                   
@@ -199,7 +245,7 @@ onChange={(event) => {
               <Stack direction="row" mb={2} justifyContent="space-between" pl={2} /* alignItems="center"  */ >
           <Button onClick={() => setNoOfRows(noOfRows + 1)}>+ Add Item</Button>
         </Stack>
-          
+       {qterr?<Alert severity="error">{qtyerror}</Alert>:''} 
           </Stack>
         </Container>
       </Dialog>
