@@ -216,21 +216,21 @@ setqtErr(true)
               helperText={touched.Notes && errors.Notes}
             /> 
 
-{[...Array(noOfRows)].map((elementInArray, ind) => {
+              {[...Array(noOfRows)].map((elementInArray, ind) => {
                   return (
                  
                      <Stack direction="row" spacing={2}>
                     <FormControl fullWidth key={ind}> 
                    
                     <InputLabel id={`item${ind}`}>Items</InputLabel> 
-                    <Select sx={{ minWidth: 400 }} labelId={`item-label-${ind}`} id={`item${ind}`}  label="Items" 
-value={selectedItems[ind]}
-onChange={(event) => {
-  setSelectedItems(prevItems => {
-    prevItems[ind] = event.target.value;
-    return [...prevItems];
-  });
-}}>
+                    <Select sx={{ minWidth: 300 }} labelId={`item-label-${ind}`} id={`item${ind}`}  label="Items" 
+                     value={selectedItems[ind]}
+                      onChange={(event) => {
+                         setSelectedItems(prevItems => {
+                           prevItems[ind] = event.target.value;
+                        return [...prevItems];
+                        });
+                         }}>
                         {items.map(({label, itemId}, index)  => (
                             <MenuItem key={index} value={itemId} >{label}</MenuItem>
                         ))} 
@@ -239,8 +239,9 @@ onChange={(event) => {
                       </FormControl>
                       
                       <FormControl>
-                        <OutlinedInput type='number' id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}   />
-                       
+                        
+                      <TextField label="Quantity" variant="outlined" type='number'  id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}  />
+                        
                       </FormControl>
                       </Stack>
                   
