@@ -59,7 +59,7 @@ export default function FadeMenu(props) {
         TransitionComponent={Fade}
       >
         {props.editUser?   <MenuItem onClick={edituser}>Edit</MenuItem> : ''}
-      
+        
         { props.updateItem ?  <MenuItem onClick={updateitem}>Update</MenuItem> : '' }
         { props.callback ?   <MenuItem onClick={deletereq}>Delete</MenuItem> : ''}
 
