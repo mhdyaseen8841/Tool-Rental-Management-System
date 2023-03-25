@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -22,13 +22,14 @@ import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
+export const ItemResult = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
-
+const [data,setData]=useState([])
+const [item,setItem]=useState([])
   const handleClose = () => {
     setDialog();
   };
@@ -95,7 +96,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.mId);
+    //   newSelectedCustomerIds = customers.map((customer) => customer.mId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -125,12 +126,20 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
-  };
+  }
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
+  useEffect(() => {
+  
+    setData(customers.data)
+    setItem(customers.item)
+        console.log(customers);
+    console.log(customers.data);
+    console.log(customers.item);
+    }, []);
   return (
     
     <Card {...rest}>
@@ -146,9 +155,9 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                  Date
                 </TableCell>
                 
-                {customers.map((customer) => (
+                {item.map((itemHead) => (
                 <TableCell>
-                  Feedback
+                  {itemHead.name}
                 </TableCell>
                 )
                 )}
@@ -157,24 +166,25 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {data.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.mId}
-                  selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+                //   key={customer.mId}
+                //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
                 >
-                 
-                 
-                  <TableCell>
-                    {customer.Date}
+                 <TableCell>
+                   
+                    {customer[0]}
                   </TableCell>
-                  <TableCell>
-                    {customer.feedback}
+                 {
+                     customer.slice(1,customer.length-1).map((item) => (
+<TableCell>
+                    {item.outgoing}
+                    {item.incoming}
                   </TableCell>
-                 
-                  <TableCell>
-                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
-                  </TableCell>
+                     ))
+                 }
+                  
                 </TableRow>
               ))}
             </TableBody>
@@ -195,6 +205,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 };
 
 
-HistoryListResults.propTypes = {
+ItemResult.propTypes = {
   customers: PropTypes.array.isRequired
 };

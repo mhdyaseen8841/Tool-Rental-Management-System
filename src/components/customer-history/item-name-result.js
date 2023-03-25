@@ -22,7 +22,7 @@ import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
+export const ItemNameResult = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -201,6 +201,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 };
 
 
-HistoryListResults.propTypes = {
+ItemNameResult.propTypes = {
   customers: PropTypes.array.isRequired
 };
