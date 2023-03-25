@@ -3,7 +3,7 @@ import axios from "axios";
 // import 'react-toastify/dist/ReactToastify.css';
 
 
-const ServiceURL = 'https://bde9-202-164-137-208.in.ngrok.io/tools/src/API/'
+const ServiceURL = 'https://59cc-202-164-137-208.in.ngrok.io/tools/src/API/'
 
 const datas={
     result:[
