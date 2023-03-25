@@ -99,8 +99,7 @@ export default function FullScreenDialog(details) {
     console.log(selectedItems);
     let shouldBreak = false;
     setQtyError('');
-    [...Array(noOfRows)].map((elementInArray, ind) => {
-
+for (let ind = 0; ind< noOfRows; ind++) {
 
       if (shouldBreak) {
         return;
@@ -140,7 +139,7 @@ if(selectedItems[ind]){
   
       })
   
-      console.log("heyheyhey");
+     
     }
 }
   
@@ -150,7 +149,7 @@ if(selectedItems[ind]){
 
       }
     
-    })
+    }
 console.log(itemsArr);
 
 if(qterr===false){

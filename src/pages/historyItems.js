@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { useEffect,useState } from 'react';
 import { Box, Container } from '@mui/material';
-import { CustomerListResults } from '../components/customer/customer-list-results';
-import { CustomerListToolbar } from '../components/customer/customer-list-toolbar';
+import { CustomerListResults } from '../components/items-history/itemhistory-list-results';
+import { CustomerListToolbar } from '../components/items-history/itemhistory-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 

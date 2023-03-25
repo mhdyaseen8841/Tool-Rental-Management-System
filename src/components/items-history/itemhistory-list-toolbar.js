@@ -11,17 +11,15 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-history';
+import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
-import { mt } from 'date-fns/locale';
-export const HistoryListToolbar = (props) => 
+export const CustomerListToolbar = (props) => 
 {
 
   const [open, setOpen] = useState(true);
 
   const [addDialog, setDialog] = useState();
-  const [cId, setCid] = useState(props.cId);
-  const [cName, setcName] = useState(props.cName);
+
   const handleClose = () => {
     setDialog();
   };
@@ -29,25 +27,25 @@ export const HistoryListToolbar = (props) =>
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
-  const add = (items,note,status) => {
-   console.log("ciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiddddddddddddddddddddd");
-    console.log(cId)
-    console.log(items);
+  const add = (data,file) => {
+   console.log(data);
+    
    let req={
-    "type" : "SP_CALL",
- "requestId" : 1400001,
-     request: {
-"cId":cId,
-"status":1,
-"note" :note,
-"items":items
-    }
+      "type" : "SP_CALL",
+      "requestId" : 1100001,
+      request: {
+       "name":data.CustomerName,
+       "mobile" : data.Mobnum,
+       "address" : data.Address,
+       "altermobile" : data.AltMobnum,
+ "proof" : file
+     }
 }
 
 
 
 requestPost(req).then((res)=>{
-  if(res.errorcode==0){
+  if(res.errorcode ==0){
     setDialog();
     console.log(error);
             console.log('No internet connection found. App is running in offline mode.');
@@ -58,9 +56,6 @@ requestPost(req).then((res)=>{
  
 })
 
-
-
-    
 
   };
 
@@ -76,34 +71,6 @@ requestPost(req).then((res)=>{
     />
   ));
 };
-
-const [itemButton, setButtons] = useState([{}])
-function getItems(){
-  let data=  {
-    "type" : "SP_CALL",
-    "requestId" : 1200005,
-    request: {
-   }
-}
-
-requestPost(data).then((res)=>{
-  if(res.result[0] ==null){
-    setButtons([{}])
-  }else{
-    console.log(res);
-    setButtons(res.result)
-  }
- 
-})
-}
-
-
-
-useEffect(() => {
- getItems();
- console.log(props.cName);
- console.log(cName);
-}, [])
 
 
 return(
@@ -122,7 +89,7 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-         {cName}
+        Customers
       </Typography>
       <Box sx={{ m: 1 }}>
         
@@ -131,7 +98,7 @@ return(
           variant="contained"
           onClick={handleAdd}
         >
-          Add History
+          Add Customers
         </Button>
       </Box>
     </Box>
@@ -153,81 +120,9 @@ return(
                   </InputAdornment>
                 )
               }}
-              placeholder="Search Product"
+              placeholder="Search customer"
               variant="outlined"
             />
-
-
-
-
-            
-        
-        
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
-
-    <Box sx={{ mt: 3 }}>
-      <Card>
-        <CardContent>
-          <Box >
-        
-         
-          <Button
-          sx={{ ml: 2,mt:2 }}
-          color="primary"
-          variant="contained"
-          onClick={handleAdd}
-        >
-          HISTORY
-        </Button>
-
- 
-        <Button
-          sx={{ ml: 2,mt:2 }}
-          color="primary"
-          variant="contained"
-          onClick={handleAdd}
-        >
-          ITEMS
-        </Button>
-
-          {itemButton.map(({iName, itemId}, index)  => {
-return(
-<Button
-sx={{ ml: 2 ,mt :2 }}
-color="primary"
-variant="contained"
-onClick={() => handleAdd(itemId)}
->
-{iName}
-</Button>
-)
-})}
-        
-         
-
-        
-
-      
-        <Button
-          sx={{ ml: 2,mt:2 }}
-          color="primary"
-          variant="contained"
-          onClick={handleAdd}
-        >
-          TOTAL
-        </Button>
-
-
-  
-
-
-
-            
-        
-        
           </Box>
         </CardContent>
       </Card>
