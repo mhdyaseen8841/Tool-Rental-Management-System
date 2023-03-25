@@ -207,6 +207,9 @@ setDialog();
                   Daily Rent
                 </TableCell>
                 <TableCell>
+                  Available Stocks
+                </TableCell>
+                <TableCell>
                   Total Stocks
                 </TableCell>
                
@@ -251,6 +254,9 @@ setDialog();
                   </TableCell>
                   <TableCell>
                     {items.dRent}
+                  </TableCell>
+                  <TableCell>
+                    {items.astock}
                   </TableCell>
                   <TableCell>
                     {items.tstock}

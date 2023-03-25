@@ -5,6 +5,7 @@ import { CustomerListResults } from '../components/customer/customer-list-result
 import { CustomerListToolbar } from '../components/customer/customer-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
+
 const Page = () => {
 
 
@@ -23,11 +24,14 @@ function getCustomer(){
     if(res.result[0] ==null){
       setCustomers([{}])
     }else{
-    
       setCustomers(res.result)
     }
    
-  })
+  }).catch((err)=>{
+    setCustomers([{}])
+    })
+
+
 }
 
 useEffect(() => {

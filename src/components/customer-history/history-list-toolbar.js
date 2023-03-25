@@ -31,7 +31,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   const add = (items,note,status) => {
    console.log("ciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiddddddddddddddddddddd");
     console.log(cId)
-    
+    console.log(items);
    let req={
     "type" : "SP_CALL",
  "requestId" : 1400001,

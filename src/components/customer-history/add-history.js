@@ -106,12 +106,11 @@ export default function FullScreenDialog(details) {
         return;
       }
 
-  console.log("gfgfgs");
       if (selectedItems[ind] !== "") {
-       console.log(ind);
+       
 if(selectedItems[ind]){
   let aqty=  items.find(obj => obj.itemId === selectedItems[ind]);
-  console.log("qtyyyyyyyyyyyyyyyyyyyy");
+  
   console.log(aqty);
   const element = document.getElementById(`qty${ind}`);
   if(element){

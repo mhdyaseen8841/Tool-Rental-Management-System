@@ -26,10 +26,16 @@ const Page = () => {
       setItems([{}])
     }else{
       console.log(res);
-      setItems(res.result)
+      setItems([{
+
+        
+      }])
     }
    
-  })
+  }).catch((err)=>{
+    setItems([{}])
+    })
+
 }
   useEffect(() => {
 
