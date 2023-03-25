@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container, Grid, Pagination } from '@mui/material';
+import { Box, Container, Grid, Pagination,Snackbar,Alert } from '@mui/material';
 import { useEffect,useState } from 'react';
 
 import { HistoryListResults } from '../components/customer-history/history-list-results';
@@ -16,7 +16,12 @@ const Page = () => {
 
   const [customers, setCustomers] = useState([{}])
   const [cId, setCid] = useState('');
-  
+  const [open, setOpen] = useState(false)
+  const [error, setError] = useState('')
+
+ const handleClose = ()=>{
+  setOpen(false)
+ }
 
   function getCustomer(){
 
@@ -36,6 +41,8 @@ const Page = () => {
   
   
     requestPost(data).then((res)=>{
+
+      if(res.result){
       if(res.result[0] ==null){
         setCustomers([{}])
       }else{
@@ -44,7 +51,14 @@ const Page = () => {
         setCustomers(res.result)
       }
      
-    })
+    }else{
+      setError(""+res)
+          setOpen(true)
+          setCustomers([{}])
+        }
+      })
+
+
   }
   
   useEffect(() => {
@@ -74,6 +88,11 @@ router.push('/')
       <Container maxWidth={false}>
         <HistoryListToolbar  getdata={getCustomer} cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+    {error}
+  </Alert>
+</Snackbar>
           <HistoryListResults customers={customers} getdata={getCustomer} />
         </Box>
       </Container>

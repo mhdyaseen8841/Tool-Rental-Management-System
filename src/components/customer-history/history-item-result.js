@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import Link from 'next/link';
+
 import {
   Avatar,
   Box,
@@ -18,11 +18,11 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
+export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -34,55 +34,26 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
   };
 
 
-  const deleteUser = (cid)=>{
-    let del = {
-      "type" : "SP_CALL",
-      "requestId" : 1100003,
-      request: {
-       "cId": cid
-     }
-    }
-    requestPost(del).then((res)=>{
-      if(res.errorcode ==0){
-        
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
-      }else{
-        getdata()
-        
-      }
-     
-    })
+  
 
 
-
-
-  }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log('Editttttttttttt')
   console.log(data);
   setOpen(true);
-let cid= data.cid;
 
-  const add = (data,file) => {
+
+  const add = (data) => {
    
 
     let req={
       "type" : "SP_CALL",
-      "requestId" : 1100002,
-      request: {
-       "cId":cid,
-       "name":data.CustomerName,
-       "mobile" : data.Mobnum,
-       "address" : data.Address,
-       "altermobile" : data.AltMobnum,
- "proof" : file
-     }
+      "requestId" : 1400002,
+      request: data
     }
     
     requestPost(req).then((res)=>{
       if(res.errorcode ==0){
-        
+        let error="error happend"
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
       }else{
@@ -114,11 +85,17 @@ let cid= data.cid;
 
 
 
+
+
+
+
+
+
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.cId);
+      newSelectedCustomerIds = customers.map((customer) => customer.mId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -163,21 +140,20 @@ let cid= data.cid;
           <Table>
             <TableHead>
               <TableRow>
+              <TableCell>
+                 Item
+                </TableCell>
+                
+              
+                <TableCell>
+                 Date
+                </TableCell>
                 
                 <TableCell>
-                  Name
+                  Rate
                 </TableCell>
                 <TableCell>
-                  Mobile Number
-                </TableCell>
-                <TableCell>
-                  Alternative number
-                </TableCell>
-                <TableCell>
-                  Address
-                </TableCell>
-                <TableCell>
-                   Actions
+                   Qty
                   </TableCell>
               </TableRow>
             </TableHead>
@@ -185,46 +161,20 @@ let cid= data.cid;
               {customers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.cId}
-                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                  key={customer.mId}
+                  selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
                 >
-                
+                 
+                 
                   <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex'
-                      }}
-                    >
-                      <Avatar
-                        
-                        sx={{ mr: 2 }}
-                        
-                      >
-                        {getInitials(customer.cName)}
-                      </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}`}>
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                         {customer.cName} 
-                      </Typography>
-                      </Link>
-                    </Box>
+                    {customer.Date}
                   </TableCell>
                   <TableCell>
-                    {customer.mobile}
+                    {customer.feedback}
                   </TableCell>
+                 
                   <TableCell>
-                    {customer.altermobile}
-                  </TableCell>
-                  <TableCell>
-                    {customer.address}
-                  </TableCell>
-                
-                  <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -246,6 +196,6 @@ let cid= data.cid;
 };
 
 
-CustomerListResults.propTypes = {
+HistoryListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };

@@ -5,7 +5,8 @@ import {
   CardContent,
   TextField,
   InputAdornment,
-  SvgIcon, Typography
+  SvgIcon, Typography,
+  Snackbar,Alert
 } from '@mui/material';
 import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
@@ -22,6 +23,12 @@ export const HistoryListToolbar = (props) =>
   const [addDialog, setDialog] = useState();
   const [cId, setCid] = useState(props.cId);
   const [cName, setcName] = useState(props.cName);
+  const [ErrOpen, setErrOpen] = useState(false)
+  const [error, setError] = useState('')
+
+ const handleErrClose = ()=>{
+  setOpen(false)
+ }
   const handleClose = () => {
     setDialog();
   };
@@ -87,6 +94,7 @@ function getItems(){
 }
 
 requestPost(data).then((res)=>{
+  if(res.result){
   if(res.result[0] ==null){
     setButtons([{}])
   }else{
@@ -94,7 +102,12 @@ requestPost(data).then((res)=>{
     setButtons(res.result)
   }
  
-})
+}else{
+  setError(""+res)
+      setErrOpen(true)
+      setButtons([{}])
+    }
+  })
 }
 
 
@@ -107,7 +120,14 @@ useEffect(() => {
 
 
 return(
+  
   <Box {...props}>
+
+<Snackbar open={open} autoHideDuration={6000} onClose={handleErrClose}>
+  <Alert onClose={handleErrClose} severity="error" sx={{ width: '100%' }}>
+    {error}
+  </Alert>
+</Snackbar>
     <Box
       sx={{
         alignItems: 'center',
