@@ -174,7 +174,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                   </TableCell>
                  
                   <TableCell>
-                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
+                  {/* <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} /> */}
                   </TableCell>
                 </TableRow>
               ))}

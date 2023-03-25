@@ -37,9 +37,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
   const add = (items,note,status) => {
-   console.log("ciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiddddddddddddddddddddd");
-    console.log(cId)
-    console.log(items);
+   
    let req={
     "type" : "SP_CALL",
  "requestId" : 1400001,
@@ -98,7 +96,6 @@ requestPost(data).then((res)=>{
   if(res.result[0] ==null){
     setButtons([{}])
   }else{
-    console.log(res);
     setButtons(res.result)
   }
  
@@ -114,8 +111,7 @@ requestPost(data).then((res)=>{
 
 useEffect(() => {
  getItems();
- console.log(props.cName);
- console.log(cName);
+
 }, [])
 
 

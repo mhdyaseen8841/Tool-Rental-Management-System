@@ -20,7 +20,8 @@ const Page = () => {
   const router = useRouter();
 
 
-  const [customers, setCustomers] = useState([{}])
+  const [customers, setCustomers] = useState([])
+  const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
@@ -52,6 +53,7 @@ getCustomer(data,1)
   setTable(2)
   //not done
 }else{
+  console.log("item-result page result")
   let data=  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
@@ -71,21 +73,35 @@ getCustomer(data,3)
 
     requestPost(data).then((res)=>{
 
+console.log("tabbbllleeeeeee"+tableid);
+if(tableid==3){
+  if(res.result){
+    if(res.result.item[0] ==null){
+      setItemHistory([{}])
+    }else{
+      setItemHistory(res.result)
+    }
+    setTable(tableid)
+  }else{
+    setError(""+res)
+        setOpen(true)
+        setCustomers([{}])
+      }
+}else{
       if(res.result){
       if(res.result[0] ==null){
         setCustomers([{}])
       }else{
-        console.log("hehehe haha");
-        console.log(router.query.cName);
         setCustomers(res.result)
-        setTable(tableid)
       }
-     
+      setTable(tableid)
     }else{
       setError(""+res)
           setOpen(true)
           setCustomers([{}])
         }
+      }
+
       })
   }
   
@@ -134,8 +150,7 @@ router.push('/')
   <HistoryListResults customers={customers} getdata={getCustomer} />:table===2?
  //total page to be added
   <HistoryListResults customers={customers} getdata={getCustomer} />: 
-    // <ItemResult customers={customers} getdata={getCustomer} />
-<div/>
+     <ItemResult customers={itemhistory} getdata={getCustomer} />
 }
 
         </Box>

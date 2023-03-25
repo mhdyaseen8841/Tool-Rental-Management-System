@@ -38,7 +38,6 @@ export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
 
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log(data);
   setOpen(true);
 
 
