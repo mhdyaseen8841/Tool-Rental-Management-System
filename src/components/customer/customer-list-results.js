@@ -71,7 +71,7 @@ let cid= data.cid;
       "type" : "SP_CALL",
       "requestId" : 1100002,
       request: {
-        "cId":cid,
+       "cId":cid,
        "name":data.CustomerName,
        "mobile" : data.Mobnum,
        "address" : data.Address,
