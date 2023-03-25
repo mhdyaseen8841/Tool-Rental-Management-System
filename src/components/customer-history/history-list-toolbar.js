@@ -18,7 +18,7 @@ import { mt } from 'date-fns/locale';
 export const HistoryListToolbar = (props) => 
 {
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const [addDialog, setDialog] = useState();
   const [cId, setCid] = useState(props.cId);
@@ -119,6 +119,8 @@ useEffect(() => {
 }, [])
 
 
+
+
 return(
   
   <Box {...props}>
@@ -147,11 +149,28 @@ return(
       <Box sx={{ m: 1 }}>
         
         <Button
+        sx={{ ml: 2,mt:2 }}
+          color="success"
+          variant="contained"
+          onClick={handleAdd}
+        >
+          Add Rent
+        </Button>
+        <Button
+            sx={{ ml: 2,mt:2 }}
+          color="error"
+          variant="contained"
+          onClick={handleAdd}
+        >
+          Add Return
+        </Button>
+        <Button
+            sx={{ ml: 2,mt:2 }}
           color="primary"
           variant="contained"
           onClick={handleAdd}
         >
-          Add History
+          Add Payment
         </Button>
       </Box>
     </Box>
@@ -198,7 +217,7 @@ return(
           sx={{ ml: 2,mt:2 }}
           color="primary"
           variant="contained"
-          onClick={handleAdd}
+          onClick={()=>props.setTable("history")}
         >
           HISTORY
         </Button>
@@ -208,7 +227,7 @@ return(
           sx={{ ml: 2,mt:2 }}
           color="primary"
           variant="contained"
-          onClick={handleAdd}
+          onClick={()=>props.setTable("items")}
         >
           ITEMS
         </Button>
@@ -219,7 +238,7 @@ return(
 sx={{ ml: 2 ,mt :2 }}
 color="primary"
 variant="contained"
-onClick={() => handleAdd(itemId)}
+onClick={() => props.setTable(itemId,2)}
 >
 {iName}
 </Button>
@@ -235,7 +254,7 @@ onClick={() => handleAdd(itemId)}
           sx={{ ml: 2,mt:2 }}
           color="primary"
           variant="contained"
-          onClick={handleAdd}
+          onClick={()=>props.setTable("total")}
         >
           TOTAL
         </Button>
