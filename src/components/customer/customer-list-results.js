@@ -217,7 +217,7 @@ let cid= data.cid;
                     {customer.mobile}
                   </TableCell>
                   <TableCell>
-                    {customer.alterMobile}
+                    {customer.altermobile}
                   </TableCell>
                   <TableCell>
                     {customer.address}

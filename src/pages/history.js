@@ -31,11 +31,12 @@ const Page = () => {
         
     let data=  {
       "type" : "SP_CALL",
-   "requestId" : 1400005,
+   "requestId" : 1400006,
        request: {
  "cId":router.query.cId
       }
 }
+
 
   
   

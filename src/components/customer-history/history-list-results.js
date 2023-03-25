@@ -95,7 +95,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.cId);
+      newSelectedCustomerIds = customers.map((customer) => customer.mId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -141,17 +141,13 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
             <TableHead>
               <TableRow>
                 
-                <TableCell>
-                  Item
-                </TableCell>
+              
                 <TableCell>
                  Date
                 </TableCell>
+                
                 <TableCell>
-                  Rate
-                </TableCell>
-                <TableCell>
-                  Quantity
+                  Feedback
                 </TableCell>
                 <TableCell>
                    Actions
@@ -162,36 +158,18 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               {customers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.hId}
-                  selected={selectedCustomerIds.indexOf(customer.hId) !== -1}
+                  key={customer.mId}
+                  selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
                 >
                  
+                 
                   <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex'
-                      }}
-                    >
-                     
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                        {customer.item}
-                      </Typography>
-                    </Box>
+                    {customer.Date}
                   </TableCell>
                   <TableCell>
-                    {customer.date}
+                    {customer.feedback}
                   </TableCell>
-                  <TableCell>
-                    {customer.rate}
-                  </TableCell>
-                  <TableCell>
-                    {customer.qty}
-                  </TableCell>
-                
+                 
                   <TableCell>
                   <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
                   </TableCell>
