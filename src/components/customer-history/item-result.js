@@ -189,8 +189,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                       customer.slice(1,customer.length).map((item) => (
 <TableCell>
 <Stack spacing={2}>
-  <div> Outgoing:{item.outgoing.qty}</div>
-  <div> incoming: {item.incoming.qty}</div>
+  <div style={{ color: 'red' }}>Outgoing: {item.outgoing.qty}</div>
+  <div style={{ color: 'green' }}>Incoming: {item.incoming.qty}</div>
 </Stack>
                  
                   

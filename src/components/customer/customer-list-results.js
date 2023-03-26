@@ -154,6 +154,8 @@ let cid= data.cid;
     setPage(newPage);
   };
 
+  
+
   return (
     
     <Card {...rest}>

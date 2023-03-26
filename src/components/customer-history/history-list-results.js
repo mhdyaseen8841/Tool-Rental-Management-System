@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-
+import GetHistoryModal from './getHistoryModal';
 import {
   Avatar,
   Box,
@@ -78,6 +78,23 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
        data={data}
     />
   ));
+};
+
+
+
+
+const handleHModalAdd = (e,mid) => {
+console.log("hehehehehehehehe")
+  setOpen(true);
+  setDialog(() => (
+    <GetHistoryModal
+      onClose={handleClose}
+      open={open}
+      mid={mid}
+    />
+  ));
+
+  
 };
 
 
@@ -162,10 +179,13 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                 >
                  
                  
-                  <TableCell>
+                  <TableCell
+                  onClick={(e)=>handleHModalAdd(e,customer.mId)}
+                  >
                     {customer.Date}
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                   onClick={(e)=>handleHModalAdd(e,customer.mId)}>
                     {customer.feedback}
                   </TableCell>
                  
