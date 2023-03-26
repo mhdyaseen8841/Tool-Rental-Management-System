@@ -16,7 +16,7 @@ import requestPost from '../../../serviceWorker'
 export const ItemListToolbar = (props) => 
 {
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const [addDialog, setDialog] = useState();
 
