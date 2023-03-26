@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@mui/material/Typography';
+import requestPost from '../../../serviceWorker'
+
 import {
   Button,
   Modal,
@@ -9,11 +12,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  IconButton,
+  Paper
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
-
+import { ContactSupportOutlined } from '@mui/icons-material';
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: 'flex',
@@ -22,75 +23,104 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
+    borderRadius: '10px', 
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    position: 'relative',
-    width: 500,
-    maxHeight: '80vh',
-    overflowY: 'auto',
-    outline: 'none',
-    borderRadius: 5,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: theme.spacing(1),
-    right: theme.spacing(1),
   },
   table: {
-    minWidth: 500,
+    minWidth: 800,
+    minHeight: 200,
+  },
+  tableHead: {
+    backgroundColor: '#f5f5f5',
+    fontWeight: 'bold',
+  },
+  tableRow: {
+    '&:nth-of-type(even)': {
+      backgroundColor: '#f2f2f2',
+    },
+  },
+  tableCell: {
+    border: '1px solid #ddd',
+    padding: '8px',
   },
 }));
 
-const GetHistoryModal = ({ open, onClose }) => {
+const GetHistoryModal = (details) => {
   const classes = useStyles();
 
-  const [tableData, setTableData] = useState([]);
+
+  const [data, setData] = useState([{}]);
 
   useEffect(() => {
-    // Mock data for the table
-    const data = [
-      { id: 1, col1: 'Row 1, Column 1', col2: 'Row 1, Column 2', col3: 'Row 1, Column 3' },
-      { id: 2, col1: 'Row 2, Column 1', col2: 'Row 2, Column 2', col3: 'Row 2, Column 3' },
-      { id: 3, col1: 'Row 3, Column 1', col2: 'Row 3, Column 2', col3: 'Row 3, Column 3' },
-    ];
 
-    setTableData(data);
+    let req = {
+      "type" : "SP_CALL",
+        "requestId" : 1400005,
+        "request": {
+ 	    "mId" : 110
+     }
+    }
+    requestPost(req).then((res)=>{
+      if(res.errorcode ==0){
+        
+        console.log(error);
+                console.log('No internet connection found. App is running in offline mode.');
+      }else{
+setData(res.result)
+        console.log(res.result)
+        
+      }
+     
+    })
+
+    
   }, []);
 
   return (
-    <Modal
-      className={classes.modal}
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
-    >
-      <div className={classes.paper}>
-        <IconButton className={classes.closeButton} onClick={onClose}>
-          <Close />
-        </IconButton>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="example table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Column 1</TableCell>
-                <TableCell>Column 2</TableCell>
-                <TableCell>Column 3</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.col1}</TableCell>
-                  <TableCell>{row.col2}</TableCell>
-                  <TableCell>{row.col3}</TableCell>
+
+
+
+    <div>
+      <Modal
+        className={classes.modal}
+        open={details.open}
+        onClose={details.onClose}
+        aria-labelledby="example-modal-title"
+        aria-describedby="example-modal-description"
+      >
+        <div className={classes.paper}>
+          <TableContainer component={Paper}>
+          <Typography variant="h5" gutterBottom>
+        RENT HISTORY
+      </Typography>
+            <Table className={classes.table} aria-label="example table">
+              <TableHead>
+                <TableRow className={classes.tableHead}>
+                  <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">Date</TableCell>
+                  <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">Item</TableCell>
+                  <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">Rate</TableCell>
+                  <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">Qty</TableCell>
+
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    </Modal>
+              </TableHead>
+              <TableBody>
+  {data.map((row) => (
+    <TableRow className={classes.tableRow}>
+      <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">{row.date}</TableCell>
+      <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">{row.item}</TableCell>
+      <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">{row.rate}</TableCell>
+      <TableCell className={classes.tableCell} style={{ fontWeight: 'bold' }} align="center">{row.qty}</TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
+
+            </Table>
+          </TableContainer>
+        </div>
+      </Modal>
+    </div>
   );
 };
 
