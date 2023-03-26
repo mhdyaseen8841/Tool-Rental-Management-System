@@ -130,6 +130,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     setPage(newPage);
   };
 
+  
+
   return (
     
     <Card {...rest}>

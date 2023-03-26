@@ -183,7 +183,7 @@ setqtErr(true)
   };
  
   return (
-    <div>
+    <>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
         <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
           <Toolbar>
@@ -257,6 +257,6 @@ setqtErr(true)
           </Stack>
         </Container>
       </Dialog>
-    </div>
+    </>
   );
 }
