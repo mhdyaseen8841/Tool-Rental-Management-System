@@ -6,12 +6,36 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Stack, Container, Typography, TextField, Checkbox, Alert } from '@mui/material';
+import requestPost from '../../../serviceWorker'
+// material
+import {
+  TextField,
+  InputAdornment,
+  Card,
+  Table,
+  Stack,
+  Avatar,
+
+  Alert,
+  Checkbox,
+  TableRow,
+  TableBody,
+  TableCell,
+  Container,
+  Typography,
+  TableContainer,
+  TablePagination,
+  TableHead,
+  MenuItem,
+  Autocomplete,
+  OutlinedInput,
+  Select,
+  InputLabel,
+  FormControl,
+
+} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Compressor from 'compressorjs';
-
-import FileUpload from 'react-material-file-upload';
 
 
 
@@ -20,83 +44,122 @@ export default function ReturnDialog(details) {
  
  
   const [update, setUpdate] = useState(details.updated);
-  const [files, setFiles] = useState();
-  const [doc,setDoc]= useState(update?details.data.proof:'');
+  const [noOfRows, setNoOfRows] = useState(1);
+  const [items, setItems] = useState([]);
+  const [qtyerror, setQtyError] = useState('');
+  const [qterr,setqtErr]=useState(false);
+  const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ""))
+// const [itemsArr,setItemsArr]=useState([{}])
+  useEffect(() => {
 
-  const [imgPreview, setImgPreview] = useState();
-
-
-  const getBase64 = (file) => {
-
+    console.log("heeeeeeeeeeeeeeeeeee")
+    console.log(details.open);
+        const requestdata2 =   {
+          "type" : "SP_CALL",
+       "requestId" : 1200005,
+           request: {
+          }
+    }
    
-    return new Promise((resolve) => {
-      // Make new FileReader
-      const reader = new FileReader();
-      // Convert the file to base64 text
-      reader.readAsDataURL(file);
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        // console.log('Called', reader);
-        let baseURL = '';
-        baseURL = reader.result;
-        
-        setDoc(baseURL)
-        resolve(baseURL);
-      };
-    });
-  };
-
-  
-
-  const handleFileChange = event => {
-    setFiles(event)
-   
-     const fileObj = event && event[0];
-     if (!fileObj) {
-         return;
-     }
+    requestPost(requestdata2).then((res)=>{
+      if(res.result[0] ==null){
+        setItems([{}])
+      }else{
+        setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
+        console.log(items);
+      }
+     
+    })
+  },[])
+     
     
- 
-     setImgPreview(URL.createObjectURL(event[0]))
-     new Compressor(event[0], {      
-       quality: 0.6,
-       success: (compressedResult) => {
-           getBase64(compressedResult).then((result) => {
-               
-              
-               setImgPreview();
- 
-              
-             }).catch((err) => {
-             console.log("error", err);
-           })
-       },
-     });
-   }
- 
 
 
   const validSchema = Yup.object().shape({
-    CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
-    Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
-    AltMobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Altnum is required'),
-    Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Address is required'),
+   
   });
 
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
-      CustomerName: update ? details.data.name :'',
-      Mobnum: update ? details.data.mobile : '',
-      AltMobnum : update ? details.data.mobile : '',
-      Address: update ? details.data.address : '',
+    
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
+      
+      let notes="";
+      if(values.Notes){
+        notes=values.Notes;
+      }
+      let itemsArr = []
+     console.log("submitttttttttttttttttttttttttttttttttt");
+    console.log(selectedItems);
+    let shouldBreak = false;
+    setQtyError('');
+for (let ind = 0; ind< noOfRows; ind++) {
+
+      if (shouldBreak) {
+        return;
+      }
+
+      if (selectedItems[ind] !== "") {
+       
+if(selectedItems[ind]){
+  let aqty=  items.find(obj => obj.itemId === selectedItems[ind]);
+  
+  console.log(aqty);
+  const element = document.getElementById(`qty${ind}`);
+  if(element){
+    if((aqty.astock < element.value)  ){
+    
+        setQtyError(aqty.label+' Out of stock!, available stock is only '+aqty.astock)
+        setqtErr(true)
+        shouldBreak = true;
+        return;
+      
+      console.log("out of stock");
+    }else if(parseInt(element.value) <= 0){
+
+        setQtyError('enter '+ aqty.label+' quantity greater than zero')
+        setqtErr(true)
+        shouldBreak = true;
+        return;
+    }
+    
+    else{
+      setQtyError('')
+      setqtErr(false)
+
+      itemsArr.push({
+        "itemId":selectedItems[ind],
+        "qty":element.value,
+  
+      })
+  
      
-      details.submit(values,doc)
-     
+    }
+}
+  
+          
+}
+
+
+      }
+    
+    }
+console.log(itemsArr);
+
+if(qterr===false){
+if(itemsArr.length === 0){
+console.log("array null");
+setQtyError('Add atleast one item')
+setqtErr(true)
+}else{
+  setQtyError('')
+  setqtErr(false)
+  details.submit(itemsArr,notes,1)
+}
+}
 
     }
   });
@@ -117,7 +180,7 @@ export default function ReturnDialog(details) {
   };
  
   return (
-    <div>
+    <>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
         <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
           <Toolbar>
@@ -125,7 +188,7 @@ export default function ReturnDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              {details.button} CUSTOMER
+              {details.button} RENT HISTORY
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
@@ -135,72 +198,62 @@ export default function ReturnDialog(details) {
         <Container maxWidth="sm">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">CUSTOMER DETAILS</Typography>
+            <Typography variant="h4">RENT HISTORY</Typography>
             
-            {}
-            <TextField
-              fullWidth
-              type="text"
-              label="Customer Name"
-              variant="outlined"
-              {...getFieldProps('CustomerName')}
-              error={Boolean(touched.CustomerName && errors.CustomerName)}
-              helperText={touched.CustomerName && errors.CustomerName}
-            />
-            <TextField
-           
-           fullWidth
-           type="text"
-           label="Mobile Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('Mobnum')}
-           error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-           helperText={touched.Mobnum && errors.Mobnum || alertMsg}
-         />
-         <TextField
-           
-           fullWidth
-           type="text"
-           label="Alternative Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('AltMobnum')}
-           error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
-           helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
-         />
-            <TextField
-              fullWidth
-              type="text"
-              label="Address"
-              variant="outlined"
-              {...getFieldProps('Address')}
-              error={Boolean(touched.Address && errors.Address)}
-              helperText={touched.Address && errors.Address}
-            />
-            
-          { doc ? 
-         <img
-        
-          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"  }}
-          src={`${doc}`}
-          role="presentation"
-          alt="no network"
-        />
-       :  
-       <Typography variant="subtitle2" sx={{cursor: "pointer"}}
-     >
-        No Image
-      </Typography>
-
-         }
-
-          <FileUpload accept="image/*" value={files} onChange={handleFileChange} />
-
           
+             <TextField
+              fullWidth
+              type="text"
+              label="Notes"
+              variant="outlined"
+              {...getFieldProps('Notes')}
+              error={Boolean(touched.Notes && errors.Notes)}
+              helperText={touched.Notes && errors.Notes}
+            /> 
+
+              {[...Array(noOfRows)].map((elementInArray, ind) => {
+                  return (
+                 
+                     <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth key={ind}> 
+                   
+                    <InputLabel id={`item${ind}`}>Items</InputLabel> 
+                    <Select sx={{ minWidth: 300 }} labelId={`item-label-${ind}`} id={`item${ind}`}  label="Items" 
+                     value={selectedItems[ind]}
+                      onChange={(event) => {
+                         setSelectedItems(prevItems => {
+                           prevItems[ind] = event.target.value;
+                        return [...prevItems];
+                        });
+                         }}>
+                        {items.map(({label, itemId}, index)  => (
+                            <MenuItem key={index} value={itemId} >{label}</MenuItem>
+                        ))} 
+                      </Select>
+                      
+                      </FormControl>
+                      
+                      <FormControl>
+                        
+                      <TextField label="Quantity" variant="outlined" type='number'  id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}  />
+                        
+                      </FormControl>
+                      </Stack>
+                  
+                   
+                  )
+                })}
+
+
+    
+
+              <Stack direction="row" mb={2} justifyContent="space-between" pl={2} /* alignItems="center"  */ >
+          <Button onClick={() => setNoOfRows(noOfRows + 1)}>+ Add Item</Button>
+        </Stack>
+       {qterr?<Alert severity="error">{qtyerror}</Alert>:''} 
           </Stack>
         </Container>
       </Dialog>
-    </div>
+    </>
   );
 }

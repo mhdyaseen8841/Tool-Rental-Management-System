@@ -19,7 +19,7 @@ import ReturnDialog from "./add-Return";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
 export const HistoryListToolbar = (props) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [Sopen, setSOpen] = useState(false);
 
   const [addDialog, setDialog] = useState();
@@ -36,6 +36,7 @@ export const HistoryListToolbar = (props) => {
   };
 
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
+    console.log("addddddddddddddddddddddddddd")
     setOpen(true);
 
     const add = (items, note, status) => {

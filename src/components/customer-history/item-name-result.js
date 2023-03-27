@@ -26,7 +26,7 @@ export const ItemNameResult = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [addDialog, setDialog] = useState();
 
   const handleClose = () => {

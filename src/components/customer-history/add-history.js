@@ -52,8 +52,8 @@ export default function FullScreenDialog(details) {
 // const [itemsArr,setItemsArr]=useState([{}])
   useEffect(() => {
 
-    
-    
+    console.log("heeeeeeeeeeeeeeeeeee")
+    console.log(details.open);
         const requestdata2 =   {
           "type" : "SP_CALL",
        "requestId" : 1200005,
