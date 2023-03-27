@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
 
+
 import FileUpload from 'react-material-file-upload';
 
 
@@ -115,6 +116,14 @@ export default function ReturnDialog(details) {
     formik.resetForm();
     details.onClose();
   };
+
+
+  const styles = {
+    disabled: {
+      color: 'black',
+      borderColor: 'black',
+    },
+  };
  
   return (
     <div>
@@ -141,64 +150,56 @@ export default function ReturnDialog(details) {
             <TextField
               fullWidth
               type="text"
-              label="Customer Name"
+              label="Notes"
               variant="outlined"
               {...getFieldProps('CustomerName')}
               error={Boolean(touched.CustomerName && errors.CustomerName)}
               helperText={touched.CustomerName && errors.CustomerName}
             />
-            <TextField
-           
-           fullWidth
-           type="text"
-           label="Mobile Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('Mobnum')}
-           error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-           helperText={touched.Mobnum && errors.Mobnum || alertMsg}
-         />
-         <TextField
-           
-           fullWidth
-           type="text"
-           label="Alternative Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('AltMobnum')}
-           error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
-           helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
-         />
-            <TextField
-              fullWidth
-              type="text"
-              label="Address"
-              variant="outlined"
-              {...getFieldProps('Address')}
-              error={Boolean(touched.Address && errors.Address)}
-              helperText={touched.Address && errors.Address}
-            />
             
-          { doc ? 
-         <img
-        
-          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"  }}
-          src={`${doc}`}
-          role="presentation"
-          alt="no network"
-        />
-       :  
-       <Typography variant="subtitle2" sx={{cursor: "pointer"}}
-     >
-        No Image
-      </Typography>
+  
+          </Stack>
 
-         }
+          <Stack direction="row" spacing={2}>
 
-          <FileUpload accept="image/*" value={files} onChange={handleFileChange} />
+          <TextField
+      id="outlined-uncontrolled"
+      label="Item Name"
+      defaultValue="Grinder"
+      disabled={true}
+      variant="outlined"
+      InputProps={{ style: styles.disabled }}
+      InputLabelProps={{ style: styles.disabled }}
+    />
+
+
+<TextField
+      id="outlined-uncontrolled"
+      label="Outgoing Items"
+      defaultValue="10"
+      disabled={true}
+      variant="outlined"
+      InputProps={{ style: styles.disabled }}
+      InputLabelProps={{ style: styles.disabled }}
+    />
+
+<TextField
+      id="outlined-uncontrolled"
+      label="Return Items"
+      defaultValue="2"
+      variant="outlined"
+      InputProps={{ style: styles.disabled }}
+      InputLabelProps={{ style: styles.disabled }}
+    />
+
+
+
+</Stack>
 
           
-          </Stack>
+  
+  
+  
         </Container>
       </Dialog>
     </div>
