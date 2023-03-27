@@ -53,6 +53,7 @@ getCustomer(data,1)
   setTable(2)
   //not done
 }else{
+  setTable(3)
   console.log("item-result page result")
   let data=  {
     "type" : "SP_CALL",

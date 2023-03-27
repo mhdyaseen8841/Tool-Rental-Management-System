@@ -14,6 +14,7 @@ import { Search as SearchIcon } from "../../icons/search";
 import { Upload as UploadIcon } from "../../icons/upload";
 import { Download as DownloadIcon } from "../../icons/download";
 import { useState, useEffect } from "react";
+import Fade from '@mui/material/Fade';
 import FullScreenDialog from "./add-history";
 import ReturnDialog from "./add-Return";
 import requestPost from "../../../serviceWorker";
@@ -78,8 +79,29 @@ export const HistoryListToolbar = (props) => {
   const handleReturn = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
 
-    const add = () => {
+    const add = (note,items) => {
+      const req=  {
+        "type" : "SP_CALL",
+     "requestId" : 1400001,
+         "request": {
+   "cId":cId,
+ "status":0,
+   "note" :note,
+ "items":items
+        }
+  }
+
+  requestPost(req).then((res) => {
+    if (res.errorcode == 0) {
+      setDialog();
+      console.log(error);
+      console.log("No internet connection found. App is running in offline mode.");
+    } else {
       
+      setDialog();
+    }
+  });
+
     };
 
     setDialog(() => (
@@ -89,6 +111,7 @@ export const HistoryListToolbar = (props) => {
         submit={add}
         updated={upd}
         button={button}
+        cId= {cId}
         data={data}
       />
     ));

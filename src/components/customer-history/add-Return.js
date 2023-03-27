@@ -15,7 +15,6 @@ import {
   Table,
   Stack,
   Avatar,
-
   Alert,
   Checkbox,
   TableRow,
@@ -23,20 +22,12 @@ import {
   TableCell,
   Container,
   Typography,
-  TableContainer,
-  TablePagination,
-  TableHead,
-  MenuItem,
-  Autocomplete,
-  OutlinedInput,
-  Select,
-  InputLabel,
-  FormControl,
 
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-
+import Snackbar from '@mui/material/Snackbar';
+import Fade from '@mui/material/Fade';
 
 
 
@@ -52,23 +43,26 @@ export default function ReturnDialog(details) {
 // const [itemsArr,setItemsArr]=useState([{}])
   useEffect(() => {
 
-    console.log("heeeeeeeeeeeeeeeeeee")
-    console.log(details.open);
+    
         const requestdata2 =   {
           "type" : "SP_CALL",
-       "requestId" : 1200005,
+       "requestId" : 1500002,
            request: {
+            "cId":details.cId
           }
     }
-   
+   console.log(requestdata2);
     requestPost(requestdata2).then((res)=>{
       if(res.result[0] ==null){
         setItems([{}])
       }else{
-        setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
+        setItems(res.result);
+        console.log("huuuuuuuuuuuuuuuuuuuu");
         console.log(items);
       }
      
+    }).catch(err=>{
+      console.log(err);
     })
   },[])
      
@@ -86,88 +80,72 @@ export default function ReturnDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      
       let notes="";
+      let flag=false;
       if(values.Notes){
         notes=values.Notes;
       }
-      let itemsArr = []
-     console.log("submitttttttttttttttttttttttttttttttttt");
-    console.log(selectedItems);
-    let shouldBreak = false;
-    setQtyError('');
-for (let ind = 0; ind< noOfRows; ind++) {
+      let itemsArr = [];
+           
+      for (let ind = 0; ind< items.length; ind++) {
+        console.log("looooooooop"+ind)
+        const element = document.getElementById(`return${ind}`);
+        const checkelement = document.getElementById(`tick${ind}`);
+        console.log(element.value);
+        console.log(checkelement.checked);
 
-      if (shouldBreak) {
-        return;
-      }
+        console.log("pending"+items[ind].pending)
+      console.log("element.value"+element.value)
 
-      if (selectedItems[ind] !== "") {
-       
-if(selectedItems[ind]){
-  let aqty=  items.find(obj => obj.itemId === selectedItems[ind]);
-  
-  console.log(aqty);
-  const element = document.getElementById(`qty${ind}`);
-  if(element){
-    if((aqty.astock < element.value)  ){
-    
-        setQtyError(aqty.label+' Out of stock!, available stock is only '+aqty.astock)
-        setqtErr(true)
-        shouldBreak = true;
-        return;
+      var numberAsInt = parseInt(element.value, 10);  
+      if(checkelement.checked){
+     if(items[ind].pending<numberAsInt){
       
-      console.log("out of stock");
-    }else if(parseInt(element.value) <= 0){
-
-        setQtyError('enter '+ aqty.label+' quantity greater than zero')
-        setqtErr(true)
-        shouldBreak = true;
-        return;
-    }
-    
-    else{
-      setQtyError('')
-      setqtErr(false)
-
+      console.log("items[ind].pending>element.value error adich ");
+      setqtErr(true);
+      setQtyError("Quantity should be less than or equal to pending quantity");
+      flag=true;
+      break;
+     }
+     else if(element.value==0){
+      console.log("element.value===0 error adich ");
+      setqtErr(true);
+      setQtyError("Quantity should be greater than 0");
+      flag=true;
+      break
+    }else{
       itemsArr.push({
-        "itemId":selectedItems[ind],
-        "qty":element.value,
-  
-      })
-  
-     
+        "itemId": items[ind].itemId,
+"qty": element.value
+  })
     }
-}
-  
-          
-}
-
-
+  }
       }
+      console.log(itemsArr);
+      // details.submit(notes,itemsArr);
+      if(flag==false){
+        details.submit(notes,itemsArr);
+      }else{
+        
+      }
+}
+
     
-    }
-console.log(itemsArr);
-
-if(qterr===false){
-if(itemsArr.length === 0){
-console.log("array null");
-setQtyError('Add atleast one item')
-setqtErr(true)
-}else{
-  setQtyError('')
-  setqtErr(false)
-  details.submit(itemsArr,notes,1)
-}
-}
-
-    }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
 
   
+  const [state, setState] = useState({
+    open: false,
+    Transition: Fade,
+  });
 
-  
+  const handleClose = () => {
+    setState({
+      ...state,
+      open: false,
+    });
+  };
   
   const alertTimeOut = () => {
     setTimeout(() => {
@@ -189,6 +167,16 @@ setqtErr(true)
  
   return (
     <>
+    {
+      qterr && 
+  
+
+     <Snackbar open={open}  onClose={handleClose}>
+  <Alert onClose={handleClose} autoHideDuration={4000} severity="error" sx={{ width: '100%' }}>
+    {qtyerror}
+  </Alert>
+</Snackbar>
+    }
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
         <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
           <Toolbar>
@@ -209,25 +197,30 @@ setqtErr(true)
             <Typography variant="h4">RENT HISTORY</Typography>
             
             {}
+
             <TextField
               fullWidth
               type="text"
               label="Notes"
               variant="outlined"
-              {...getFieldProps('CustomerName')}
-              error={Boolean(touched.CustomerName && errors.CustomerName)}
-              helperText={touched.CustomerName && errors.CustomerName}
+              {...getFieldProps('Notes')}
+              error={Boolean(touched.notes && errors.notes)}
+              helperText={touched.notes && errors.notes}
             />
             
   
           </Stack>
 
-          <Stack direction="row" spacing={2}>
+{items.map((item,ind)=>{
+
+
+return(
+  <Stack direction="row" pt={2} spacing={2}>
 
           <TextField
-      id="outlined-uncontrolled"
+      id={`item${ind}`}
       label="Item Name"
-      defaultValue="Grinder"
+      defaultValue={item.itemName}
       disabled={true}
       variant="outlined"
       InputProps={{ style: styles.disabled }}
@@ -236,28 +229,34 @@ setqtErr(true)
 
 
 <TextField
-      id="outlined-uncontrolled"
+      id={`pending${ind}`}
       label="Outgoing Items"
-      defaultValue="10"
+      defaultValue={item.pending}
       disabled={true}
       variant="outlined"
+      
       InputProps={{ style: styles.disabled }}
       InputLabelProps={{ style: styles.disabled }}
     />
 
 <TextField
-      id="outlined-uncontrolled"
+      id={`return${ind}`}
       label="Return Items"
-      defaultValue="2"
+      
       variant="outlined"
+      
       InputProps={{ style: styles.disabled }}
       InputLabelProps={{ style: styles.disabled }}
     />
 
-
+<Checkbox id={`tick${ind}`} color="success" />
 
 </Stack>
 
+)
+}
+)}
+          
           
   
   
