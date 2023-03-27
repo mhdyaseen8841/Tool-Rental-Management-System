@@ -178,6 +178,14 @@ setqtErr(true)
     formik.resetForm();
     details.onClose();
   };
+
+
+  const styles = {
+    disabled: {
+      color: 'black',
+      borderColor: 'black',
+    },
+  };
  
   return (
     <>
@@ -200,58 +208,60 @@ setqtErr(true)
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Typography variant="h4">RENT HISTORY</Typography>
             
-          
-             <TextField
+            {}
+            <TextField
               fullWidth
               type="text"
               label="Notes"
               variant="outlined"
-              {...getFieldProps('Notes')}
-              error={Boolean(touched.Notes && errors.Notes)}
-              helperText={touched.Notes && errors.Notes}
-            /> 
-
-              {[...Array(noOfRows)].map((elementInArray, ind) => {
-                  return (
-                 
-                     <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth key={ind}> 
-                   
-                    <InputLabel id={`item${ind}`}>Items</InputLabel> 
-                    <Select sx={{ minWidth: 300 }} labelId={`item-label-${ind}`} id={`item${ind}`}  label="Items" 
-                     value={selectedItems[ind]}
-                      onChange={(event) => {
-                         setSelectedItems(prevItems => {
-                           prevItems[ind] = event.target.value;
-                        return [...prevItems];
-                        });
-                         }}>
-                        {items.map(({label, itemId}, index)  => (
-                            <MenuItem key={index} value={itemId} >{label}</MenuItem>
-                        ))} 
-                      </Select>
-                      
-                      </FormControl>
-                      
-                      <FormControl>
-                        
-                      <TextField label="Quantity" variant="outlined" type='number'  id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}  />
-                        
-                      </FormControl>
-                      </Stack>
-                  
-                   
-                  )
-                })}
-
-
-    
-
-              <Stack direction="row" mb={2} justifyContent="space-between" pl={2} /* alignItems="center"  */ >
-          <Button onClick={() => setNoOfRows(noOfRows + 1)}>+ Add Item</Button>
-        </Stack>
-       {qterr?<Alert severity="error">{qtyerror}</Alert>:''} 
+              {...getFieldProps('CustomerName')}
+              error={Boolean(touched.CustomerName && errors.CustomerName)}
+              helperText={touched.CustomerName && errors.CustomerName}
+            />
+            
+  
           </Stack>
+
+          <Stack direction="row" spacing={2}>
+
+          <TextField
+      id="outlined-uncontrolled"
+      label="Item Name"
+      defaultValue="Grinder"
+      disabled={true}
+      variant="outlined"
+      InputProps={{ style: styles.disabled }}
+      InputLabelProps={{ style: styles.disabled }}
+    />
+
+
+<TextField
+      id="outlined-uncontrolled"
+      label="Outgoing Items"
+      defaultValue="10"
+      disabled={true}
+      variant="outlined"
+      InputProps={{ style: styles.disabled }}
+      InputLabelProps={{ style: styles.disabled }}
+    />
+
+<TextField
+      id="outlined-uncontrolled"
+      label="Return Items"
+      defaultValue="2"
+      variant="outlined"
+      InputProps={{ style: styles.disabled }}
+      InputLabelProps={{ style: styles.disabled }}
+    />
+
+
+
+</Stack>
+
+          
+  
+  
+  
         </Container>
       </Dialog>
     </>
