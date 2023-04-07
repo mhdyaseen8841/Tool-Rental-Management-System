@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import Fade from '@mui/material/Fade';
 import FullScreenDialog from "./add-history";
 import ReturnDialog from "./add-Return";
+import AddPaymetDialog from "./add-payment";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
 export const HistoryListToolbar = (props) => {
@@ -28,12 +29,14 @@ export const HistoryListToolbar = (props) => {
   const [cName, setcName] = useState(props.cName);
   const [ErrOpen, setErrOpen] = useState(false);
   const [error, setError] = useState("");
+  const [Copen , setCopen] = useState(false);
 
   const handleErrClose = () => {
     setSOpen(false);
   };
   const handleClose = () => {
     setDialog();
+    setCopen(false)
   };
 
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
@@ -53,6 +56,8 @@ export const HistoryListToolbar = (props) => {
       };
 
       requestPost(req).then((res) => {
+        console.log(req)
+        console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
         if (res.errorcode == 0) {
           setDialog();
           console.log(error);
@@ -75,6 +80,52 @@ export const HistoryListToolbar = (props) => {
       />
     ));
   };
+
+ const handlePayment = () => {
+
+  setOpen(true);
+
+  setDialog(() => (
+    <AddPaymetDialog
+      onClose={handleClose}
+      open={open}
+
+    />
+  ));
+
+
+
+    
+  }
+
+  const handleRent = () => {
+    let req = {
+        type : "SP_CALL",
+        requestId : "returnCalculate",
+        request: {
+ 	    cId : cId
+       }
+  }
+
+
+    requestPost(req).then((res) => {
+      if (res.errorcode == 0) {
+        //erroooooorrr
+
+        //
+        console.log(error);
+        console.log("No internet connection found. App is running in offline mode.");
+      } else {
+
+        setCopen(true)
+        
+      }
+    });
+  }
+
+
+
+
 
   const handleReturn = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
@@ -145,12 +196,25 @@ export const HistoryListToolbar = (props) => {
   }, []);
 
   return (
+    <>
+
+    
     <Box {...props}>
       <Snackbar open={Sopen} autoHideDuration={6000} onClose={handleErrClose}>
         <Alert onClose={handleErrClose} severity="error" sx={{ width: "100%" }}>
           {error}
         </Alert>
       </Snackbar>
+
+      <Snackbar open={Copen} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Payment Caluculated Successfully
+        </Alert>
+      </Snackbar>
+
+
+
+
       <Box
         sx={{
           alignItems: "center",
@@ -165,13 +229,16 @@ export const HistoryListToolbar = (props) => {
           {cName}
         </Typography>
         <Box sx={{ m: 1 }}>
+          <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={handleRent}>
+            Caluculate Rent
+          </Button>
           <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
             Add Rent
           </Button>
           <Button sx={{ ml: 2, mt: 2 }} color="error" variant="contained" onClick={(e)=>handleReturn(e, true, "RETURN" , {})}>
             Add Return
           </Button>
-          <Button sx={{ ml: 2, mt: 2 }} color="primary" variant="contained" onClick={handleAdd}>
+          <Button sx={{ ml: 2, mt: 2 }} color="primary" variant="contained" onClick={handlePayment}>
             Add Payment
           </Button>
         </Box>
@@ -247,5 +314,6 @@ export const HistoryListToolbar = (props) => {
         </Card>
       </Box>
     </Box>
+    </>
   );
 };
