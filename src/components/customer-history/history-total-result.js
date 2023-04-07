@@ -127,11 +127,11 @@ const customers = [
             </TableBody>
           </Table>
         </TableContainer>
-    {/* Total box */}
-    <Grid container spacing={3} mt={1}>
-  <Grid item xs={12}>
-    <Paper elevation={3}>
-      <Typography variant="subtitle1"  align="center">
+     {/* Total box */}
+     <Grid container spacing={3} mt={1}>
+  <Grid item xs={12} >
+  <Paper elevation={3} sx={{bgcolor: '#4BB543' }}>
+      <Typography variant="subtitle1" color={'white'}  align="center">
       Item Total: 2500
       </Typography>
     </Paper>
@@ -139,8 +139,8 @@ const customers = [
 </Grid>
 <Grid container spacing={1} mt={1}>
   <Grid item xs={12}>
-    <Paper elevation={3}>
-      <Typography variant="subtitle1" align="center">
+    <Paper elevation={3} sx={{bgcolor: '#4079FC' }}>
+      <Typography variant="subtitle1" color={'white'} align="center">
        Total Paid : 1500
       </Typography>
     </Paper>
@@ -148,14 +148,13 @@ const customers = [
 </Grid>
 <Grid container spacing={1} mt={1}>
   <Grid item xs={12}>
-    <Paper elevation={3}>
-      <Typography variant="subtitle1" align="center">
+  <Paper elevation={3} sx={{bgcolor: '#D14343' }}>
+      <Typography variant="subtitle1" color={'white'} align="center">
       Pending Amount: 1000
       </Typography>
     </Paper>
   </Grid>
 </Grid>
-
 
 
 
