@@ -1,4 +1,4 @@
-##Tool Rental Management Web Application
+#Tool Rental Management Web Application
 This is a web application for managing tool rentals built using ReactJS and Material-UI.
 
 Table of Contents
