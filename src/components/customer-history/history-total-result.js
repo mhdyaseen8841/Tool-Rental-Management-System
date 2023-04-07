@@ -84,18 +84,61 @@ const customers = [
     };
 
 
+    const deleteUser = (pId) => {
+        let req = {
+          "type" : "SP_CALL",
+          "requestId" : 1700003,
+          request: {
+            "pId" : pId,
+         }
+    }
+    requestPost(req).then((res)=>{
+      if(res.errorcode ==0){
+        
+        console.log(error);
+                console.log('No internet connection found. App is running in offline mode.');
+      }else{
+        // getdata()
+        
+      }
+     
+    })
+  }
+
+
 const handleAdd = (pId) => {
   console.log('calllleddddd')
 setOpen(true)
-    const add = (data) => {
+    const add = (amount) => {
+      console.log("amt")
+        console.log(amount)
+        let req =   {
+          "type" : "SP_CALL",
+          "requestId" : 1700002,
+          request: {
+            "pId" : pId,
+            "amount" : amount,
+         }
+    }
+  
+        requestPost(req).then((res) => {
+            if (res.errorcode == 0) {
+                let error = "error happend"
+                console.log(error);
+                console.log('No internet connection found. App is running in offline mode.');
+            } else {
+              console.log("Amount Edited succesfully")
+              
+                // getdata()
+            }
+        })
     }
     setDialog(() => (
     
         <FullScreenDialog
           onClose={handleClose}
-          open={open}
+           open={open}
            submit={add}
-         
            button='UPDATE'
       
         />
@@ -125,13 +168,13 @@ setOpen(true)
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers && customers[0].map((item) => (
+              {customers && customers[0] ? customers[0].map((item) => (
                 <TableRow >
                   <TableCell>{item.itemName}</TableCell>
                   <TableCell>{item.amount}</TableCell>
                  
                 </TableRow>
-              ))}
+              )) : null}
             </TableBody>
           </Table>
         </TableContainer>

@@ -103,6 +103,7 @@ export const HistoryListToolbar = (props) => {
       } else {
         console.log('Amount Addedd')
         setDialog();
+        
       }
     });
   }

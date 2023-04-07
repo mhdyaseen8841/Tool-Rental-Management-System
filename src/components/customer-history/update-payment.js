@@ -44,6 +44,7 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
+    
       details.submit(values.Amount)
     }
   });
