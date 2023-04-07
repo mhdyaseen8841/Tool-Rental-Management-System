@@ -14,6 +14,7 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 
 import { useRouter } from 'next/router';
+import { HistoryTotalResult } from '../components/customer-history/history-total-result';
 const Page = () => {
 
  
@@ -52,6 +53,7 @@ getCustomer(data,0)
 
 }else{
   if(btnName==="history"){
+
     let data=  {
       "type" : "SP_CALL",
    "requestId" : 1400006,
@@ -61,9 +63,18 @@ getCustomer(data,0)
 }
 getCustomer(data,1)
 }else if(btnName==="total"){
-  setCustomers([])
-  setTable(2)
-  //not done
+  
+  let data = {
+    "type" : "SP_CALL",
+    "requestId" : 1700005,
+    request: {
+      "cId" : cId,
+   }
+}
+
+getCustomer(data,2)
+
+
 }else{
   console.log("item-result page result")
   let data =  {
@@ -100,7 +111,33 @@ if(tableid==3){
         setOpen(true)
         setCustomers([])
       }
+}else if(tableid==2){
+
+    
+  if(res.result){
+    if(res.result[0][0] ==null){
+      console.log("hloooooooooooo hiiiiiiiiiii hoiii")
+      setCustomers([
+       [],[]
+      ])
+    }else{
+      console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+      setCustomers(res.result)
+      console.log(res.result);
+    }
+    setTable(tableid)
+  }else{
+    setError(""+res)
+        setOpen(true)
+        setCustomers([
+          [],[]
+         ])
+
+      }
+    
+
 }else{
+
       if(res.result){
       if(res.result[0] ==null){
         console.log("hloooooooooooo hiiiiiiiiiii hoiii")
@@ -115,6 +152,9 @@ if(tableid==3){
       setError(""+res)
           setOpen(true)
           setCustomers([])
+
+          
+
         }
       }
 
@@ -165,7 +205,7 @@ router.push('/')
   table===0?  <ItemNameResult customers={customers} getdata={getCustomer} />:table===1?
   <HistoryListResults customers={customers} getdata={getCustomer} />:table===2?
  //total page to be added
-  <HistoryListResults customers={customers} getdata={getCustomer} />: 
+  <HistoryTotalResult customers={customers} getdata={getCustomer} />: 
      <ItemResult customers={itemhistory} getdata={getCustomer} />
 }
 
