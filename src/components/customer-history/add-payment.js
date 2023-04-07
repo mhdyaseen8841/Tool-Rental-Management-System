@@ -25,33 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 export default function AddPaymetDialog(details) {
  
  
- 
-  const [noOfRows, setNoOfRows] = useState(1);
-  const [items, setItems] = useState([]);
 
-// const [itemsArr,setItemsArr]=useState([{}])
-  useEffect(() => {
-
-    console.log("heeeeeeeeeeeeeeeeeee")
-    console.log(details.open);
-        const requestdata2 =   {
-          "type" : "SP_CALL",
-       "requestId" : 1200005,
-           request: {
-          }
-    }
-   
-    requestPost(requestdata2).then((res)=>{
-      if(res.result[0] ==null){
-        setItems([{}])
-      }else{
-        setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
-        console.log(items);
-      }
-     
-    })
-  },[])
-     
     
 
 
@@ -70,7 +44,7 @@ export default function AddPaymetDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      
+      details.add(values.Amount)
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;

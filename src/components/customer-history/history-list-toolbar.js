@@ -85,10 +85,21 @@ export const HistoryListToolbar = (props) => {
 
   setOpen(true);
 
+  const add = (amount) => {
+    let req = {
+      "type" : "SP_CALL",
+      "requestId" : 1700001,
+      request: {
+        "amount" : amount,
+     }
+    };
+  }
+
   setDialog(() => (
     <AddPaymetDialog
       onClose={handleClose}
       open={open}
+      submit={add}
 
     />
   ));
