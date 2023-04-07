@@ -149,16 +149,21 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                 <TableCell>
                   Date
                 </TableCell>
-                <TableCell>
-                   Return Date
-                  </TableCell>
+                
                   <TableCell>
                    Days
+                  </TableCell>
+                  <TableCell>
+                   Return Date
                   </TableCell>
 
                   <TableCell>
                    Total(₹)
                   </TableCell>
+
+                  {/* <TableCell>
+                   Actions
+                  </TableCell> */}
 
               </TableRow>
             </TableHead>
@@ -172,15 +177,23 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                  
                  
                   <TableCell>
-                    {customer.Date}
+                    1
                   </TableCell>
                   <TableCell>
-                    {customer.feedback}
+                    {customer.rentDate}
                   </TableCell>
-                 
                   <TableCell>
+                    {customer.days}
+                  </TableCell>
+                  <TableCell>
+                    {customer.returnDate}
+                  </TableCell>
+                  <TableCell>
+                    {customer.price}
+                  </TableCell>
+                  {/* <TableCell>
                   <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

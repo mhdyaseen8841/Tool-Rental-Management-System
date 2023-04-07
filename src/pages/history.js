@@ -37,9 +37,18 @@ if(Btnstatus===2){
   console.log("item-name-result page result");
   console.log("tabbbllleeeeeee"+btnName);
   console.log("tabbbllleeeeeee"+Btnstatus);
-  setCustomers([])
+  
+  let data=   {
+    "type" : "SP_CALL",
+ "requestId" : 1600005,
+     "request": {
+"cId":router.query.cId,
+ "itemId":btnName
+    }
+}
+getCustomer(data,0)
   //not done
-  setTable(0)
+  // setTable(0)
 
 }else{
   if(btnName==="history"){
@@ -57,7 +66,7 @@ getCustomer(data,1)
   //not done
 }else{
   console.log("item-result page result")
-  let data=  {
+  let data =  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
      request: {
@@ -83,6 +92,7 @@ if(tableid==3){
       setItemHistory([])
     }else{
       setItemHistory(res.result)
+
     }
     setTable(tableid)
   }else{
@@ -98,6 +108,7 @@ if(tableid==3){
       }else{
         console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
         setCustomers(res.result)
+        console.log(res.result);
       }
       setTable(tableid)
     }else{
