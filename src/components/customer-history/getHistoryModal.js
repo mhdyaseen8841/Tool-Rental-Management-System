@@ -58,16 +58,24 @@ const GetHistoryModal = (details) => {
       "type" : "SP_CALL",
         "requestId" : 1400005,
         "request": {
- 	    "mId" : 110
+ 	    "mId" : details.mId
      }
     }
     requestPost(req).then((res)=>{
       if(res.errorcode ==0){
-        
+        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
       }else{
-setData(res.result)
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        if(res.result[0]==null){
+          console.log("no data")
+          setData([{}])
+        }
+        else{
+
+          setData(res.result)
+        }
         console.log(res.result)
         
       }

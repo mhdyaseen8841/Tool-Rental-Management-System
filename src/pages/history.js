@@ -34,9 +34,21 @@ const [table,setTable]=useState(1)
  const changeTable=(btnName, Btnstatus=1)=>{
 console.log(btnName, Btnstatus);
 if(Btnstatus===2){
-  setCustomers([{}])
+  console.log("item-name-result page result");
+  console.log("tabbbllleeeeeee"+btnName);
+  console.log("tabbbllleeeeeee"+Btnstatus);
+  
+  let data=   {
+    "type" : "SP_CALL",
+ "requestId" : 1600005,
+     "request": {
+"cId":router.query.cId,
+ "itemId":btnName
+    }
+}
+getCustomer(data,0)
   //not done
-  setTable(0)
+  // setTable(0)
 
 }else{
   if(btnName==="history"){
@@ -49,12 +61,12 @@ if(Btnstatus===2){
 }
 getCustomer(data,1)
 }else if(btnName==="total"){
-  setCustomers[{}]
+  setCustomers([])
   setTable(2)
   //not done
 }else{
   console.log("item-result page result")
-  let data=  {
+  let data =  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
      request: {
@@ -77,28 +89,32 @@ console.log("tabbbllleeeeeee"+tableid);
 if(tableid==3){
   if(res.result){
     if(res.result.item[0] ==null){
-      setItemHistory([{}])
+      setItemHistory([])
     }else{
       setItemHistory(res.result)
+
     }
     setTable(tableid)
   }else{
     setError(""+res)
         setOpen(true)
-        setCustomers([{}])
+        setCustomers([])
       }
 }else{
       if(res.result){
       if(res.result[0] ==null){
-        setCustomers([{}])
+        console.log("hloooooooooooo hiiiiiiiiiii hoiii")
+        setCustomers([])
       }else{
+        console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
         setCustomers(res.result)
+        console.log(res.result);
       }
       setTable(tableid)
     }else{
       setError(""+res)
           setOpen(true)
-          setCustomers([{}])
+          setCustomers([])
         }
       }
 

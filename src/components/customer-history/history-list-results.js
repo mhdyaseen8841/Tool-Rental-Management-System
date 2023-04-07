@@ -90,7 +90,7 @@ console.log("hehehehehehehehe")
     <GetHistoryModal
       onClose={handleClose}
       open={open}
-      mid={mid}
+      mId={mid}
     />
   ));
 
