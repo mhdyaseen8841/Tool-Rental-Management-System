@@ -11,9 +11,13 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
-import FullScreenDialog from './update-history';
+
 import requestPost from '../../../serviceWorker';
+import React from 'react'
+import FadeMenu from '../more-items-btn';
+
 
 
 const customers = [
@@ -77,6 +81,7 @@ const customers = [
     }, [])
 
   return (
+    
     <Grid container spacing={3}>
       <Grid item xs={8}>
         <TableContainer component={Paper}>
@@ -100,35 +105,19 @@ const customers = [
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Grid item xs={12} sx={{ display: 'flex', flexDirection :'column', position: 'fixed', bottom: '20px' }}>
+  <a href="https://wa.me/whatsappphonenumber" target="_blank" rel="noopener noreferrer">
+    <WhatsAppIcon style={{ fontSize: 50, color: '#25D366'  }} />
+  </a>
+</Grid>
+
+  
       </Grid>
 
       <Grid item xs={4}>
-        <TableContainer component={Paper}>
-          <Table>
-            {/* Second table */}
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Amount</TableCell>
-               
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {customers && customers[1].map((customer) =>
-               
-                  <TableRow key={customer.pId}>
-                    <TableCell>{customer.date}</TableCell>
-                    <TableCell>{customer.amount}</TableCell>
-                    <TableCell>{customer.amount}</TableCell>
-                
-                  </TableRow>
-                
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-     {/* Total box */}
-     <Grid container spacing={3} mt={1}>
+           {/* Total box */}
+     <Grid container >
   <Grid item xs={12} >
   <Paper elevation={3} sx={{bgcolor: '#4BB543' }}>
       <Typography variant="subtitle1" color={'white'}  align="center">
@@ -157,9 +146,41 @@ const customers = [
 </Grid>
 
 
+        <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+          <Table>
+            {/* Second table */}
+            <TableHead>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Action</TableCell>
+               
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {customers && customers[1].map((customer) =>
+               
+                  <TableRow key={customer.pId}>
+                    <TableCell>{customer.date}</TableCell>
+                    <TableCell>{customer.amount}</TableCell>
+                    <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {})}/></TableCell>
+                   
+                
+                  </TableRow>
+
+                
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        
 
       </Grid>
     </Grid>
+
+    
+    
+    
   );
 };
 
