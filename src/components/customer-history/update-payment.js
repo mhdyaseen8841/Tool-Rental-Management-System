@@ -22,7 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 
-export default function AddPaymetDialog(details) {
+export default function FullScreenDialog(details) {
  
  
 
@@ -72,7 +72,7 @@ export default function AddPaymetDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              {details.button} ADD PAYMENT
+              {details.button} PAYMENT
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               ADD
@@ -82,7 +82,7 @@ export default function AddPaymetDialog(details) {
         <Container maxWidth="sm">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">ADD PAYMENT</Typography>
+            <Typography variant="h4">UPDATE PAYMENT</Typography>
             
           
             <TextField

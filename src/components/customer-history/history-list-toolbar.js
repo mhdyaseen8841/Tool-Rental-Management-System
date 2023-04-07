@@ -82,6 +82,7 @@ export const HistoryListToolbar = (props) => {
   };
 
  const handlePayment = () => {
+  console.log('Cid checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
   setOpen(true);
 
@@ -90,14 +91,26 @@ export const HistoryListToolbar = (props) => {
       "type" : "SP_CALL",
       "requestId" : 1700001,
       request: {
+        "cId" : cId,
         "amount" : amount,
      }
     };
+    requestPost(req).then((res) => {
+      if (res.errorcode == 0) {
+        setDialog();
+        console.log(error);
+        console.log("Amount not Added");
+      } else {
+        console.log('Amount Addedd')
+        setDialog();
+      }
+    });
   }
 
   setDialog(() => (
     <AddPaymetDialog
       onClose={handleClose}
+      cId= {cId}
       open={open}
       submit={add}
 

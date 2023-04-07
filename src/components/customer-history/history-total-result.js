@@ -17,6 +17,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import requestPost from '../../../serviceWorker';
 import React from 'react'
 import FadeMenu from '../more-items-btn';
+import FullScreenDialog from './update-payment';
 
 
 
@@ -75,13 +76,42 @@ const customers = [
 // export const HistoryListResults = ({ customers, getdata, ...rest }) => {
   export const HistoryTotalResult = ({customers, getdata, ...rest }) => {
 
+    const [open, setOpen] = useState(true);
+    const [addDialog, setDialog] = useState();
+    
+    const handleClose = () => {
+        setDialog();
+    };
+
+
+const handleAdd = (pId) => {
+  console.log('calllleddddd')
+setOpen(true)
+    const add = (data) => {
+    }
+    setDialog(() => (
+    
+        <FullScreenDialog
+          onClose={handleClose}
+          open={open}
+           submit={add}
+         
+           button='UPDATE'
+      
+        />
+      ));
+}
+
+
+
     useEffect(() => {
         console.log("customers", customers)
         // getdata()
     }, [])
 
   return (
-    
+    <>
+    {addDialog}
     <Grid container spacing={3}>
       <Grid item xs={8}>
         <TableContainer component={Paper}>
@@ -163,7 +193,7 @@ const customers = [
                   <TableRow key={customer.pId}>
                     <TableCell>{customer.date}</TableCell>
                     <TableCell>{customer.amount}</TableCell>
-                    <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {})}/></TableCell>
+                    <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.pId)}}  editUser={(e)=>handleAdd(customer.pId)}/></TableCell>
                    
                 
                   </TableRow>
@@ -180,7 +210,7 @@ const customers = [
 
     
     
-    
+    </>
   );
 };
 
