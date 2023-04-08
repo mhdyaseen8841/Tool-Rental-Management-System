@@ -28,14 +28,11 @@ const Page = () => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
-let data= {
-  "type" : "SP_CALL",
-"requestId" : 1400006,
-   request: {
-"cId":router.query.cId
-  }
-};
- const handleClose = ()=>{
+const [data,setData]=useState({})
+
+
+
+const handleClose = ()=>{
   setOpen(false)
  }
 
@@ -46,7 +43,7 @@ if(Btnstatus===2){
   console.log("tabbbllleeeeeee"+btnName);
   console.log("tabbbllleeeeeee"+Btnstatus);
   
-   data=   {
+ let  data=   {
     "type" : "SP_CALL",
  "requestId" : 1600005,
      "request": {
@@ -54,54 +51,59 @@ if(Btnstatus===2){
  "itemId":btnName
     }
 }
-getCustomer(0)
+setData(data)
+getCustomer(0,data)
   //not done
   // setTable(0)
 
 }else{
   if(btnName==="history"){
 
-     data=  {
+    let data=  {
       "type" : "SP_CALL",
    "requestId" : 1400006,
        request: {
  "cId":router.query.cId
       }
 }
-getCustomer(1)
+setData(data)
+getCustomer(1,data)
 }else if(btnName==="total"){
   
-   data = {
+  let data = {
     "type" : "SP_CALL",
     "requestId" : 1700005,
     request: {
       "cId" : cId,
    }
 }
-
-getCustomer(2)
+setData(data)
+getCustomer(2,data)
 
 
 }else{
   console.log("item-result page result")
-   data =  {
+ let  data =  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
      request: {
 "cId":router.query.cId
     }
 }
-getCustomer(3)
+setData(data)
+getCustomer(3,data)
  
 }
  }
 }
  
  
- function getCustomer(tableid){
+ function getCustomer(tableid,datas){
 
+console.log("ippaltha dataaaaaa")
+console.log(datas)
 
-    requestPost(data).then((res)=>{
+    requestPost(datas).then((res)=>{
 
 console.log("tabbbllleeeeeee"+tableid);
 if(tableid==3){
@@ -194,8 +196,15 @@ if(router.query){
     if(!router.query.cId){
 router.push('/')
     }
-    
-   getCustomer(1)
+   let data= {
+      "type" : "SP_CALL",
+    "requestId" : 1400006,
+       request: {
+    "cId":router.query.cId
+      }
+    };
+    setData(data)
+   getCustomer(1,data)
   }, [])
 
 
@@ -214,7 +223,7 @@ router.push('/')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} CtableId={table} cId={router.query.cId} cName={router.query.cName} />
+        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} ApiData={data} CtableId={table} cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
@@ -225,7 +234,7 @@ router.push('/')
   table===0?  <ItemNameResult customers={customers} getdata={getCustomer} />:table===1?
   <HistoryListResults customers={customers} getdata={getCustomer} />:table===2?
  //total page to be added
-  <HistoryTotalResult customers={customers} payments={payment} getdata={getCustomer} />: 
+  <HistoryTotalResult customers={customers} ApiData={data} CtableId={table} payments={payment} getdata={getCustomer} />: 
      <ItemResult customers={itemhistory} getdata={getCustomer} />
 }
 

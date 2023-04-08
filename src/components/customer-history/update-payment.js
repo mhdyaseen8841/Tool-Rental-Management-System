@@ -25,8 +25,9 @@ import CloseIcon from '@mui/icons-material/Close';
 export default function FullScreenDialog(details) {
  
  
+  console.log(" detailsssssssssssssssssssssssssssssssssssss")
 
-    
+    console.log(details.amount)
 
 
   const validSchema = Yup.object().shape({
@@ -41,6 +42,8 @@ export default function FullScreenDialog(details) {
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
+      Amount: details.amount || '',
+     
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
@@ -60,8 +63,9 @@ export default function FullScreenDialog(details) {
     }, 2000);
   };
   const onclose = () => {
-    formik.resetForm();
     details.onClose();
+    formik.resetForm();
+   
   };
  
   return (
@@ -76,7 +80,7 @@ export default function FullScreenDialog(details) {
               {details.button} PAYMENT
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
-              ADD
+              UPDATE
             </Button>
           </Toolbar>
         </AppBar>

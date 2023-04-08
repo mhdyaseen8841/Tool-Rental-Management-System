@@ -74,7 +74,7 @@ const customers = [
 
 
 // export const HistoryListResults = ({ customers, getdata, ...rest }) => {
-  export const HistoryTotalResult = ({customers,payments, getdata, ...rest }) => {
+  export const HistoryTotalResult = ({customers,payments, getdata,CtableId,ApiData, ...rest }) => {
 
     const [open, setOpen] = useState(true);
     const [addDialog, setDialog] = useState();
@@ -82,7 +82,11 @@ const customers = [
     const [totalPaid ,setTotalPaid] = useState(0)
     const [totalDue ,setTotalDue] = useState(0)
     const [advance ,setAdvance] = useState(0)
+   
+   
+   
     const handleClose = () => {
+     
         setDialog();
     };
 
@@ -102,6 +106,9 @@ const customers = [
                 console.log('No internet connection found. App is running in offline mode.');
       }else{
         // getdata()
+       
+        getdata(CtableId,ApiData)
+
         
       }
      
@@ -109,7 +116,7 @@ const customers = [
   }
 
 
-const handleAdd = (pId) => {
+const handleAdd = (pId,amount) => {
   console.log('calllleddddd')
 setOpen(true)
     const add = (amount) => {
@@ -131,8 +138,8 @@ setOpen(true)
                 console.log('No internet connection found. App is running in offline mode.');
             } else {
               console.log("Amount Edited succesfully")
-              
-                // getdata()
+              setDialog();
+              getdata(CtableId,ApiData)
             }
         })
     }
@@ -143,6 +150,7 @@ setOpen(true)
            open={open}
            submit={add}
            button='UPDATE'
+           amount={amount}
       
         />
       ));
@@ -164,7 +172,11 @@ useEffect(() => {
 
   setTotal(totalAmount);
   setTotalPaid(totalPaidAmount);
+  if(totalPaidAmount > totalAmount){
+    setTotalDue(0);
+  }else{
   setTotalDue(totalAmount - totalPaidAmount);
+  }
   if(totalPaidAmount > totalAmount){
     setAdvance(totalPaidAmount - totalAmount);
   }else{
@@ -265,7 +277,7 @@ useEffect(() => {
                <TableRow key={customer.pId}>
                  <TableCell>{customer.date}</TableCell>
                  <TableCell>{customer.amount}</TableCell>
-                 <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.pId)}}  editUser={(e)=>handleAdd(customer.pId)}/></TableCell>
+                 <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.pId)}}  editUser={(e)=>handleAdd(customer.pId,customer.amount)}/></TableCell>
                 
              
                </TableRow>
