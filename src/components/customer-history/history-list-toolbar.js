@@ -63,7 +63,7 @@ export const HistoryListToolbar = (props) => {
           console.log(error);
           console.log("No internet connection found. App is running in offline mode.");
         } else {
-          props.getdata();
+          props.getdata(props.CtableId);
           setDialog();
         }
       });
@@ -102,6 +102,8 @@ export const HistoryListToolbar = (props) => {
         console.log("Amount not Added");
       } else {
         console.log('Amount Addedd')
+        props.getdata(props.CtableId);
+
         setDialog();
         
       }
@@ -141,6 +143,7 @@ export const HistoryListToolbar = (props) => {
         console.log(error);
         console.log("No internet connection found. App is running in offline mode.");
       } else {
+        props.getdata(props.CtableId);
 
         setCopen(true)
         
@@ -173,7 +176,8 @@ export const HistoryListToolbar = (props) => {
       console.log(error);
       console.log("No internet connection found. App is running in offline mode.");
     } else {
-      
+      props.getdata(props.CtableId);
+
       setDialog();
     }
   });
@@ -194,6 +198,7 @@ export const HistoryListToolbar = (props) => {
   };
 
   const [itemButton, setButtons] = useState([{}]);
+
   function getItems() {
     let data = {
       type: "SP_CALL",

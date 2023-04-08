@@ -22,12 +22,19 @@ const Page = () => {
 
 
   const [customers, setCustomers] = useState([])
+  const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
-
+let data= {
+  "type" : "SP_CALL",
+"requestId" : 1400006,
+   request: {
+"cId":router.query.cId
+  }
+};
  const handleClose = ()=>{
   setOpen(false)
  }
@@ -39,7 +46,7 @@ if(Btnstatus===2){
   console.log("tabbbllleeeeeee"+btnName);
   console.log("tabbbllleeeeeee"+Btnstatus);
   
-  let data=   {
+   data=   {
     "type" : "SP_CALL",
  "requestId" : 1600005,
      "request": {
@@ -47,24 +54,24 @@ if(Btnstatus===2){
  "itemId":btnName
     }
 }
-getCustomer(data,0)
+getCustomer(0)
   //not done
   // setTable(0)
 
 }else{
   if(btnName==="history"){
 
-    let data=  {
+     data=  {
       "type" : "SP_CALL",
    "requestId" : 1400006,
        request: {
  "cId":router.query.cId
       }
 }
-getCustomer(data,1)
+getCustomer(1)
 }else if(btnName==="total"){
   
-  let data = {
+   data = {
     "type" : "SP_CALL",
     "requestId" : 1700005,
     request: {
@@ -72,26 +79,26 @@ getCustomer(data,1)
    }
 }
 
-getCustomer(data,2)
+getCustomer(2)
 
 
 }else{
   console.log("item-result page result")
-  let data =  {
+   data =  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
      request: {
 "cId":router.query.cId
     }
 }
-getCustomer(data,3)
+getCustomer(3)
  
 }
  }
 }
  
  
- function getCustomer(data,tableid){
+ function getCustomer(tableid){
 
 
     requestPost(data).then((res)=>{
@@ -115,22 +122,41 @@ if(tableid==3){
 
     
   if(res.result){
-    if(res.result[0][0] ==null){
+    console.log("result kitidooooooo");
+    console.log(res.result);
+    if((res.result[0][0] ==null) && (res.result[0][1] ==null)){
       console.log("hloooooooooooo hiiiiiiiiiii hoiii")
-      setCustomers([
-       [],[]
-      ])
+      setCustomers([],[])
+      setPayments([],[])
     }else{
+      if(res.result[0][0] ==null){
+        console.log("first nuluuuuuuuuuuuuuuuuuuuuuuu");
+        setCustomers([],[])
+        setPayments(res.result[1])
+      }else if(res.result[0][1] ==null){
+        console.log("second nulllllllllllllllllll");
+        setCustomers(res.result[0])
+        setPayments([],[])
+      
+      }else{
+        setCustomers(res.result[0])
+        setPayments(res.result[1])
+      }
       console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-      setCustomers(res.result)
-      console.log(res.result);
+      
+      console.log("cussssssssssssssssssssssssss");
+      console.log(customers);
+      console.log(payment);
     }
     setTable(tableid)
   }else{
     setError(""+res)
         setOpen(true)
         setCustomers([
-          [],[]
+          []
+         ])
+         setPayments([
+          []
          ])
 
       }
@@ -168,14 +194,8 @@ if(router.query){
     if(!router.query.cId){
 router.push('/')
     }
-    let data=  {
-      "type" : "SP_CALL",
-   "requestId" : 1400006,
-       request: {
- "cId":router.query.cId
-      }
-    }
-   getCustomer(data,1)
+    
+   getCustomer(1)
   }, [])
 
 
@@ -205,7 +225,7 @@ router.push('/')
   table===0?  <ItemNameResult customers={customers} getdata={getCustomer} />:table===1?
   <HistoryListResults customers={customers} getdata={getCustomer} />:table===2?
  //total page to be added
-  <HistoryTotalResult customers={customers} getdata={getCustomer} />: 
+  <HistoryTotalResult customers={customers} payments={payment} getdata={getCustomer} />: 
      <ItemResult customers={itemhistory} getdata={getCustomer} />
 }
 

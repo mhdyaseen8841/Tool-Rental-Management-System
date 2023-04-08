@@ -74,11 +74,14 @@ const customers = [
 
 
 // export const HistoryListResults = ({ customers, getdata, ...rest }) => {
-  export const HistoryTotalResult = ({customers, getdata, ...rest }) => {
+  export const HistoryTotalResult = ({customers,payments, getdata, ...rest }) => {
 
     const [open, setOpen] = useState(true);
     const [addDialog, setDialog] = useState();
-    
+    const [total ,setTotal] = useState(0)
+    const [totalPaid ,setTotalPaid] = useState(0)
+    const [totalDue ,setTotalDue] = useState(0)
+    const [advance ,setAdvance] = useState(0)
     const handleClose = () => {
         setDialog();
     };
@@ -147,10 +150,27 @@ setOpen(true)
 
 
 
-    useEffect(() => {
-        console.log("customers", customers)
-        // getdata()
-    }, [])
+useEffect(() => {
+  let totalAmount = 0;
+  let totalPaidAmount = 0;
+
+  for (let i = 0; i < customers.length; i++) {
+    totalAmount += customers[i].amount;
+  }
+
+  for (let i = 0; i < payments.length; i++) {
+    totalPaidAmount += payments[i].amount;
+  }
+
+  setTotal(totalAmount);
+  setTotalPaid(totalPaidAmount);
+  setTotalDue(totalAmount - totalPaidAmount);
+  if(totalPaidAmount > totalAmount){
+    setAdvance(totalPaidAmount - totalAmount);
+  }else{
+    setAdvance(0);
+  }
+}, [customers, payments]);
 
   return (
     <>
@@ -168,8 +188,8 @@ setOpen(true)
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers && customers[0] ? customers[0].map((item) => (
-                <TableRow >
+              {customers && customers[0] ? customers.map((item,index) => (
+                <TableRow key={index} >
                   <TableCell>{item.itemName}</TableCell>
                   <TableCell>{item.amount}</TableCell>
                  
@@ -192,9 +212,9 @@ setOpen(true)
            {/* Total box */}
      <Grid container >
   <Grid item xs={12} >
-  <Paper elevation={3} sx={{bgcolor: '#4BB543' }}>
+  <Paper elevation={3} sx={{bgcolor: '#FF8E2B' }}>
       <Typography variant="subtitle1" color={'white'}  align="center">
-      Item Total: 2500
+      Item Total: {total}
       </Typography>
     </Paper>
   </Grid>
@@ -203,7 +223,7 @@ setOpen(true)
   <Grid item xs={12}>
     <Paper elevation={3} sx={{bgcolor: '#4079FC' }}>
       <Typography variant="subtitle1" color={'white'} align="center">
-       Total Paid : 1500
+       Total Paid : {totalPaid}
       </Typography>
     </Paper>
   </Grid>
@@ -212,7 +232,16 @@ setOpen(true)
   <Grid item xs={12}>
   <Paper elevation={3} sx={{bgcolor: '#D14343' }}>
       <Typography variant="subtitle1" color={'white'} align="center">
-      Pending Amount: 1000
+      Pending Amount:   {totalDue}
+      </Typography>
+    </Paper>
+  </Grid>
+</Grid>
+<Grid container spacing={1} mt={1}>
+  <Grid item xs={12} >
+  <Paper elevation={3} sx={{bgcolor: '#4BB543' }}>
+      <Typography variant="subtitle1" color={'white'}  align="center">
+      Advance: {advance}
       </Typography>
     </Paper>
   </Grid>
@@ -231,18 +260,19 @@ setOpen(true)
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers && customers[1].map((customer) =>
+            {payments && payments.map((customer) =>
                
-                  <TableRow key={customer.pId}>
-                    <TableCell>{customer.date}</TableCell>
-                    <TableCell>{customer.amount}</TableCell>
-                    <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.pId)}}  editUser={(e)=>handleAdd(customer.pId)}/></TableCell>
-                   
+               <TableRow key={customer.pId}>
+                 <TableCell>{customer.date}</TableCell>
+                 <TableCell>{customer.amount}</TableCell>
+                 <TableCell> <FadeMenu  callback={()=>{deleteUser(customer.pId)}}  editUser={(e)=>handleAdd(customer.pId)}/></TableCell>
                 
-                  </TableRow>
+             
+               </TableRow>
 
-                
-              )}
+             
+           )}
+              
             </TableBody>
           </Table>
         </TableContainer>
