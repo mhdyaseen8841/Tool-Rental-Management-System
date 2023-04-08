@@ -194,7 +194,7 @@ router.push('/')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} cId={router.query.cId} cName={router.query.cName} />
+        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} CtableId={table} cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
