@@ -63,8 +63,8 @@ export const HistoryListToolbar = (props) => {
           console.log(error);
           console.log("No internet connection found. App is running in offline mode.");
         } else {
-          props.getdata();
-          setDialog();
+          props.getdata(props.CtableId,props.ApiData);
+                    setDialog();
         }
       });
     };
@@ -82,6 +82,7 @@ export const HistoryListToolbar = (props) => {
   };
 
  const handlePayment = () => {
+  console.log('Cid checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
   setOpen(true);
 
@@ -90,14 +91,31 @@ export const HistoryListToolbar = (props) => {
       "type" : "SP_CALL",
       "requestId" : 1700001,
       request: {
+        "cId" : cId,
         "amount" : amount,
      }
     };
+    requestPost(req).then((res) => {
+      if (res.errorcode == 0) {
+        setDialog();
+        console.log(error);
+        console.log("Amount not Added");
+      } else {
+        console.log('Amount Addedd')
+        console.log(props.CtableId);
+   
+        props.getdata(props.CtableId,props.ApiData);
+
+        setDialog();
+        
+      }
+    });
   }
 
   setDialog(() => (
     <AddPaymetDialog
       onClose={handleClose}
+      cId= {cId}
       open={open}
       submit={add}
 
@@ -127,6 +145,7 @@ export const HistoryListToolbar = (props) => {
         console.log(error);
         console.log("No internet connection found. App is running in offline mode.");
       } else {
+        props.getdata(props.CtableId,props.ApiData);
 
         setCopen(true)
         
@@ -159,7 +178,8 @@ export const HistoryListToolbar = (props) => {
       console.log(error);
       console.log("No internet connection found. App is running in offline mode.");
     } else {
-      
+  props.getdata(props.CtableId,props.ApiData);
+  
       setDialog();
     }
   });
@@ -180,6 +200,7 @@ export const HistoryListToolbar = (props) => {
   };
 
   const [itemButton, setButtons] = useState([{}]);
+
   function getItems() {
     let data = {
       type: "SP_CALL",

@@ -14,6 +14,7 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 
 import { useRouter } from 'next/router';
+import { HistoryTotalResult } from '../components/customer-history/history-total-result';
 const Page = () => {
 
  
@@ -21,13 +22,17 @@ const Page = () => {
 
 
   const [customers, setCustomers] = useState([])
+  const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
+const [data,setData]=useState({})
 
- const handleClose = ()=>{
+
+
+const handleClose = ()=>{
   setOpen(false)
  }
 
@@ -38,7 +43,7 @@ if(Btnstatus===2){
   console.log("tabbbllleeeeeee"+btnName);
   console.log("tabbbllleeeeeee"+Btnstatus);
   
-  let data=   {
+ let  data=   {
     "type" : "SP_CALL",
  "requestId" : 1600005,
      "request": {
@@ -46,12 +51,14 @@ if(Btnstatus===2){
  "itemId":btnName
     }
 }
-getCustomer(data,0)
+setData(data)
+getCustomer(0,data)
   //not done
   // setTable(0)
 
 }else{
   if(btnName==="history"){
+
     let data=  {
       "type" : "SP_CALL",
    "requestId" : 1400006,
@@ -59,31 +66,44 @@ getCustomer(data,0)
  "cId":router.query.cId
       }
 }
-getCustomer(data,1)
+setData(data)
+getCustomer(1,data)
 }else if(btnName==="total"){
-  setCustomers([])
-  setTable(2)
-  //not done
+  
+  let data = {
+    "type" : "SP_CALL",
+    "requestId" : 1700005,
+    request: {
+      "cId" : cId,
+   }
+}
+setData(data)
+getCustomer(2,data)
+
+
 }else{
   console.log("item-result page result")
-  let data =  {
+ let  data =  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
      request: {
 "cId":router.query.cId
     }
 }
-getCustomer(data,3)
+setData(data)
+getCustomer(3,data)
  
 }
  }
 }
  
  
- function getCustomer(data,tableid){
+ function getCustomer(tableid,datas){
 
+console.log("ippaltha dataaaaaa")
+console.log(datas)
 
-    requestPost(data).then((res)=>{
+    requestPost(datas).then((res)=>{
 
 console.log("tabbbllleeeeeee"+tableid);
 if(tableid==3){
@@ -100,7 +120,52 @@ if(tableid==3){
         setOpen(true)
         setCustomers([])
       }
+}else if(tableid==2){
+
+    
+  if(res.result){
+    console.log("result kitidooooooo");
+    console.log(res.result);
+    if((res.result[0][0] ==null) && (res.result[0][1] ==null)){
+      console.log("hloooooooooooo hiiiiiiiiiii hoiii")
+      setCustomers([],[])
+      setPayments([],[])
+    }else{
+      if(res.result[0][0] ==null){
+        console.log("first nuluuuuuuuuuuuuuuuuuuuuuuu");
+        setCustomers([],[])
+        setPayments(res.result[1])
+      }else if(res.result[0][1] ==null){
+        console.log("second nulllllllllllllllllll");
+        setCustomers(res.result[0])
+        setPayments([],[])
+      
+      }else{
+        setCustomers(res.result[0])
+        setPayments(res.result[1])
+      }
+      console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+      
+      console.log("cussssssssssssssssssssssssss");
+      console.log(customers);
+      console.log(payment);
+    }
+    setTable(tableid)
+  }else{
+    setError(""+res)
+        setOpen(true)
+        setCustomers([
+          []
+         ])
+         setPayments([
+          []
+         ])
+
+      }
+    
+
 }else{
+
       if(res.result){
       if(res.result[0] ==null){
         console.log("hloooooooooooo hiiiiiiiiiii hoiii")
@@ -115,6 +180,9 @@ if(tableid==3){
       setError(""+res)
           setOpen(true)
           setCustomers([])
+
+          
+
         }
       }
 
@@ -128,14 +196,15 @@ if(router.query){
     if(!router.query.cId){
 router.push('/')
     }
-    let data=  {
+   let data= {
       "type" : "SP_CALL",
-   "requestId" : 1400006,
+    "requestId" : 1400006,
        request: {
- "cId":router.query.cId
+    "cId":router.query.cId
       }
-    }
-   getCustomer(data,1)
+    };
+    setData(data)
+   getCustomer(1,data)
   }, [])
 
 
@@ -154,7 +223,7 @@ router.push('/')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} cId={router.query.cId} cName={router.query.cName} />
+        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} ApiData={data} CtableId={table} cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
@@ -165,7 +234,7 @@ router.push('/')
   table===0?  <ItemNameResult customers={customers} getdata={getCustomer} />:table===1?
   <HistoryListResults customers={customers} getdata={getCustomer} />:table===2?
  //total page to be added
-  <HistoryListResults customers={customers} getdata={getCustomer} />: 
+  <HistoryTotalResult customers={customers} ApiData={data} CtableId={table} payments={payment} getdata={getCustomer} />: 
      <ItemResult customers={itemhistory} getdata={getCustomer} />
 }
 

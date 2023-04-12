@@ -106,11 +106,13 @@ for (let ind = 0; ind< noOfRows; ind++) {
        
 if(selectedItems[ind]){
   let aqty=  items.find(obj => obj.itemId === selectedItems[ind]);
+  console.log("qtyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
   
-  console.log(aqty);
   const element = document.getElementById(`qty${ind}`);
-  if(element){
+  console.log(element.value);
+  if(element.value){
     if((aqty.astock < element.value)  ){
+      
     
         setQtyError(aqty.label+' Out of stock!, available stock is only '+aqty.astock)
         setqtErr(true)
@@ -138,12 +140,22 @@ if(selectedItems[ind]){
   
      
     }
+}else{
+  setQtyError('enter '+ aqty.label+' quantity')
+  setqtErr(true)
+  shouldBreak = true;
+  return;
 }
   
           
 }
 
 
+      }else{
+        setQtyError('select item')
+        setqtErr(true)
+        shouldBreak = true;
+        return;
       }
     
     }

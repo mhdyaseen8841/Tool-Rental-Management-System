@@ -22,11 +22,12 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 
-export default function AddPaymetDialog(details) {
+export default function FullScreenDialog(details) {
  
  
+  console.log(" detailsssssssssssssssssssssssssssssssssssss")
 
-    
+    console.log(details.amount)
 
 
   const validSchema = Yup.object().shape({
@@ -41,9 +42,12 @@ export default function AddPaymetDialog(details) {
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
+      Amount: details.amount || '',
+     
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
+    
       details.submit(values.Amount)
     }
   });
@@ -59,8 +63,9 @@ export default function AddPaymetDialog(details) {
     }, 2000);
   };
   const onclose = () => {
-    formik.resetForm();
     details.onClose();
+    formik.resetForm();
+   
   };
  
   return (
@@ -72,17 +77,17 @@ export default function AddPaymetDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              {details.button} ADD PAYMENT
+              {details.button} PAYMENT
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
-              ADD
+              UPDATE
             </Button>
           </Toolbar>
         </AppBar>
         <Container maxWidth="sm">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">ADD PAYMENT</Typography>
+            <Typography variant="h4">UPDATE PAYMENT</Typography>
             
           
             <TextField
