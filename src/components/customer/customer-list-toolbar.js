@@ -89,7 +89,7 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-        Customers
+        Users
       </Typography>
       <Box sx={{ m: 1 }}>
         
