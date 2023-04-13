@@ -7,9 +7,11 @@ import {
   Box,
   Card,
   Checkbox,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -181,22 +183,12 @@ setDialog();
     
     <Card {...rest}>
         {addDialog}
-      <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
-          <Table>
+     
+    <TableContainer sx={{ display: 'block', overflowX: 'auto', minWidth: 650 }}>
+                    <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCustomerIds.length === items.length}
-                    color="primary"
-                    indeterminate={
-                      selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < items.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
+              
                 <TableCell>
                   Name
                 </TableCell>
@@ -225,13 +217,7 @@ setDialog();
                   key={items.itemId}
                   selected={selectedCustomerIds.indexOf(items.itemId) !== -1}
                 >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedCustomerIds.indexOf(items.itemId) !== -1}
-                      onChange={(event) => handleSelectOne(event, items.itemId)}
-                      value="true"
-                    />
-                  </TableCell>
+               
                   <TableCell>
                     <Box
                       sx={{
@@ -270,8 +256,9 @@ setDialog();
               ))}
             </TableBody>
           </Table>
-        </Box>
-      </PerfectScrollbar>
+          </TableContainer>
+       
+     
       <TablePagination
         component="div"
         count={items.length}

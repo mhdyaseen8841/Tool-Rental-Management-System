@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import GetHistoryDialog from './getHistoryDialog';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
   Box,
@@ -19,15 +19,15 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './update-history';
+import FullScreenDialog from './rate-card-update';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 
-export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
+export const RateCardResult = ({ApiData,CtableId, customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [addDialog, setDialog] = useState();
 
   const handleClose = () => {
@@ -39,16 +39,18 @@ export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
 
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+ 
+    console.log("called called called ..............................")
   setOpen(true);
+console.log(open);
 
-
-  const add = (data) => {
+  const add = (datas) => {
    
 
     let req={
       "type" : "SP_CALL",
-      "requestId" : 1400002,
-      request: data
+      "requestId" : 1800002,
+      "request": datas
     }
     
     requestPost(req).then((res)=>{
@@ -57,7 +59,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
       }else{
-        getdata()
+        getdata(CtableId,ApiData)
         
       }
 
@@ -72,30 +74,13 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     
     <FullScreenDialog
       onClose={handleClose}
-      open={open}
+      open={true}
        submit={add}
        updated={upd}
        button={button}
        data={data}
     />
   ));
-};
-
-
-
-
-const handleHModalAdd = (e,mid) => {
-console.log("hehehehehehehehe")
-  //setOpen(true); 
-  setDialog(() => (
-    <GetHistoryDialog
-      onClose={handleClose}
-      open={true}
-      mId={mid}
-    />
-  ));
-
-  
 };
 
 
@@ -148,8 +133,6 @@ console.log("hehehehehehehehe")
     setPage(newPage);
   };
 
-  
-
   return (
     
     <Card {...rest}>
@@ -160,53 +143,47 @@ console.log("hehehehehehehehe")
             <TableHead>
               <TableRow>
                 
-              <TableCell>
-                  Status
-                </TableCell>
+              
                 <TableCell>
-                 Date
+                 No.Item
                 </TableCell>
                 
                 <TableCell>
-                  Feedback
+                Item name
                 </TableCell>
                 
-                <TableCell>
-                   Actions
+                  <TableCell>
+                   Rate
                   </TableCell>
+                 
+                   <TableCell>
+                   Actions
+                  </TableCell> 
+
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
-                
+              {customers.slice(0, limit).map((customer,index) => (
                 <TableRow
                   hover
-                  key={customer.mId}
-                  selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+                  key={customer.rId}
+                  selected={selectedCustomerIds.indexOf(customer.rId) !== -1}
                 >
                  
-                 <TableCell
-                  onClick={(e)=>handleHModalAdd(e,customer.mId)}
-                  >
-                    
-                      <Button sx={{ backgroundColor: customer.status ? '#f32013' : '#4BB543' }}
- variant="contained">{customer.status ?'RENTED':'RETURN'}</Button>
-                      
-                  </TableCell>
-
-                  <TableCell
-                  onClick={(e)=>handleHModalAdd(e,customer.mId)}
-                  >
-                    {customer.Date}
-                  </TableCell>
-                  <TableCell
-                   onClick={(e)=>handleHModalAdd(e,customer.mId)}>
-                    {customer.feedback}
-                  </TableCell>
                  
                   <TableCell>
-                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
+                    {index+1}
                   </TableCell>
+                  <TableCell>
+                    {customer.itemName}
+                  </TableCell>
+                  <TableCell>
+                    {customer.rate}
+                  </TableCell>
+                  
+                   <TableCell>
+                  <EditIcon sx={{cursor:"pointer"}}  onClick={(e)=>handleAdd(e,true,'UPDATE', {rId:customer.rId,Name:customer.itemName,Amount:customer.rate})} />
+                  </TableCell> 
                 </TableRow>
               ))}
             </TableBody>
@@ -227,6 +204,6 @@ console.log("hehehehehehehehe")
 };
 
 
-HistoryListResults.propTypes = {
+RateCardResult.propTypes = {
   customers: PropTypes.array.isRequired
 };

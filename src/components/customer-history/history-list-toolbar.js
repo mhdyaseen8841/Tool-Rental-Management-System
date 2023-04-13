@@ -9,6 +9,11 @@ import {
   Typography,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { Search as SearchIcon } from "../../icons/search";
 import { Upload as UploadIcon } from "../../icons/upload";
@@ -20,6 +25,11 @@ import ReturnDialog from "./add-Return";
 import AddPaymetDialog from "./add-payment";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
+
+
+
+
+
 export const HistoryListToolbar = (props) => {
   const [open, setOpen] = useState(true);
   const [Sopen, setSOpen] = useState(false);
@@ -30,6 +40,11 @@ export const HistoryListToolbar = (props) => {
   const [ErrOpen, setErrOpen] = useState(false);
   const [error, setError] = useState("");
   const [Copen , setCopen] = useState(false);
+const [confirmOpen, setConfirmOpen] = useState(false);
+
+const handleConfirmClose = () => {
+  setConfirmOpen(false);
+};
 
   const handleErrClose = () => {
     setSOpen(false);
@@ -128,6 +143,7 @@ export const HistoryListToolbar = (props) => {
   }
 
   const handleRent = () => {
+    setConfirmOpen(false)
     let req = {
         type : "SP_CALL",
         requestId : "returnCalculate",
@@ -201,6 +217,43 @@ export const HistoryListToolbar = (props) => {
 
   const [itemButton, setButtons] = useState([{}]);
 
+
+const confirmCalculate = () => {
+  
+  setConfirmOpen(true)
+
+
+}
+
+
+const ConfirmDialog = (props) => {
+
+
+  return (
+    <Dialog
+        open={props.open}
+        onClose={props.close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Do you want to confirm?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          Do you want to confirm the calculate rent for the customer
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={props.close}>Cancel</Button>
+          <Button onClick={handleRent} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+  )}
+
+
   function getItems() {
     let data = {
       type: "SP_CALL",
@@ -257,11 +310,14 @@ export const HistoryListToolbar = (props) => {
         }}
       >
         {addDialog}
+        
+          <ConfirmDialog open={confirmOpen} close={handleConfirmClose} />
+        
         <Typography sx={{ m: 1 }} variant="h4">
           {cName}
         </Typography>
         <Box sx={{ m: 1 }}>
-          <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={handleRent}>
+          <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
             Caluculate Rent
           </Button>
           <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
@@ -340,6 +396,14 @@ export const HistoryListToolbar = (props) => {
                 onClick={() => props.setTable("total")}
               >
                 TOTAL
+              </Button>
+              <Button
+                sx={{ ml: 2, mt: 2 }}
+                color="primary"
+                variant="contained"
+                onClick={() => props.setTable("ratecard")}
+              >
+                RATE CARD
               </Button>
             </Box>
           </CardContent>

@@ -1,9 +1,10 @@
 import axios from "axios";
 
 
-const ServiceURL = 'https://212b-111-92-81-234.in.ngrok.io/tools/src/API/'
+const ServiceURL = 'https://2365-111-92-74-77.ngrok-free.app/tools/src/API/'
 
 const requestPost = async (data)=>{
+    
     
     const response = await axios.post(ServiceURL,data)
     console.log(response);

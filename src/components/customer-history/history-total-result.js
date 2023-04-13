@@ -159,6 +159,9 @@ setOpen(true)
 
 
 useEffect(() => {
+
+  console.log(payments);
+  console.log("----------------------------------------------------------------------------------------");
   let totalAmount = 0;
   let totalPaidAmount = 0;
 
