@@ -7,7 +7,7 @@ import { ItemListToolbar } from "../components/items/item-list-toolbar";
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 
-
+import Router from 'next/router';
 const Page = () => {
 
  
@@ -22,12 +22,25 @@ const Page = () => {
 }
 
   requestPost(data).then((res)=>{
+
+    if(res.errorCode===3){
+      Router
+      .push(
+      
+      {
+        pathname: '/login',
+        query: { redirect: '1' },
+      })
+  }else{
+
     if(res.result[0] ==null){
       setItems([{}])
     }else{
       console.log(res);
       setItems(res.result)
     }
+
+  }
    
   })
 

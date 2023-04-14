@@ -13,6 +13,7 @@ import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
 import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
+import Router from 'next/router';
 export const CustomerListToolbar = (props) => 
 {
 
@@ -45,6 +46,18 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
 
 requestPost(req).then((res)=>{
+
+  if(res.errorCode===3){
+    Router
+    .push(
+    
+    {
+      pathname: '/login',
+      query: { redirect: '1' },
+    })
+}else{
+
+
   if(res.errorcode ==0){
     setDialog();
     console.log(error);
@@ -53,6 +66,7 @@ requestPost(req).then((res)=>{
     props.getdata()
     setDialog();
   }
+}
  
 })
 

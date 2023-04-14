@@ -28,6 +28,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Snackbar from '@mui/material/Snackbar';
 import Fade from '@mui/material/Fade';
+import Router from 'next/router';
 
 
 
@@ -53,6 +54,17 @@ export default function ReturnDialog(details) {
     }
    console.log(requestdata2);
     requestPost(requestdata2).then((res)=>{
+
+
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
+    }else{
       if(res.result[0] ==null){
         setItems([{}])
       }else{
@@ -60,6 +72,8 @@ export default function ReturnDialog(details) {
         console.log("huuuuuuuuuuuuuuuuuuuu");
         console.log(items);
       }
+      }
+    
      
     }).catch(err=>{
       console.log(err);

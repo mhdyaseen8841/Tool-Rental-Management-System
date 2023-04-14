@@ -36,7 +36,7 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-
+import Router from 'next/router';
 
 
 
@@ -62,12 +62,23 @@ export default function FullScreenDialog(details) {
     }
    
     requestPost(requestdata2).then((res)=>{
-      if(res.result[0] ==null){
-        setItems([{}])
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
       }else{
-        setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
-        console.log(items);
+        if(res.result[0] ==null){
+          setItems([{}])
+        }else{
+          setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
+          console.log(items);
+        }
       }
+   
      
     })
   },[])

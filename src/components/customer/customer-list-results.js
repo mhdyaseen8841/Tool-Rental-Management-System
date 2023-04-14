@@ -2,6 +2,8 @@ import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import Router from 'next/router';
+
 import Link from 'next/link';
 import {
   Avatar,
@@ -11,6 +13,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -43,7 +46,15 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
      }
     }
     requestPost(del).then((res)=>{
-      if(res.errorcode ==0){
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
+    }else if(res.errorcode ==0){
         
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
@@ -79,7 +90,16 @@ let cid= data.cid;
     }
     
     requestPost(req).then((res)=>{
-      if(res.errorcode ==0){
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
+        
+    }else if(res.errorcode ==0){
         
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
@@ -159,7 +179,8 @@ let cid= data.cid;
     <Card {...rest}>
         {addDialog}
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box >
+        <TableContainer >
           <Table>
             <TableHead>
               <TableRow>
@@ -230,6 +251,7 @@ let cid= data.cid;
               ))}
             </TableBody>
           </Table>
+          </TableContainer>
         </Box>
       </PerfectScrollbar>
       <TablePagination

@@ -13,6 +13,8 @@ export const AccountPopover = (props) => {
 
 
     sessionStorage.removeItem("uid");
+    sessionStorage.removeItem("uid");
+    sessionStorage.removeItem("uid");
     Router.push('/login')
     // onClose?.();
 

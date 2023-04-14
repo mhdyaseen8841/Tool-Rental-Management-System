@@ -7,9 +7,11 @@ import {
   Box,
   Card,
   Checkbox,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -20,7 +22,7 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-item';
 import FullScreenDialogUpdate from './update-item';
 import requestPost from '../../../serviceWorker'
-
+import Router from 'next/router';
 export const ItemListResults = ({ items,getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -53,6 +55,17 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 }
 
 requestPost(req).then((res)=>{
+
+  if(res.errorCode===3){
+    Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
+}else{
+
   if(res.errorcode ==0){
     
     console.log(error);
@@ -61,6 +74,8 @@ requestPost(req).then((res)=>{
     getdata()
     
   }
+
+}
 
 setDialog(); 
 });
@@ -108,6 +123,17 @@ console.log(data)
 
 
 requestPost(req).then((res)=>{
+  if(res.errorCode===3){
+    Router
+    .push(
+    
+    {
+      pathname: '/login',
+      query: { redirect: '1' },
+    })
+}else{
+
+
   if(res.errorcode ==0){
     
     console.log(error);
@@ -116,6 +142,7 @@ requestPost(req).then((res)=>{
     getdata()
     
   }
+}
 
 setDialog(); 
 });
@@ -181,22 +208,12 @@ setDialog();
     
     <Card {...rest}>
         {addDialog}
-      <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
-          <Table>
+     
+    <TableContainer >
+                    <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCustomerIds.length === items.length}
-                    color="primary"
-                    indeterminate={
-                      selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < items.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
+              
                 <TableCell>
                   Name
                 </TableCell>
@@ -225,14 +242,8 @@ setDialog();
                   key={items.itemId}
                   selected={selectedCustomerIds.indexOf(items.itemId) !== -1}
                 >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedCustomerIds.indexOf(items.itemId) !== -1}
-                      onChange={(event) => handleSelectOne(event, items.itemId)}
-                      value="true"
-                    />
-                  </TableCell>
-                  <TableCell>
+               
+                  <TableCell  style={{ whiteSpace: 'nowrap' }}>
                     <Box
                       sx={{
                         alignItems: 'center',
@@ -270,8 +281,9 @@ setDialog();
               ))}
             </TableBody>
           </Table>
-        </Box>
-      </PerfectScrollbar>
+          </TableContainer>
+       
+     
       <TablePagination
         component="div"
         count={items.length}

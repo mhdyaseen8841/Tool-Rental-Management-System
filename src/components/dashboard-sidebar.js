@@ -134,7 +134,7 @@ export const DashboardSidebar = (props) => {
                   color="inherit"
                   variant="subtitle1"
                 >
-                  TRMS
+                  A-ONE RENTALS
                 </Typography>
                 
               </div>

@@ -11,6 +11,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -21,6 +22,7 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
+import Router from 'next/router';
 
 export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -52,14 +54,21 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     }
     
     requestPost(req).then((res)=>{
-      if(res.errorcode ==0){
-        let error="error happend"
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+      if(res.errorcode ==3){
+
+        Router
+        .push('/login')
       }else{
-        getdata()
-        
+        if(res.errorcode ==0){
+          let error="error happend"
+          console.log(error);
+                  console.log('No internet connection found. App is running in offline mode.');
+        }else{
+          getdata()
+          
+        }
       }
+     
 
     setDialog(); 
   });
@@ -136,7 +145,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     <Card {...rest}>
         {addDialog}
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box >
+        <TableContainer >
           <Table>
             <TableHead>
               <TableRow>
@@ -180,6 +190,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               ))}
             </TableBody>
           </Table>
+          </TableContainer >
         </Box>
       </PerfectScrollbar>
       <TablePagination

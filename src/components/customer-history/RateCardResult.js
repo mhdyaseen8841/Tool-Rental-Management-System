@@ -1,15 +1,12 @@
-import { useState,useEffect } from 'react';
+import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
-
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
   Box,
+  Button,
   Card,
   Checkbox,
   Table,
@@ -23,22 +20,17 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './update-history';
+import FullScreenDialog from './rate-card-update';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
-
-
-
-
-
-export const ItemResult = ({ customers,getdata, ...rest  }) => {
+import Router from 'next/router';
+export const RateCardResult = ({ApiData,CtableId, customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [addDialog, setDialog] = useState();
-const [data,setData]=useState([])
-const [item,setItem]=useState([{}])
+
   const handleClose = () => {
     setDialog();
   };
@@ -48,31 +40,45 @@ const [item,setItem]=useState([{}])
 
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log(data);
+ 
+    console.log("called called called ..............................")
   setOpen(true);
+console.log(open);
 
-
-  const add = (data) => {
+  const add = (datas) => {
    
 
-  //   let req={
-  //     "type" : "SP_CALL",
-  //     "requestId" : 1400002,
-  //     request: data
-  //   }
+    let req={
+      "type" : "SP_CALL",
+      "requestId" : 1800002,
+      "request": datas
+    }
     
-  //   requestPost(req).then((res)=>{
-  //     if(res.errorcode ==0){
-  //       let error="error happend"
-  //       console.log(error);
-  //               console.log('No internet connection found. App is running in offline mode.');
-  //     }else{
-  //       getdata()
-        
-  //     }
+    requestPost(req).then((res)=>{
 
-  //   setDialog(); 
-  // });
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
+    }else{
+
+      if(res.errorcode ==0){
+        let error="error happend"
+        console.log(error);
+                console.log('No internet connection found. App is running in offline mode.');
+      }else{
+        getdata(CtableId,ApiData)
+        
+      }
+
+    }
+
+    setDialog(); 
+  });
 
 
   }
@@ -82,7 +88,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     
     <FullScreenDialog
       onClose={handleClose}
-      open={open}
+      open={true}
        submit={add}
        updated={upd}
        button={button}
@@ -105,7 +111,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-    //   newSelectedCustomerIds = customers.map((customer) => customer.mId);
+      newSelectedCustomerIds = customers.map((customer) => customer.mId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -135,26 +141,16 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
-  }
+  };
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
-  useEffect(() => {
-  
-    setData(customers.data)
-    setItem(customers.item)
-        console.log("customers:");
-       
-    console.log("customerdata:");
-    console.log(customers.data)
-  
-    }, []);
   return (
     
     <Card {...rest}>
-      
+        {addDialog}
       <PerfectScrollbar>
         <Box >
         <TableContainer >
@@ -164,45 +160,47 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                 
               
                 <TableCell>
-                 Date
+                 No.Item
                 </TableCell>
                 
-                {item.map((itemHead) => (
                 <TableCell>
-                  {itemHead.name}
+                Item name
                 </TableCell>
-                )
-                )}
                 
-               
+                  <TableCell>
+                   Rate
+                  </TableCell>
+                 
+                   <TableCell>
+                   Actions
+                  </TableCell> 
+
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((customer) => (
+              {customers.slice(0, limit).map((customer,index) => (
                 <TableRow
                   hover
-                //   key={customer.mId}
-                //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+                  key={customer.rId}
+                  selected={selectedCustomerIds.indexOf(customer.rId) !== -1}
                 >
-                  <TableCell sx={{whiteSpace:'nowrap'}}>
-                    {customer[0]}
-                  </TableCell>
-                  {
-                      customer.slice(1,customer.length).map((item) => (
-<TableCell>
-<Stack spacing={2}>
-  <div style={{ color: 'red' }}>Outgoing: {item.outgoing.qty}</div>
-  <div style={{ color: 'green' }}>Incoming: {item.incoming.qty}</div>
-</Stack>
                  
+                 
+                  <TableCell>
+                    {index+1}
+                  </TableCell>
+                  <TableCell>
+                    {customer.itemName}
+                  </TableCell>
+                  <TableCell>
+                    {customer.rate}
+                  </TableCell>
                   
-                 
-                  </TableCell>
-                      ))
-                  }
-                  </TableRow>
+                   <TableCell>
+                  <EditIcon sx={{cursor:"pointer"}}  onClick={(e)=>handleAdd(e,true,'UPDATE', {rId:customer.rId,Name:customer.itemName,Amount:customer.rate})} />
+                  </TableCell> 
+                </TableRow>
               ))}
-             
             </TableBody>
           </Table>
           </TableContainer >
@@ -210,7 +208,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.data.length}
+        count={customers.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
@@ -222,6 +220,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 };
 
 
-ItemResult.propTypes = {
+RateCardResult.propTypes = {
   customers: PropTypes.array.isRequired
 };
