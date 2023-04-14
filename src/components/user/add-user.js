@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Stack, Container, Typography, TextField, Checkbox, Alert } from '@mui/material';
+import { Stack, Container, Typography, TextField, Checkbox, Alert, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
@@ -18,93 +18,34 @@ import FileUpload from 'react-material-file-upload';
 
 export default function FullScreenDialog(details) {
  
- 
-  const [update, setUpdate] = useState(details.updated);
-  const [files, setFiles] = useState();
-  const [doc,setDoc]= useState(update?details.data.proof:'');
-
-  const [imgPreview, setImgPreview] = useState();
-
-
-  const getBase64 = (file) => {
-
-   
-    return new Promise((resolve) => {
-      // Make new FileReader
-      const reader = new FileReader();
-      // Convert the file to base64 text
-      reader.readAsDataURL(file);
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        // console.log('Called', reader);
-        let baseURL = '';
-        baseURL = reader.result;
-        
-        setDoc(baseURL)
-        resolve(baseURL);
-      };
-    });
-  };
-
-  
-
-  const handleFileChange = event => {
-    setFiles(event)
-   
-     const fileObj = event && event[0];
-     if (!fileObj) {
-         return;
-     }
-    
- 
-     setImgPreview(URL.createObjectURL(event[0]))
-     new Compressor(event[0], {      
-       quality: 0.6,
-       success: (compressedResult) => {
-           getBase64(compressedResult).then((result) => {
-               
-              
-               setImgPreview();
- 
-              
-             }).catch((err) => {
-             console.log("error", err);
-           })
-       },
-     });
-   }
- 
 
 
   const validSchema = Yup.object().shape({
-    CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
-    Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
-    AltMobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Altnum is required'),
-    Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Address is required'),
+    UserName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
+    UserPassword: Yup.string()
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
   });
+  
 
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
-      CustomerName: update ? details.data.name :'',
-      Mobnum: update ? details.data.mobile : '',
-      AltMobnum : update ? details.data.mobile : '',
-      Address: update ? details.data.address : '',
+      UserName: details.data.name ,
+      UserPassword:  details.data.password ,
+      // UserName: update ? details.data.name :'',
+      // UserPassword: update ? details.data.password :'',
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-     
-      details.submit(values,doc)
+      console.log('oooooooooooooooouuuuuuuuuuuuuuuuuuuuuuuuuu')
+     console.log(values)
+      details.submit(values)
      
 
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
-
-  
-
-  
   
   const alertTimeOut = () => {
     setTimeout(() => {
@@ -115,6 +56,9 @@ export default function FullScreenDialog(details) {
     formik.resetForm();
     details.onClose();
   };
+
+
+  
  
   return (
     <div>
@@ -125,7 +69,7 @@ export default function FullScreenDialog(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              {details.button} CUSTOMER
+              {details.button} USER
             </Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
@@ -135,68 +79,52 @@ export default function FullScreenDialog(details) {
         <Container maxWidth="sm">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">CUSTOMER DETAILS</Typography>
+            <Typography variant="h4">USER DETAILS</Typography>
             
             {}
             <TextField
-              fullWidth
-              type="text"
-              label="Customer Name"
-              variant="outlined"
-              {...getFieldProps('CustomerName')}
-              error={Boolean(touched.CustomerName && errors.CustomerName)}
-              helperText={touched.CustomerName && errors.CustomerName}
-            />
-            <TextField
-           
-           fullWidth
-           type="text"
-           label="Mobile Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('Mobnum')}
-           error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-           helperText={touched.Mobnum && errors.Mobnum || alertMsg}
-         />
-         <TextField
-           
-           fullWidth
-           type="text"
-           label="Alternative Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('AltMobnum')}
-           error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
-           helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
-         />
-            <TextField
-              fullWidth
-              type="text"
-              label="Address"
-              variant="outlined"
-              {...getFieldProps('Address')}
-              error={Boolean(touched.Address && errors.Address)}
-              helperText={touched.Address && errors.Address}
-            />
-            
-          { doc ? 
-         <img
+  fullWidth
+  type="text"
+  label="User Name"
+  variant="outlined"
+  {...getFieldProps('UserName')}
+  error={Boolean(touched.UserName && errors.UserName)}
+  helperText={touched.UserName && errors.UserName}
+/>
+
         
-          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"  }}
-          src={`${doc}`}
-          role="presentation"
-          alt="no network"
-        />
-       :  
-       <Typography variant="subtitle2" sx={{cursor: "pointer"}}
-     >
-        No Image
-      </Typography>
+      
+        <TextField
+  error={Boolean(touched.UserPassword && errors.UserPassword)}
+  fullWidth
+  helperText={touched.UserPassword && errors.UserPassword}
+  label="Password"
+  margin="normal"
+  name="UserPassword"
+  onBlur={formik.handleBlur}
+  onChange={formik.handleChange}
+  type="password"
+  value={formik.values.UserPassword}
+  variant="outlined"
+/>
 
-         }
+<FormControl>
+  <FormLabel id="demo-controlled-radio-buttons-group">ADMIN / OWNER</FormLabel>
+  <RadioGroup
+    aria-labelledby="demo-controlled-radio-buttons-group"
+    name="controlled-radio-buttons-group"
+    // value={value}
+    // onChange={handleChange}
+  >
+     {Boolean(touched.Status && errors.Status || alertMsg)}
+    {touched.Status && errors.Status || alertMsg} 
+    <FormControlLabel {...getFieldProps('Status')} value="Admin" label="Admin" control={<Radio />} />
 
-          <FileUpload accept="image/*" value={files} onChange={handleFileChange} />
+    <FormControlLabel {...getFieldProps('Status')} value="Owner" label="Owner" control={<Radio />} />
+  </RadioGroup>
+</FormControl>
 
+         
           
           </Stack>
         </Container>

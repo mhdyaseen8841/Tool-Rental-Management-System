@@ -2,31 +2,39 @@ import Head from 'next/head';
 import { useEffect,useState } from 'react';
 import { Box, Container } from '@mui/material';
 import { UserListResults } from '../components/user/user-list-results';
-import { UserListToobar } from '../components/user/user-list-toolbar';
+import { UserListToolbar } from '../components/user/user-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
+import Router from 'next/router'
 
 const Page = () => {
 
 
 
-  const [customers, setCustomers] = useState([{}])
+  const [users, setUsers] = useState([{}])
 
-function getCustomer(){
+function getUser(){
   let data=  {
     "type" : "SP_CALL",
-    "requestId" : 1100005,
-    request: {
-   }
+   "requestId" : 1000005,
+   "request": {
+      }
 }
 
+
+
   requestPost(data).then((res)=>{
-    if(res.result[0] ==null){
-      setCustomers([{}])
+ 
+    if(res.errorCode===3){
+        Router.push('/login')
     }else{
-      setCustomers(res.result)
+        if(res.result[0] ==null){
+            setUsers([{}])
+          }else{
+            setUsers(res.result)
+          }
     }
-   
+  
   })
   // .catch((err)=>{
   //   setCustomers([{}])
@@ -37,7 +45,7 @@ function getCustomer(){
 
 useEffect(() => {
 
- getCustomer()
+ getUser()
 }, [])
 
 
@@ -45,7 +53,7 @@ return(
   <>
     <Head>
       <title>
-        Customers | TRMS
+        Users | TRMS
       </title>
     </Head>
     <Box
@@ -56,9 +64,9 @@ return(
       }}
     >
       <Container maxWidth={false}>
-        <UserListToobar  getdata={getCustomer} />
+        <UserListToolbar  getdata={getUser} />
         <Box sx={{ mt: 3 }}>
-          <UserListResults customers={customers} getdata={getCustomer} />
+          <UserListResults users={users} getdata={getUser} />
         </Box>
       </Container>
     </Box>

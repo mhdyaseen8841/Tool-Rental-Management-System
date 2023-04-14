@@ -13,6 +13,8 @@ import {
   import { useState, useEffect } from 'react';
   import FullScreenDialog from './add-user';
   import requestPost from '../../../serviceWorker'
+  import Router from 'next/router'
+
   export const UserListToolbar = (props) => 
   {
   
@@ -27,24 +29,25 @@ import {
   const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     setOpen(true);
   
-    const add = (data,file) => {
+    const add = (data) => {
      console.log(data);
       
      let req={
-        "type" : "SP_CALL",
-        "requestId" : 1100001,
-        request: {
-         "name":data.CustomerName,
-         "mobile" : data.Mobnum,
-         "address" : data.Address,
-         "altermobile" : data.AltMobnum,
-   "proof" : file
-       }
-  }
-  
-  
-  
+  "type" : "SP_CALL",
+   "requestId" : 1000001,
+   "request": {
+      "username" : data.UserName,
+	"password" : data.UserPassword,
+      "usertype" : data.Status
+      }
+}
+
   requestPost(req).then((res)=>{
+
+    if(res.errorCode===3){
+      Router.push('/login')
+  }else{
+
     if(res.errorcode ==0){
       setDialog();
       console.log(error);
@@ -53,7 +56,7 @@ import {
       props.getdata()
       setDialog();
     }
-   
+  }
   })
   
   

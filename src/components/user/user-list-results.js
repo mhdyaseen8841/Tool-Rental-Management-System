@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useState,useRef } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { DeleteOutlined } from '@mui/icons-material';
 import {
   Avatar,
   Box,
+  Button,
   Card,
   Checkbox,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -21,28 +27,90 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-user';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
+import Router from 'next/router'
+import { pink, red } from '@mui/material/colors';
 
-export const UserListResults = ({ customers,getdata, ...rest  }) => {
+export const UserListResults = ({ users,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
-
+  const ref = useRef(null)
   const handleClose = () => {
     setDialog();
   };
 
+  const StatusMenu = (prop)=>{
 
-  const deleteUser = (cid)=>{
+    const ref = useRef(null)
+    const [isOpen, setIsOpen] = useState(false);
+    const spcall = (status)=>{
+      console.log(prop.uId);
+      const requestdata =  {
+        "type" : "SP_CALL",
+        "requestId" : 1000002,
+        "request": {
+         "uId" : prop.uId,
+	       "userType" : status
+       }
+      }
+      requestPost(requestdata).then((res) => {
+          getdata()
+          }).catch(() => {
+              console.log('No internet connection found. App is running in offline mode.');
+        })
+     }
+    return(
+      <>
+      <Button ref={ref} variant="contained" sx={{ cursor: 'pointer', userSelect: 'none' }} color={prop.status === "admin" ? 'primary' : 'error'} onClick={() => {setIsOpen(true); } }>
+        {prop.status === "admin" ? 'admin' : 'owner'}
+      </Button>
+      <Menu
+        open={isOpen}
+        anchorEl={ref.current}
+        onClose={() => setIsOpen(false)}
+        PaperProps={{
+          sx: { width: 200, maxWidth: '100%' },
+        }}
+        anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'center', horizontal: 'center' }}
+      >
+         {prop.status === "admin" ?
+          <MenuItem sx={{ color: 'text.secondary'  }} onClick={()=>{spcall("owner")}}>
+            <ListItemIcon>
+               {/* <Iconify icon="carbon:task-complete" width={24} height={24} /> */}
+            </ListItemIcon>
+            <ListItemText primary="owner" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+          :
+          <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>{spcall("admin")}}>
+            <ListItemIcon>
+               {/* <Iconify icon="mdi:timer-sand-complete" width={24} height={24} /> */}
+            </ListItemIcon>
+            <ListItemText primary="admin" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        }
+        </Menu></>);
+  }
+
+
+  const deleteUser = (uId)=>{
+    console.log(uId + 'deleteeeeeeeeeeeeeeeeeeeeee');
     let del = {
       "type" : "SP_CALL",
-      "requestId" : 1100003,
-      request: {
-       "cId": cid
-     }
+       "requestId" : 1000003,
+       request: {
+          "uId" : uId
+          }
     }
+    
     requestPost(del).then((res)=>{
+      console.log('kouytttttttttttttttttttttt')
+
+      if(res.errorCode===3){
+        Router.push('/login')
+    }else{
       if(res.errorcode ==0){
         
         console.log(error);
@@ -51,66 +119,13 @@ export const UserListResults = ({ customers,getdata, ...rest  }) => {
         getdata()
         
       }
-     
+    }
     })
 
 
 
 
   }
-const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log('Editttttttttttt')
-  console.log(data);
-  setOpen(true);
-let cid= data.cid;
-
-  const add = (data,file) => {
-   
-
-    let req={
-      "type" : "SP_CALL",
-      "requestId" : 1100002,
-      request: {
-       "cId":cid,
-       "name":data.CustomerName,
-       "mobile" : data.Mobnum,
-       "address" : data.Address,
-       "altermobile" : data.AltMobnum,
- "proof" : file
-     }
-    }
-    
-    requestPost(req).then((res)=>{
-      if(res.errorcode ==0){
-        
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
-      }else{
-        getdata()
-        
-      }
-
-    setDialog(); 
-  });
-
-
-  }
-
-
-  setDialog(() => (
-    
-    <FullScreenDialog
-      onClose={handleClose}
-      open={open}
-       submit={add}
-       updated={upd}
-       button={button}
-       data={data}
-    />
-  ));
-};
-
-
 
 
 
@@ -118,7 +133,7 @@ let cid= data.cid;
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.cId);
+      newSelectedCustomerIds = users.map((users) => users.userId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -170,64 +185,37 @@ let cid= data.cid;
                   Name
                 </TableCell>
                 <TableCell>
-                  Mobile Number
+                  Type
                 </TableCell>
-                <TableCell>
-                  Alternative number
-                </TableCell>
-                <TableCell>
-                  Address
-                </TableCell>
+    
                 <TableCell>
                    Actions
                   </TableCell>
+                  
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {users.slice(0, limit).map((users) => (
                 <TableRow
                   hover
-                  key={customer.cId}
-                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                 
+                  selected={selectedCustomerIds.indexOf(users.uId) !== -1}
                 >
                 
+           
                   <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex'
-                      }}
-                    >
-                      <Avatar
-                        
-                        sx={{ mr: 2 }}
-                        
-                      >
-                        {getInitials(customer.cName)}
-                      </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}`}>
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                         {customer.cName} 
-                      </Typography>
-                      </Link>
-                    </Box>
+                    {users.username}
                   </TableCell>
                   <TableCell>
-                    {customer.mobile}
+                    <StatusMenu ref={ref} status={users.userType} uId={users.uId} />
                   </TableCell>
-                  <TableCell>
-                    {customer.altermobile}
-                  </TableCell>
-                  <TableCell>
-                    {customer.address}
-                  </TableCell>
+          
                 
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+                 <DeleteOutlined onClick={()=>{deleteUser(users.uId)}} sx={{cursor:"pointer", color: red[500]}} />
                   </TableCell>
+                  
+
                 </TableRow>
               ))}
             </TableBody>
@@ -236,7 +224,7 @@ let cid= data.cid;
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={users.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
