@@ -15,6 +15,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -155,7 +156,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     <Card {...rest}>
       
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box >
+        <TableContainer >
           <Table>
             <TableHead>
               <TableRow>
@@ -182,7 +184,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                 //   key={customer.mId}
                 //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
                 >
-                  <TableCell>
+                  <TableCell sx={{whiteSpace:'nowrap'}}>
                     {customer[0]}
                   </TableCell>
                   {
@@ -203,6 +205,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
              
             </TableBody>
           </Table>
+          </TableContainer >
         </Box>
       </PerfectScrollbar>
       <TablePagination

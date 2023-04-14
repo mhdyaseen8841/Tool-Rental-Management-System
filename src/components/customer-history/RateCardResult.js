@@ -12,6 +12,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -22,7 +23,7 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './rate-card-update';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
-
+import Router from 'next/router';
 export const RateCardResult = ({ApiData,CtableId, customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -54,6 +55,12 @@ console.log(open);
     }
     
     requestPost(req).then((res)=>{
+
+      if(res.errorCode===3){
+        Router
+        .push('/login')
+    }else{
+
       if(res.errorcode ==0){
         let error="error happend"
         console.log(error);
@@ -62,6 +69,8 @@ console.log(open);
         getdata(CtableId,ApiData)
         
       }
+
+    }
 
     setDialog(); 
   });
@@ -138,7 +147,8 @@ console.log(open);
     <Card {...rest}>
         {addDialog}
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box >
+        <TableContainer >
           <Table>
             <TableHead>
               <TableRow>
@@ -188,6 +198,7 @@ console.log(open);
               ))}
             </TableBody>
           </Table>
+          </TableContainer >
         </Box>
       </PerfectScrollbar>
       <TablePagination

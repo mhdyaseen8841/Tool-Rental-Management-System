@@ -13,6 +13,7 @@ import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
 import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
+import Router from 'next/router'
 export const CustomerListToolbar = (props) => 
 {
 
@@ -45,14 +46,23 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
 
 requestPost(req).then((res)=>{
-  if(res.errorcode ==0){
-    setDialog();
+
+
+  if(res.errorCode===3){
+    Router
+    .push('/login')
+    
+}else if(res.errorcode ==0){
+  setDialog();
     console.log(error);
             console.log('No internet connection found. App is running in offline mode.');
   }else{
     props.getdata()
     setDialog();
+    
   }
+
+ 
  
 })
 

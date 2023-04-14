@@ -3,6 +3,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import Router from 'next/router';
 import {
   Avatar,
   Box,
@@ -43,6 +44,15 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
      }
     }
     requestPost(del).then((res)=>{
+      if(res.errorcode ==0){
+        setDialog();
+        console.log(error);
+                console.log('No internet connection found. App is running in offline mode.');
+      }else{
+        props.getdata()
+        setDialog();
+      }
+
       if(res.errorcode ==0){
         
         console.log(error);

@@ -22,7 +22,7 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-item';
 import FullScreenDialogUpdate from './update-item';
 import requestPost from '../../../serviceWorker'
-
+import Router from 'next/router';
 export const ItemListResults = ({ items,getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -55,6 +55,12 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 }
 
 requestPost(req).then((res)=>{
+
+  if(res.errorCode===3){
+    Router
+    .push('/login')
+}else{
+
   if(res.errorcode ==0){
     
     console.log(error);
@@ -63,6 +69,8 @@ requestPost(req).then((res)=>{
     getdata()
     
   }
+
+}
 
 setDialog(); 
 });
@@ -110,6 +118,12 @@ console.log(data)
 
 
 requestPost(req).then((res)=>{
+  if(res.errorCode===3){
+    Router
+    .push('/login')
+}else{
+
+
   if(res.errorcode ==0){
     
     console.log(error);
@@ -118,6 +132,7 @@ requestPost(req).then((res)=>{
     getdata()
     
   }
+}
 
 setDialog(); 
 });
@@ -184,7 +199,7 @@ setDialog();
     <Card {...rest}>
         {addDialog}
      
-    <TableContainer sx={{ display: 'block', overflowX: 'auto', minWidth: 650 }}>
+    <TableContainer >
                     <Table>
             <TableHead>
               <TableRow>
@@ -218,7 +233,7 @@ setDialog();
                   selected={selectedCustomerIds.indexOf(items.itemId) !== -1}
                 >
                
-                  <TableCell>
+                  <TableCell  style={{ whiteSpace: 'nowrap' }}>
                     <Box
                       sx={{
                         alignItems: 'center',

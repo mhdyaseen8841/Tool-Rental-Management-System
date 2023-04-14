@@ -16,6 +16,8 @@ import requestPost from '../../serviceWorker'
 import { useRouter } from 'next/router';
 import { HistoryTotalResult } from '../components/customer-history/history-total-result';
 import {RateCardResult} from '../components/customer-history/RateCardResult'
+
+import Router from 'next/router';
 const Page = () => {
 
  
@@ -119,88 +121,94 @@ console.log(datas)
 
     requestPost(datas).then((res)=>{
 
-console.log("tabbbllleeeeeee"+tableid);
-if(tableid==3){
-  if(res.result){
-    if(res.result.item[0] ==null){
-      setItemHistory([])
+      if(res.errorCode===3){
+        Router
+        .push('/login')
     }else{
-      setItemHistory(res.result)
 
-    }
-    setTable(tableid)
-  }else{
-    setError(""+res)
-        setOpen(true)
-        setCustomers([])
-      }
-}else if(tableid==2){
-
-    
-  if(res.result){
-    console.log("result kitidooooooo");
-    console.log(res.result);
-    if((res.result[0][0] ==null) && (res.result[0][1] ==null)){
-      console.log("hloooooooooooo hiiiiiiiiiii hoiii")
-      setCustomers([])
-      setPayments([])
-    }else{
-      if(res.result[0][0] ==null){
-        console.log("first nuluuuuuuuuuuuuuuuuuuuuuuu");
-        setCustomers([])
-        setPayments(res.result[1])
-      }else if(res.result[1]==null){
-        console.log("second nulllllllllllllllllll");
-        console.log(res.result[1]);
-        setCustomers(res.result[0])
-        setPayments([])
+      console.log("tabbbllleeeeeee"+tableid);
+      if(tableid==3){
+        if(res.result){
+          if(res.result.item[0] ==null){
+            setItemHistory([])
+          }else{
+            setItemHistory(res.result)
       
-      }else{
-        console.log("both not-----------------------------")
-        setCustomers(res.result[0])
-        setPayments(res.result[1])
-      }
-      console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+          }
+          setTable(tableid)
+        }else{
+          setError(""+res)
+              setOpen(true)
+              setCustomers([])
+            }
+      }else if(tableid==2){
       
-      console.log("cussssssssssssssssssssssssss");
-      console.log(customers);
-      console.log(payment);
-    }
-    setTable(tableid)
-  }else{
-    setError(""+res)
-        setOpen(true)
-        setCustomers([
-          []
-         ])
-         setPayments([
-          []
-         ])
-
-      }
-    
-
-}else{
-
-      if(res.result){
-      if(res.result[0] ==null){
-        console.log("hloooooooooooo hiiiiiiiiiii hoiii")
-        setCustomers([])
-      }else{
-        console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-        setCustomers(res.result)
-        console.log(res.result);
-      }
-      setTable(tableid)
-    }else{
-      setError(""+res)
-          setOpen(true)
-          setCustomers([])
-
           
-
-        }
-      }
+        if(res.result){
+          console.log("result kitidooooooo");
+          console.log(res.result);
+          if((res.result[0][0] ==null) && (res.result[0][1] ==null)){
+            console.log("hloooooooooooo hiiiiiiiiiii hoiii")
+            setCustomers([])
+            setPayments([])
+          }else{
+            if(res.result[0][0] ==null){
+              console.log("first nuluuuuuuuuuuuuuuuuuuuuuuu");
+              setCustomers([])
+              setPayments(res.result[1])
+            }else if(res.result[1]==null){
+              console.log("second nulllllllllllllllllll");
+              console.log(res.result[1]);
+              setCustomers(res.result[0])
+              setPayments([])
+            
+            }else{
+              console.log("both not-----------------------------")
+              setCustomers(res.result[0])
+              setPayments(res.result[1])
+            }
+            console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+            
+            console.log("cussssssssssssssssssssssssss");
+            console.log(customers);
+            console.log(payment);
+          }
+          setTable(tableid)
+        }else{
+          setError(""+res)
+              setOpen(true)
+              setCustomers([
+                []
+               ])
+               setPayments([
+                []
+               ])
+      
+            }
+          
+      
+      }else{
+      
+            if(res.result){
+            if(res.result[0] ==null){
+              console.log("hloooooooooooo hiiiiiiiiiii hoiii")
+              setCustomers([])
+            }else{
+              console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+              setCustomers(res.result)
+              console.log(res.result);
+            }
+            setTable(tableid)
+          }else{
+            setError(""+res)
+                setOpen(true)
+                setCustomers([])
+      
+                
+      
+              }
+            }
+    }
 
       })
   }

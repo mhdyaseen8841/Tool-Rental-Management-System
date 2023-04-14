@@ -18,6 +18,9 @@ import {
   TextField,
 } from "@material-ui/core";
 
+import Router from 'next/router';
+
+
 const GetHistoryModal = (details) => {
   const [data, setData] = useState([{}]);
 
@@ -30,19 +33,25 @@ const GetHistoryModal = (details) => {
       },
     };
     requestPost(req).then((res) => {
-      if (res.errorcode == 0) {
-        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        console.log(error);
-        console.log("No internet connection found. App is running in offline mode.");
-      } else {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        if (res.result[0] == null) {
-          console.log("no data");
-          setData([{}]);
+      if(res.errorcode===3){
+        Router
+        .push('/login')
+      }else{
+
+        if (res.errorcode == 0) {
+          console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+          console.log(error);
+          console.log("No internet connection found. App is running in offline mode.");
         } else {
-          setData(res.result);
+          console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+          if (res.result[0] == null) {
+            console.log("no data");
+            setData([{}]);
+          } else {
+            setData(res.result);
+          }
+          console.log(res.result);
         }
-        console.log(res.result);
       }
     });
   }, []);

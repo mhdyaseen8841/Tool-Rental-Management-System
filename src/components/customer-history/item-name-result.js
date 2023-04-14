@@ -11,6 +11,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -21,7 +22,7 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
-
+import Router from 'next/router';
 export const ItemNameResult = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -52,6 +53,11 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     }
     
     requestPost(req).then((res)=>{
+      if(res.errorCode===3){
+        Router
+        .push('/login')
+    }else{
+
       if(res.errorcode ==0){
         let error="error happend"
         console.log(error);
@@ -60,6 +66,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
         getdata()
         
       }
+
+    }
 
     setDialog(); 
   });
@@ -136,7 +144,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     <Card {...rest}>
         {addDialog}
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box >
+        <TableContainer >
           <Table>
             <TableHead>
               <TableRow>
@@ -168,7 +177,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {customers.slice(0, limit).map((customer,index) => (
                 <TableRow
                   hover
                   key={customer.mId}
@@ -177,7 +186,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                  
                  
                   <TableCell>
-                    1
+                   {index+1}
                   </TableCell>
                   <TableCell>
                     {customer.rentDate}
@@ -198,6 +207,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               ))}
             </TableBody>
           </Table>
+          </TableContainer >
         </Box>
       </PerfectScrollbar>
       <TablePagination

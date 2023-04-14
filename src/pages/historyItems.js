@@ -5,7 +5,7 @@ import { CustomerListResults } from '../components/items-history/itemhistory-lis
 import { CustomerListToolbar } from '../components/items-history/itemhistory-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
-
+import Router from 'next/router';
 const Page = () => {
 
 
@@ -21,11 +21,18 @@ function getCustomer(){
 }
 
   requestPost(data).then((res)=>{
+    if(res.errorCode===3){
+      Router
+      .push('/login')
+  }else{
+
     if(res.result[0] ==null){
       setCustomers([{}])
     }else{
       setCustomers(res.result)
     }
+
+  }
    
   })
   // .catch((err)=>{

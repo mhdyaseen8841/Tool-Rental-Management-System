@@ -25,6 +25,7 @@ import ReturnDialog from "./add-Return";
 import AddPaymetDialog from "./add-payment";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
+import Router from 'next/router';
 
 
 
@@ -73,6 +74,13 @@ const handleConfirmClose = () => {
       requestPost(req).then((res) => {
         console.log(req)
         console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+
+        if(res.errorCode===3){
+          Router
+          .push('/login')
+          
+      }else{
+          
         if (res.errorcode == 0) {
           setDialog();
           console.log(error);
@@ -81,6 +89,7 @@ const handleConfirmClose = () => {
           props.getdata(props.CtableId,props.ApiData);
                     setDialog();
         }
+      }
       });
     };
 
@@ -111,6 +120,11 @@ const handleConfirmClose = () => {
      }
     };
     requestPost(req).then((res) => {
+       if(res.errorCode===3){
+        Router
+        .push('/login')
+        
+    }else{
       if (res.errorcode == 0) {
         setDialog();
         console.log(error);
@@ -123,7 +137,9 @@ const handleConfirmClose = () => {
 
         setDialog();
         
-      }
+      }  
+    }
+    
     });
   }
 
@@ -154,6 +170,12 @@ const handleConfirmClose = () => {
 
 
     requestPost(req).then((res) => {
+ if(res.errorCode===3){
+        Router
+        .push('/login')
+        
+    }else{
+        
       if (res.errorcode == 0) {
         //erroooooorrr
 
@@ -166,6 +188,7 @@ const handleConfirmClose = () => {
         setCopen(true)
         
       }
+    }
     });
   }
 
@@ -189,6 +212,13 @@ const handleConfirmClose = () => {
   }
 
   requestPost(req).then((res) => {
+
+     if(res.errorCode===3){
+      Router
+      .push('/login')
+      
+  }else{
+      
     if (res.errorcode == 0) {
       setDialog();
       console.log(error);
@@ -198,6 +228,7 @@ const handleConfirmClose = () => {
   
       setDialog();
     }
+  }
   });
 
     };
@@ -261,7 +292,13 @@ const ConfirmDialog = (props) => {
       request: {},
     };
 
+    //hello hi find if any problem in this
     requestPost(data).then((res) => {
+      
+      if(res.errorCode===3){
+        Router
+        .push('/login')
+    }else{
       if (res.result) {
         if (res.result[0] == null) {
           setButtons([{}]);
@@ -273,6 +310,8 @@ const ConfirmDialog = (props) => {
         setErrOpen(true);
         setButtons([{}]);
       }
+    }
+      
     });
   }
 

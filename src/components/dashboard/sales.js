@@ -18,22 +18,12 @@ export const Sales = (props) => {
         label: 'This year',
         maxBarThickness: 10
       },
-      {
-        backgroundColor: '#EEEEEE',
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [11, 20, 12, 29, 30, 25, 13],
-        label: 'Last year',
-        maxBarThickness: 10
-      }
     ],
     labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug', '7 aug']
   };
 
   const options = {
-    animation: false,
+    animation: true,
     cornerRadius: 20,
     layout: { padding: 0 },
     legend: { display: false },
