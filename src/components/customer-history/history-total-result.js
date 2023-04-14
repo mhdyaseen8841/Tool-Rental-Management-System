@@ -101,7 +101,12 @@ export const HistoryTotalResult = ({
 
       if(res.errorCode===3){
         Router
-        .push('/login')
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
     }else{
 
 
@@ -136,7 +141,12 @@ export const HistoryTotalResult = ({
 
         if(res.errorCode===3){
           Router
-          .push('/login')
+          .push(
+          
+          {
+            pathname: '/login',
+            query: { redirect: '1' },
+          })
       }else{
   
         if (res.errorcode == 0) {

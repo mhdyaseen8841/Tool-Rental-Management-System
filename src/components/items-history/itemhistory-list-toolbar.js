@@ -49,7 +49,12 @@ requestPost(req).then((res)=>{
 
   if(res.errorCode===3){
     Router
-    .push('/login')
+    .push(
+    
+    {
+      pathname: '/login',
+      query: { redirect: '1' },
+    })
 }else{
 
 

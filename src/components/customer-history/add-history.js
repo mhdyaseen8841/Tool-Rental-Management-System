@@ -64,7 +64,12 @@ export default function FullScreenDialog(details) {
     requestPost(requestdata2).then((res)=>{
       if(res.errorCode===3){
         Router
-        .push('/login')
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
       }else{
         if(res.result[0] ==null){
           setItems([{}])

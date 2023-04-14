@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import NextLink from 'next/link';
 import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Alert, Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
@@ -12,6 +13,7 @@ import axios from "axios";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 
 const ServiceURL = 'https://2365-111-92-74-77.ngrok-free.app/tools/src/API/'
@@ -20,11 +22,27 @@ const Login = () => {
 
    
   const router = useRouter();
+
+  const [error,setError]=useState(false)
   
+ 
+
+
+
+  useEffect(() => {
+    if(router.query.redirect){
+      console.log("heloooooooooooooooooooooooooooooooooooo");
+      setError(true)
+      
+        }
+  }, [])
+  
+
 const [open,setOpen]=useState(false)
 
 const handleClose = ()=>{
   setOpen(false)
+  setError(false)
 }
   const formik = useFormik({
     initialValues: {
@@ -91,6 +109,12 @@ let data={
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
     Login Failed!
+  </Alert>
+</Snackbar>
+
+<Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
+  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+    Session Expired! Please Login Again
   </Alert>
 </Snackbar>
 

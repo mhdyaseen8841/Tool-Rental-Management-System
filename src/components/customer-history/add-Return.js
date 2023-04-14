@@ -58,7 +58,12 @@ export default function ReturnDialog(details) {
 
       if(res.errorCode===3){
         Router
-        .push('/login')
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
     }else{
       if(res.result[0] ==null){
         setItems([{}])

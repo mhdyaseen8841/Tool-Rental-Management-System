@@ -77,7 +77,12 @@ const handleConfirmClose = () => {
 
         if(res.errorCode===3){
           Router
-          .push('/login')
+          .push(
+          
+          {
+            pathname: '/login',
+            query: { redirect: '1' },
+          })
           
       }else{
           
@@ -122,7 +127,12 @@ const handleConfirmClose = () => {
     requestPost(req).then((res) => {
        if(res.errorCode===3){
         Router
-        .push('/login')
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
         
     }else{
       if (res.errorcode == 0) {
@@ -171,8 +181,13 @@ const handleConfirmClose = () => {
 
     requestPost(req).then((res) => {
  if(res.errorCode===3){
-        Router
-        .push('/login')
+  Router
+  .push(
+  
+  {
+    pathname: '/login',
+    query: { redirect: '1' },
+  })
         
     }else{
         
@@ -297,7 +312,12 @@ const ConfirmDialog = (props) => {
       
       if(res.errorCode===3){
         Router
-        .push('/login')
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
     }else{
       if (res.result) {
         if (res.result[0] == null) {

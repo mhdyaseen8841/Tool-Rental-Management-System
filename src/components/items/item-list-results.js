@@ -58,7 +58,12 @@ requestPost(req).then((res)=>{
 
   if(res.errorCode===3){
     Router
-    .push('/login')
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
 }else{
 
   if(res.errorcode ==0){
@@ -120,7 +125,12 @@ console.log(data)
 requestPost(req).then((res)=>{
   if(res.errorCode===3){
     Router
-    .push('/login')
+    .push(
+    
+    {
+      pathname: '/login',
+      query: { redirect: '1' },
+    })
 }else{
 
 
