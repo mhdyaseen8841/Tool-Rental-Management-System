@@ -23,7 +23,7 @@ const App = (props) => {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
-          TRMS
+          AONERENTALS
         </title>
         <meta
           name="viewport"

@@ -229,10 +229,12 @@ setDialog();
                 <TableCell>
                   Total Stocks
                 </TableCell>
+                {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : ( <TableCell>
+    Actions
+   </TableCell>)} 
                
-                <TableCell>
-                   Actions
-                  </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -272,10 +274,12 @@ setDialog();
                   <TableCell>
                     {items.tstock}
                   </TableCell>
-                 
-                  <TableCell>
-                  <FadeMenu   updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
-                  </TableCell>
+                  {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (    <TableCell>
+    <FadeMenu   updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
+    </TableCell>)}
+              
                   
                 </TableRow>
               ))}
