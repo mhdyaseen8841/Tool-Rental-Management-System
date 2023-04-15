@@ -34,6 +34,7 @@ export const HistoryTotalResult = ({
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
   const [advance, setAdvance] = useState(0);
+  const [pendingItems, setPendingItems] = useState('');
   const router = useRouter();
 
   const handleClose = () => {
@@ -72,6 +73,40 @@ export const HistoryTotalResult = ({
       }
     });
   };
+
+  const getPendingItems = () => {
+    const requestdata2 = {
+      "type": "SP_CALL",
+      "requestId": 1500002,
+      request: {
+        "cId": router.query.cId
+      }
+    }
+    requestPost(requestdata2).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+            {
+              pathname: '/login',
+              query: { redirect: '1' },
+            })
+      } else {
+        console.log(res.result);
+        if (res.result[0] != null) {
+          var msg = "*ITEMS PENDING*%0a";
+          res.result.map((item)=>{
+           msg =  `${msg}%0a${item.itemName} : ${item.pending}`
+          })
+          setPendingItems(msg);
+          console.log(msg);
+        } else {
+          setItems(res.result);
+        }
+      }
+    }).catch(err => {
+      console.log(err);
+    })
+  }
 
   const handleAdd = (pId, amount) => {
     console.log("calllleddddd");
@@ -152,9 +187,10 @@ export const HistoryTotalResult = ({
     } else {
       setAdvance(0);
     }
+    getPendingItems();
   }, [customers, payments]);
 
-  const whatsAppMsg = `*AONE RENTAL* &#13; Item Total : ${total}, &#13; Total Paid : ${totalPaid}, &#13; Pending Amount : ${totalDue},&#13; Advance : ${advance}`;
+  const whatsAppMsg = `*AONE RENTAL* %0a %0aItem Total : ${total} %0aTotal Paid : ${totalPaid} %0aPending Amount : ${totalDue} %0aAdvance : ${advance} %0a %0a${pendingItems}`;
 
   return (
     <>
@@ -167,7 +203,7 @@ export const HistoryTotalResult = ({
                 Item Total
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                 {total}
+                {total}
               </Typography>
             </Paper>
           </Grid>
@@ -184,10 +220,10 @@ export const HistoryTotalResult = ({
           </Grid>
 
 
-          <Grid item xs={12} sm={3}  md={3}>
+          <Grid item xs={12} sm={3} md={3}>
             <Paper elevation={3} sx={{ bgcolor: "#D14343" }}>
-              <Typography  variant="subtitle1" color={"white"} align="center">
-                Pending Amount 
+              <Typography variant="subtitle1" color={"white"} align="center">
+                Pending Amount
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
                 {totalDue}
@@ -196,7 +232,7 @@ export const HistoryTotalResult = ({
           </Grid>
 
 
-          <Grid item xs={12} sm={3}  md={3}>
+          <Grid item xs={12} sm={3} md={3}>
             <Paper elevation={3} sx={{ bgcolor: "#4BB543" }}>
               <Typography noWrap variant="subtitle1" color={"white"} align="center">
                 Advance
@@ -282,19 +318,19 @@ export const HistoryTotalResult = ({
 
           </Grid>
         </Grid>
-        
+
       </Grid>
       <div
-          style={{
-            position: "fixed",
-            right:20,
-            bottom:20
-          }}
-        >
-          <a href={`https://wa.me/91${router.query.phNo}?text=${whatsAppMsg}`} target="_blank" rel="noopener noreferrer">
-            <WhatsAppIcon style={{ fontSize: 50, color: "#25D366" }} />
-          </a>
-        </div>
+        style={{
+          position: "fixed",
+          right: 20,
+          bottom: 20
+        }}
+      >
+        <a href={`https://wa.me/91${router.query.phNo}?text=${whatsAppMsg}`} target="_blank" rel="noopener noreferrer">
+          <WhatsAppIcon style={{ fontSize: 50, color: "#25D366" }} />
+        </a>
+      </div>
     </>
   );
 };
