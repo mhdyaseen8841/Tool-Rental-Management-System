@@ -375,43 +375,26 @@ const ConfirmDialog = (props) => {
         <Typography sx={{ m: 1 }} variant="h4">
           {cName}
         </Typography>
-        <Box sx={{ m: 1 }}>
-          <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
-            Caluculate Rent
-          </Button>
-          <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
-            Add Rent
-          </Button>
-          <Button sx={{ ml: 2, mt: 2 }} color="error" variant="contained" onClick={(e)=>handleReturn(e, true, "RETURN" , {})}>
-            Add Return
-          </Button>
-          <Button sx={{ ml: 2, mt: 2 }} color="primary" variant="contained" onClick={handlePayment}>
-            Add Payment
-          </Button>
-        </Box>
+
+        {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : ( <Box sx={{ m: 1 }}>
+    <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
+      Caluculate Rent
+    </Button>
+    <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
+      Add Rent
+    </Button>
+    <Button sx={{ ml: 2, mt: 2 }} color="error" variant="contained" onClick={(e)=>handleReturn(e, true, "RETURN" , {})}>
+      Add Return
+    </Button>
+    <Button sx={{ ml: 2, mt: 2 }} color="primary" variant="contained" onClick={handlePayment}>
+      Add Payment
+    </Button>
+  </Box>)}
+       
       </Box>
-      <Box sx={{ mt: 3 }}>
-        <Card>
-          <CardContent>
-            <Box sx={{ maxWidth: 500 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon color="action" fontSize="small">
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder="Search Product"
-                variant="outlined"
-              />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
+     
 
       <Box sx={{ mt: 3 }}>
         <Card>
@@ -456,14 +439,18 @@ const ConfirmDialog = (props) => {
               >
                 TOTAL
               </Button>
-              <Button
-                sx={{ ml: 2, mt: 2 }}
-                color="primary"
-                variant="contained"
-                onClick={() => props.setTable("ratecard")}
-              >
-                RATE CARD
-              </Button>
+              {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<Button
+    sx={{ ml: 2, mt: 2 }}
+    color="primary"
+    variant="contained"
+    onClick={() => props.setTable("ratecard")}
+  >
+    RATE CARD
+  </Button>)}
+
+              
             </Box>
           </CardContent>
         </Card>

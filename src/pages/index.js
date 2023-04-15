@@ -19,7 +19,7 @@ const router=useRouter()
   <>
     <Head>
       <title>
-        Dashboard | TRMS
+        Dashboard | AONERENTALS
       </title>
     </Head>
     <Box

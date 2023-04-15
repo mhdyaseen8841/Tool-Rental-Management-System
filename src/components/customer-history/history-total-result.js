@@ -304,7 +304,10 @@ export const HistoryTotalResult = ({
                 <TableRow>
                   <TableCell>Date</TableCell>
                   <TableCell>Amount</TableCell>
-                  <TableCell>Action</TableCell>
+                  {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<TableCell>Action</TableCell>)}
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -313,15 +316,19 @@ export const HistoryTotalResult = ({
                     <TableRow key={customer.pId}>
                       <TableCell>{customer.date}</TableCell>
                       <TableCell>{customer.amount}</TableCell>
-                      <TableCell>
-                        {" "}
-                        <FadeMenu
-                          callback={() => {
-                            deleteUser(customer.pId);
-                          }}
-                          editUser={(e) => handleAdd(customer.pId, customer.amount)}
-                        />
-                      </TableCell>
+                     
+                      {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<TableCell>
+                        
+    <FadeMenu
+      callback={() => {
+        deleteUser(customer.pId);
+      }}
+      editUser={(e) => handleAdd(customer.pId, customer.amount)}
+    />
+  </TableCell>)}
+                      
                     </TableRow>
                   ))}
               </TableBody>

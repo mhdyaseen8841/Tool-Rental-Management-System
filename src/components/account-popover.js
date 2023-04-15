@@ -12,50 +12,12 @@ export const AccountPopover = (props) => {
   const handleSignOut = async () => {
 
 
-    sessionStorage.removeItem("uid");
-    sessionStorage.removeItem("uid");
-    sessionStorage.removeItem("uid");
+    sessionStorage.removeItem("uId");
+    sessionStorage.removeItem("authtoken");
+    sessionStorage.removeItem("usertype");
+    sessionStorage.removeItem("username");
     Router.push('/login')
-    // onClose?.();
-
-    // Check if authentication with Zalter is enabled
-    // If not enabled, then redirect is not required
-    // if (!ENABLE_AUTH) {
-    //   return;
-    // }
-
-    // Check if auth has been skipped
-    // From sign-in page we may have set "skip-auth" to "true"
-    // If this has been skipped, then redirect to "sign-in" directly
-    // const authSkipped = globalThis.sessionStorage.getItem('skip-auth') === 'true';
-
-    // if (authSkipped) {
-    //   // Cleanup the skip auth state
-    //   globalThis.sessionStorage.removeItem('skip-auth');
-
-      // Redirect to sign-in page
-    //   Router
-    //     .push('/sign-in')
-    //     .catch(console.error);
-    //   return;
-    // }
-
-    // try {
-      // // This can be call inside AuthProvider component, but we do it here for simplicity
-      // await auth.signOut();
-
-      // // Update Auth Context state
-      // authContext.signOut();
-
-      // // Redirect to sign-in page
-      // Router
-      //   .push('/sign-in')
-      //   .catch(console.error);
-    //   sessionStorage.removeItem("uid");
-      
-    // } catch (err) {
-    //   console.error(err);
-    // }
+    
   };
 
   return (
@@ -85,7 +47,15 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          John Doe
+         {sessionStorage.getItem("username")}
+        
+        </Typography>
+        <Typography
+          color="text.secondary"
+          variant="body2"
+        >
+        Usertype: {sessionStorage.getItem("usertype")}
+        
         </Typography>
       </Box>
       <MenuList

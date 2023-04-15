@@ -17,6 +17,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -56,16 +57,32 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
        }
       }
       requestPost(requestdata).then((res) => {
+
+        if(res.errorCode===3){
+          Router
+          .push(
+          
+          {
+            pathname: '/login',
+            query: { redirect: '1' },
+          })
+      }else{
           getdata()
+      }
           }).catch(() => {
               console.log('No internet connection found. App is running in offline mode.');
         })
      }
     return(
       <>
-      <Button ref={ref} variant="contained" sx={{ cursor: 'pointer', userSelect: 'none' }} color={prop.status === "admin" ? 'primary' : 'error'} onClick={() => {setIsOpen(true); } }>
-        {prop.status === "admin" ? 'admin' : 'owner'}
-      </Button>
+     {sessionStorage.getItem('usertype') === 'owner' ? (
+   <Button ref={ref} variant="contained" sx={{ cursor: 'pointer', userSelect: 'none' }} color={prop.status === "admin" ? 'primary' : 'error'}  >
+   {prop.status === "admin" ? 'admin' : 'owner'}
+ </Button>
+  ) : (<Button ref={ref} variant="contained" sx={{ cursor: 'pointer', userSelect: 'none' }} color={prop.status === "admin" ? 'primary' : 'error'}  onClick={() => {setIsOpen(true); } }>
+  {prop.status === "admin" ? 'admin' : 'owner'}
+</Button>)}
+      
       <Menu
         open={isOpen}
         anchorEl={ref.current}
@@ -109,7 +126,13 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
       console.log('kouytttttttttttttttttttttt')
 
       if(res.errorCode===3){
-        Router.push('/login')
+        Router
+        .push(
+        
+        {
+          pathname: '/login',
+          query: { redirect: '1' },
+        })
     }else{
       if(res.errorcode ==0){
         
@@ -176,7 +199,8 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
     <Card {...rest}>
         {addDialog}
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box>
+          <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
@@ -187,10 +211,12 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
                 <TableCell>
                   Type
                 </TableCell>
-    
-                <TableCell>
-                   Actions
-                  </TableCell>
+                {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : ( <TableCell>
+    Actions
+   </TableCell>)}
+               
                   
               </TableRow>
             </TableHead>
@@ -206,20 +232,24 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
                   <TableCell>
                     {users.username}
                   </TableCell>
-                  <TableCell>
-                    <StatusMenu ref={ref} status={users.userType} uId={users.uId} />
-                  </TableCell>
+                 <TableCell>
+    <StatusMenu ref={ref} status={users.userType} uId={users.uId} />
+  </TableCell>
+                 
           
-                
-                  <TableCell>
-                 <DeleteOutlined onClick={()=>{deleteUser(users.uId)}} sx={{cursor:"pointer", color: red[500]}} />
-                  </TableCell>
+                  {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<TableCell>
+    <DeleteOutlined onClick={()=>{deleteUser(users.uId)}} sx={{cursor:"pointer", color: red[500]}} />
+     </TableCell>)}
+                  
                   
 
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          </TableContainer>
         </Box>
       </PerfectScrollbar>
       <TablePagination

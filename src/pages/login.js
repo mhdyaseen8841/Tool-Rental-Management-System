@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 
 
-const ServiceURL = 'https://2365-111-92-74-77.ngrok-free.app/tools/src/API/'
+const ServiceURL = 'https://aonerentals.in/tools/src/API/'
 
 const Login = () => {
 
@@ -25,12 +25,20 @@ const Login = () => {
 
   const [error,setError]=useState(false)
   
- 
 
 
 
   useEffect(() => {
+
+    if(sessionStorage.getItem("uId")){
+      router.push('/')
+    }
+
     if(router.query.redirect){
+      sessionStorage.removeItem("uId");
+    sessionStorage.removeItem("authtoken");
+    sessionStorage.removeItem("usertype");
+    sessionStorage.removeItem("username");
       console.log("heloooooooooooooooooooooooooooooooooooo");
       setError(true)
       
@@ -89,7 +97,7 @@ let data={
        }
 
       }).catch((err)=>{
-        setSubmitting(false)
+        formik.setSubmitting(false)
         console.log(err);
       })
      

@@ -45,7 +45,13 @@ import {
   requestPost(req).then((res)=>{
 
     if(res.errorCode===3){
-      Router.push('/login')
+      Router
+      .push(
+      
+      {
+        pathname: '/login',
+        query: { redirect: '1' },
+      })
   }else{
 
     if(res.errorcode ==0){
@@ -94,42 +100,22 @@ import {
         >
           Users
         </Typography>
-        <Box sx={{ m: 1 }}>
+
+        {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : ( <Box sx={{ m: 1 }}>
           
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleAdd}
-          >
-            Add Users
-          </Button>
-        </Box>
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleAdd}
+    >
+      Add Users
+    </Button>
+  </Box>)}
+       
       </Box>
-      <Box sx={{ mt: 3 }}>
-        <Card>
-          <CardContent>
-            <Box sx={{ maxWidth: 500 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon
-                        color="action"
-                        fontSize="small"
-                      >
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  )
-                }}
-                placeholder="Search customer"
-                variant="outlined"
-              />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
+    
     </Box>
   );
               }

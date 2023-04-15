@@ -185,9 +185,12 @@ console.log("hehehehehehehehe")
                   Feedback
                 </TableCell>
                 
-                <TableCell>
-                   Actions
-                  </TableCell>
+                {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<TableCell>
+    Actions
+   </TableCell>)}
+                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -218,9 +221,12 @@ console.log("hehehehehehehehe")
                     {customer.feedback}
                   </TableCell>
                  
-                  <TableCell>
-                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
-                  </TableCell>
+                  {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : ( <TableCell>
+    <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
+    </TableCell>)}
+                 
                 </TableRow>
               ))}
             </TableBody>

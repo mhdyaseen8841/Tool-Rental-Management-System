@@ -3,13 +3,16 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import Router from 'next/router';
+import SearchIcon from '@mui/icons-material/Search';
 
 import Link from 'next/link';
 import {
   Avatar,
   Box,
   Card,
+  CardContent,
   Checkbox,
+  InputAdornment,
   Table,
   TableBody,
   TableCell,
@@ -17,7 +20,9 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  TextField,
+  Typography,
+  SvgIcon
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
@@ -175,8 +180,34 @@ let cid= data.cid;
   
 
   return (
-    
+    <>
+    <Box sx={{ mt: 3, mb:3 }}>
+      <Card >
+        <CardContent>
+          <Box sx={{ maxWidth: 500 }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SvgIcon
+                      color="action"
+                      fontSize="small"
+                    >
+                      <SearchIcon />
+                    </SvgIcon>
+                  </InputAdornment>
+                )
+              }}
+              placeholder="Search customer"
+              variant="outlined"
+            />
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
     <Card {...rest}>
+      
         {addDialog}
       <PerfectScrollbar>
         <Box >
@@ -197,9 +228,14 @@ let cid= data.cid;
                 <TableCell>
                   Address
                 </TableCell>
-                <TableCell>
-                   Actions
-                  </TableCell>
+
+                {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<TableCell>
+    Actions
+   </TableCell>)}
+
+                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -214,7 +250,8 @@ let cid= data.cid;
                     <Box
                       sx={{
                         alignItems: 'center',
-                        display: 'flex'
+                        display: 'flex',
+                        cursor: 'pointer'
                       }}
                     >
                       <Avatar
@@ -222,7 +259,7 @@ let cid= data.cid;
                         sx={{ mr: 2 }}
                         
                       >
-                        {getInitials(customer.cName)}
+                        {"A"}
                       </Avatar>
                       <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}`}>
                       <Typography
@@ -245,7 +282,10 @@ let cid= data.cid;
                   </TableCell>
                 
                   <TableCell>
-                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+                  {sessionStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+  )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -264,6 +304,7 @@ let cid= data.cid;
         rowsPerPageOptions={[5, 10, 25]}
       />
     </Card>
+    </>
   );
 };
 

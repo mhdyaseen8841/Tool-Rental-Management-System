@@ -1,7 +1,7 @@
 import axios from "axios";
 import Router from 'next/router';
 
-const ServiceURL = 'https://2365-111-92-74-77.ngrok-free.app/tools/src/API/'
+const ServiceURL = 'https://aonerentals.in/tools/src/API/'
 
 
 const requestPost = async (data)=>{
