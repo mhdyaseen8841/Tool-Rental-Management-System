@@ -47,7 +47,7 @@ export default function GetHistoryDialog(details) {
         rId: details.data.rId,
         rate: values.Amount,
       };
-      console.log(data);
+  
       details.submit(data);
     },
   });
@@ -78,17 +78,13 @@ export default function GetHistoryDialog(details) {
         })
       }else{
         if  (res.errorcode == 0) {
-          console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-          console.log("No internet connection found. App is running in offline mode.");
+         
         } else {
-          console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
           if (res.result[0] == null) {
-            console.log("no data");
             setData([{}]);
           } else {
             setData(res.result);
           }
-          console.log(res.result);
         }
 
       }

@@ -44,18 +44,12 @@ const GetHistoryModal = (details) => {
       }else{
 
         if (res.errorcode == 0) {
-          console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-          console.log(error);
-          console.log("No internet connection found. App is running in offline mode.");
-        } else {
-          console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+         } else {
           if (res.result[0] == null) {
-            console.log("no data");
             setData([{}]);
           } else {
             setData(res.result);
           }
-          console.log(res.result);
         }
       }
     });

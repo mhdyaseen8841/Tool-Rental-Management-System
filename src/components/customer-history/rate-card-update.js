@@ -42,7 +42,7 @@ const [update, setUpdate] = useState(details.updated);
             rId:details.data.rId,
             rate:values.Amount
         }
-        console.log(data)
+       
       details.submit(data)
      
 

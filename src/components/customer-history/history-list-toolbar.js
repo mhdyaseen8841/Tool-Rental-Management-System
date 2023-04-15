@@ -56,7 +56,6 @@ export const HistoryListToolbar = (props) => {
   };
 
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
-    console.log("addddddddddddddddddddddddddd")
     setOpen(true);
 
     const add = (items, note, status) => {
@@ -72,8 +71,7 @@ export const HistoryListToolbar = (props) => {
       };
 
       requestPost(req).then((res) => {
-        console.log(req)
-        console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+       
 
         if (res.errorCode === 3) {
           Router
@@ -88,8 +86,7 @@ export const HistoryListToolbar = (props) => {
 
           if (res.errorcode == 0) {
             setDialog();
-            console.log(error);
-            console.log("No internet connection found. App is running in offline mode.");
+           
           } else {
             props.getdata(props.CtableId, props.ApiData);
             setDialog();
@@ -111,7 +108,6 @@ export const HistoryListToolbar = (props) => {
   };
 
   const handlePayment = () => {
-    console.log('Cid checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
     setOpen(true);
 
@@ -137,11 +133,9 @@ export const HistoryListToolbar = (props) => {
         } else {
           if (res.errorcode == 0) {
             setDialog();
-            console.log(error);
-            console.log("Amount not Added");
+           
           } else {
-            console.log('Amount Addedd')
-            console.log(props.CtableId);
+           
 
             props.getdata(props.CtableId, props.ApiData);
 
@@ -192,11 +186,7 @@ export const HistoryListToolbar = (props) => {
       } else {
 
         if (res.errorcode == 0) {
-          //erroooooorrr
-
-          //
-          console.log(error);
-          console.log("No internet connection found. App is running in offline mode.");
+         
         } else {
           props.getdata(props.CtableId, props.ApiData);
 
@@ -236,8 +226,7 @@ export const HistoryListToolbar = (props) => {
 
           if (res.errorcode == 0) {
             setDialog();
-            console.log(error);
-            console.log("No internet connection found. App is running in offline mode.");
+        
           } else {
             props.getdata(props.CtableId, props.ApiData);
 

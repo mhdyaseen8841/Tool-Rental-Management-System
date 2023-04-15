@@ -56,7 +56,7 @@ const [minDate, setminDate] = useState("");
 
     setOpen(false);
   }
-  console.log(selectedDate)
+  
  }
 
 

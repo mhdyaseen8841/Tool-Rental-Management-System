@@ -36,7 +36,6 @@ const Page = () => {
     if(res.result[0] ==null){
       setItems([])
     }else{
-      console.log(res);
       setItems(res.result)
     }
 

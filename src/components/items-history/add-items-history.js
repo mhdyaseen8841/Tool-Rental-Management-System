@@ -37,7 +37,6 @@ export default function FullScreenDialog(details) {
       // on reader load somthing...
       reader.onload = () => {
         // Make a fileInfo Object
-        // console.log('Called', reader);
         let baseURL = '';
         baseURL = reader.result;
         
@@ -69,7 +68,7 @@ export default function FullScreenDialog(details) {
  
               
              }).catch((err) => {
-             console.log("error", err);
+          
            })
        },
      });

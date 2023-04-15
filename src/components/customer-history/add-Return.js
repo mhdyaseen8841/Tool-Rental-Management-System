@@ -52,7 +52,6 @@ export default function ReturnDialog(details) {
         "cId": details.cId
       }
     }
-    console.log(requestdata2);
     requestPost(requestdata2).then((res) => {
 
 
@@ -69,14 +68,13 @@ export default function ReturnDialog(details) {
           setItems([])
         } else {
           setItems(res.result);
-          console.log("huuuuuuuuuuuuuuuuuuuu");
-          console.log(items);
+         
         }
       }
 
 
     }).catch(err => {
-      console.log(err);
+     
     })
   }, [])
 
@@ -100,7 +98,7 @@ export default function ReturnDialog(details) {
         notes = values.Notes;
       }
       let itemsArr = [];
-      console.log(items.length);
+      
       if (items.length === 0) {
         flag=true;
         setqtErr(true);
@@ -108,27 +106,19 @@ export default function ReturnDialog(details) {
       }
 
       for (let ind = 0; ind < items.length; ind++) {
-        console.log("looooooooop" + ind)
+        
         const element = document.getElementById(`return${ind}`);
         const checkelement = document.getElementById(`tick${ind}`);
-        console.log(element.value);
-        console.log(checkelement.checked);
-
-        console.log("pending" + items[ind].pending)
-        console.log("element.value" + element.value)
-
+       
         var numberAsInt = parseInt(element.value, 10);
         if (checkelement.checked) {
           if (items[ind].pending < numberAsInt) {
 
-            console.log("items[ind].pending>element.value error adich ");
             setqtErr(true);
-            setQtyError("Quantity should be less than or equal to pending quantity");
             flag = true;
             break;
           }
           else if (element.value == 0) {
-            console.log("element.value===0 error adich ");
             setqtErr(true);
             setQtyError("Quantity should be greater than 0");
             flag = true;
@@ -141,7 +131,6 @@ export default function ReturnDialog(details) {
           }
         }
       }
-      console.log(itemsArr);
       // details.submit(notes,itemsArr);
       if (flag == false) {
         details.submit(notes, itemsArr);

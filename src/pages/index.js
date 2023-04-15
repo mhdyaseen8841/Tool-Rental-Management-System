@@ -46,11 +46,8 @@ function getDashboardData(){
         query: { redirect: '1' },
       })
   }else{
-    console.log('elseeeeeeeiiiiiiiiiiiiiiiiiiiiiiii')
 
   
-      console.log("heehehehehee")
-      console.log(res.result);
       // setData(res.result)
       setCustomers(res.result.total.tCustomer)
       setItems(res.result.total.tItem)
@@ -71,7 +68,6 @@ function getDashboardData(){
 }
 
 useEffect(() => {
-  console.log("daaaaaaaaaaaaaaaaaaashboard");
   getDashboardData()
 }, [])
 

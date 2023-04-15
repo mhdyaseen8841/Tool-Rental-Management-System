@@ -29,7 +29,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
   const add = (data,file) => {
-   console.log(data);
+  
     
    let req={
       "type" : "SP_CALL",
@@ -60,8 +60,7 @@ requestPost(req).then((res)=>{
 
   if(res.errorcode ==0){
     setDialog();
-    console.log(error);
-            console.log('No internet connection found. App is running in offline mode.');
+   
   }else{
     props.getdata()
     setDialog();

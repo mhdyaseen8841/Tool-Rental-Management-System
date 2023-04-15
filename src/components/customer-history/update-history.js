@@ -75,8 +75,8 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      console.log(values.qty);
-    let  req={
+
+      let  req={
         hId:details.data.hId,
         date:value,
         qty:values.qty

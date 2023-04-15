@@ -40,11 +40,8 @@ const handleClose = ()=>{
  }
 
  const changeTable=(btnName, Btnstatus=1)=>{
-console.log(btnName, Btnstatus);
 if(Btnstatus===2){
-  console.log("item-name-result page result");
-  console.log("tabbbllleeeeeee"+btnName);
-  console.log("tabbbllleeeeeee"+Btnstatus);
+  
   
  let  data=   {
     "type" : "SP_CALL",
@@ -98,7 +95,6 @@ getCustomer(4,data)
 
 
 }else{
-  console.log("item-result page result")
  let  data =  {
     "type" : "SP_CALL",
  "requestId" : 1500005,
@@ -116,8 +112,6 @@ getCustomer(3,data)
  
  function getCustomer(tableid,datas){
 
-console.log("ippaltha dataaaaaa")
-console.log(datas)
 
     requestPost(datas).then((res)=>{
 
@@ -131,7 +125,6 @@ console.log(datas)
         })
     }else{
 
-      console.log("tabbbllleeeeeee"+tableid);
       if(tableid==3){
         if(res.result){
           if(res.result.item[0] ==null){
@@ -148,34 +141,24 @@ console.log(datas)
             }
       }else if(tableid==2){
       
-          console.log(res.result);
         if(res.result){
-          console.log("result kitidooooooo");
-          console.log(res.result);
+         
           if((res.result[0][0] ==null) && (res.result[1][0] == null)){
-            console.log("hloooooooooooo hiiiiiiiiiii hoiii")
             setCustomers([])
             setPayments([])
           }else{
             if(res.result[0][0] ==null){
-              console.log("first nuluuuuuuuuuuuuuuuuuuuuuuu");
               setCustomers([])
               setPayments(res.result[1])
             }else if(res.result[1][0] == null){
-              console.log("second nulllllllllllllllllll");
-              console.log(res.result[1])
+             
               setCustomers(res.result[0])
               setPayments([])
             }else{
-              console.log("both not-----------------------------")
               setCustomers(res.result[0])
               setPayments(res.result[1])
             }
-            console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
             
-            console.log("cussssssssssssssssssssssssss");
-            console.log(customers);
-            console.log(payment);
           }
           setTable(tableid)
         }else{
@@ -195,12 +178,9 @@ console.log(datas)
       
             if(res.result){
             if(res.result[0] ==null){
-              console.log("hloooooooooooo hiiiiiiiiiii hoiii")
               setCustomers([])
             }else{
-              console.log("kitiiiiiiiiiiiiiiiiiiiii kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
               setCustomers(res.result)
-              console.log(res.result);
             }
             setTable(tableid)
           }else{

@@ -25,9 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 export default function FullScreenDialog(details) {
  
  
-  console.log(" detailsssssssssssssssssssssssssssssssssssss")
-
-    console.log(details.amount)
+  
 
 
   const validSchema = Yup.object().shape({

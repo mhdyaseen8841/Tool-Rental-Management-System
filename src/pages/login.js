@@ -39,7 +39,6 @@ const Login = () => {
     localStorage.removeItem("authtoken");
     localStorage.removeItem("usertype");
     localStorage.removeItem("username");
-      console.log("heloooooooooooooooooooooooooooooooooooo");
       setError(true)
       
         }
@@ -79,7 +78,6 @@ let data={
 
 
       axios.post(ServiceURL,data).then((res)=>{
-       console.log(res)
        if(res.data.errorCode===1){
         localStorage.setItem('usertype',res.data.data.usertype)
         localStorage.setItem('uId',res.data.data.uId)
@@ -89,7 +87,6 @@ let data={
         Router
         .push('/')
        }else{
-        console.log("heloooooooooooooooooooooooooooooooooooo");
         //erroorrrr
         formik.setSubmitting(false)
         setOpen(true)
@@ -98,7 +95,6 @@ let data={
 
       }).catch((err)=>{
         formik.setSubmitting(false)
-        console.log(err);
       })
      
       

@@ -68,8 +68,7 @@ requestPost(req).then((res)=>{
 
   if(res.errorcode ==0){
     
-    console.log(error);
-            console.log('No internet connection found. App is running in offline mode.');
+    
   }else{
     getdata()
     
@@ -99,17 +98,15 @@ setDialog();
 
 const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
 
-  console.log(data);
+ 
   setOpen(true);
-  console.log('tems idddddddddddddddddddddddddddddd')
-  console.log(data.itemId)
+  
   let itemId= data.itemId;
   
 
   
   const add = (data) => {
-    console.log('final dataaaaaaaaaaaaaaaaaaaaaaaa')
-console.log(data)
+    
 
     let req={
       "type" : "SP_CALL",
@@ -135,9 +132,7 @@ requestPost(req).then((res)=>{
 
 
   if(res.errorcode ==0){
-    
-    console.log(error);
-            console.log('No internet connection found. App is running in offline mode.');
+   
   }else{
     getdata()
     

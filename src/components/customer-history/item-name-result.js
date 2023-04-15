@@ -60,8 +60,7 @@ const updateDate = (rId,date,cdate) => {
     if(res.errorcode ==0){
       let error="error happend"
       alert(error)
-      console.log(error);
-              console.log('No internet connection found. App is running in offline mode.');
+     
     }else{
       getdata()
       
@@ -112,9 +111,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
       if(res.errorcode ==0){
         let error="error happend"
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
-      }else{
+          }else{
         getdata()
         
       }

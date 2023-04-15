@@ -97,8 +97,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
         })
     }else if(res.errorcode ==0){
         
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+     
       }else{
         getdata()
         
@@ -109,8 +108,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
   }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log('Editttttttttttt')
-  console.log(data);
+ 
   setOpen(true);
 let cid= data.cid;
 
@@ -140,8 +138,7 @@ let cid= data.cid;
         })
         
     }else if(res.errorcode ==0){
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+       
       }else{
         getdata()
         

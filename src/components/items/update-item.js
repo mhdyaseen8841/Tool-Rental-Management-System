@@ -20,8 +20,7 @@ import Compressor from 'compressorjs';
 
 
 export default function FullScreenDialogUpdate(details) {
-    console.log('heehehe');
-  console.log(details.data);
+    
   const [update, setUpdate] = useState(details.updated);
 
 
@@ -43,8 +42,7 @@ export default function FullScreenDialogUpdate(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values) => {
-      console.log("filesss");
-      console.log(values)
+    
       details.submit(values)
     }
   });

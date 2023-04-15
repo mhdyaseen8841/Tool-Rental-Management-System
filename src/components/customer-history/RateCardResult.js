@@ -41,9 +41,9 @@ export const RateCardResult = ({ApiData,CtableId, customers,getdata, ...rest  })
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
  
-    console.log("called called called ..............................")
+   
   setOpen(true);
-console.log(open);
+
 
   const add = (datas) => {
    
@@ -68,9 +68,7 @@ console.log(open);
 
       if(res.errorcode ==0){
         let error="error happend"
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
-      }else{
+       }else{
         getdata(CtableId,ApiData)
         
       }

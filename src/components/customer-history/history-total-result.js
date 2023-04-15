@@ -62,8 +62,7 @@ export const HistoryTotalResult = ({
 
 
         if (res.errorcode == 0) {
-          console.log(error);
-          console.log("No internet connection found. App is running in offline mode.");
+         
         } else {
           // getdata()
 
@@ -74,11 +73,10 @@ export const HistoryTotalResult = ({
   };
 
   const handleAdd = (pId, amount) => {
-    console.log("calllleddddd");
+   
     setOpen(true);
     const add = (amount) => {
-      console.log("amt");
-      console.log(amount);
+    
       let req = {
         type: "SP_CALL",
         requestId: 1700002,
@@ -102,10 +100,9 @@ export const HistoryTotalResult = ({
 
           if (res.errorcode == 0) {
             let error = "error happend";
-            console.log(error);
-            console.log("No internet connection found. App is running in offline mode.");
+          
           } else {
-            console.log("Amount Edited succesfully");
+           
             setDialog();
             getdata(CtableId, ApiData);
           }
@@ -125,10 +122,7 @@ export const HistoryTotalResult = ({
   };
 
   useEffect(() => {
-    console.log(payments);
-    console.log(
-      "----------------------------------------------------------------------------------------"
-    );
+   
     let totalAmount = 0;
     let totalPaidAmount = 0;
 

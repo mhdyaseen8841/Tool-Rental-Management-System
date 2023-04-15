@@ -47,7 +47,7 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
     const ref = useRef(null)
     const [isOpen, setIsOpen] = useState(false);
     const spcall = (status)=>{
-      console.log(prop.uId);
+     
       const requestdata =  {
         "type" : "SP_CALL",
         "requestId" : 1000002,
@@ -70,7 +70,6 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
           getdata()
       }
           }).catch(() => {
-              console.log('No internet connection found. App is running in offline mode.');
         })
      }
     return(
@@ -113,7 +112,6 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
 
 
   const deleteUser = (uId)=>{
-    console.log(uId + 'deleteeeeeeeeeeeeeeeeeeeeee');
     let del = {
       "type" : "SP_CALL",
        "requestId" : 1000003,
@@ -123,7 +121,6 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
     }
     
     requestPost(del).then((res)=>{
-      console.log('kouytttttttttttttttttttttt')
 
       if(res.errorCode===3){
         Router
@@ -136,8 +133,7 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
     }else{
       if(res.errorcode ==0){
         
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+      
       }else{
         getdata()
         

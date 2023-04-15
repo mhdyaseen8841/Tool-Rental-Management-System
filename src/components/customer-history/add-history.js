@@ -52,8 +52,7 @@ export default function FullScreenDialog(details) {
 // const [itemsArr,setItemsArr]=useState([{}])
   useEffect(() => {
 
-    console.log("heeeeeeeeeeeeeeeeeee")
-    console.log(details.open);
+   
         const requestdata2 =   {
           "type" : "SP_CALL",
        "requestId" : 1200005,
@@ -75,7 +74,7 @@ export default function FullScreenDialog(details) {
           setItems([{}])
         }else{
           setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
-          console.log(items);
+         
         }
       }
    
@@ -100,8 +99,7 @@ export default function FullScreenDialog(details) {
       let notes = values.Notes?values.Notes:"";
      
       let itemsArr = []
-     console.log("submitttttttttttttttttttttttttttttttttt");
-    console.log(selectedItems);
+   
     let shouldBreak = false;
     setQtyError('');
 for (let ind = 0; ind< noOfRows; ind++) {
@@ -114,10 +112,9 @@ for (let ind = 0; ind< noOfRows; ind++) {
        
 if(selectedItems[ind]){
   let aqty=  items.find(obj => obj.itemId === selectedItems[ind]);
-  console.log("qtyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
   
   const element = document.getElementById(`qty${ind}`);
-  console.log(element.value);
+
   if(element.value){
     if((aqty.astock < element.value)  ){
       
@@ -126,8 +123,7 @@ if(selectedItems[ind]){
         setqtErr(true)
         shouldBreak = true;
         return;
-      
-      console.log("out of stock");
+ 
     }else if(parseInt(element.value) <= 0){
 
         setQtyError('enter '+ aqty.label+' quantity greater than zero')
@@ -167,16 +163,13 @@ if(selectedItems[ind]){
       }
     
     }
-    console.log("items array:::ffffffffff")
-console.log(itemsArr);
+   
 
 if(qterr===false){
 if(itemsArr.length === 0){
-console.log("array null");
 setQtyError('Add atleast one item')
 setqtErr(true)
 }else{
-  console.log("array not null");
   setQtyError('')
   setqtErr(false)
   details.submit(itemsArr,notes,1)

@@ -30,7 +30,7 @@ import {
     setOpen(true);
   
     const add = (data) => {
-     console.log(data);
+     
       
      let req={
   "type" : "SP_CALL",
@@ -56,8 +56,7 @@ import {
 
     if(res.errorcode ==0){
       setDialog();
-      console.log(error);
-              console.log('No internet connection found. App is running in offline mode.');
+     
     }else{
       props.getdata()
       setDialog();

@@ -31,7 +31,6 @@ export default function FullScreenDialog(details) {
 
   const getBase64 = (file) => {
 
-    console.log(file);
     return new Promise((resolve) => {
       // Make new FileReader
       const reader = new FileReader();
@@ -40,10 +39,8 @@ export default function FullScreenDialog(details) {
       // on reader load somthing...
       reader.onload = () => {
         // Make a fileInfo Object
-        // console.log('Called', reader);
         let baseURL = '';
         baseURL = reader.result;
-        console.log(baseURL);
         setDoc(baseURL)
         resolve(baseURL);
       };
@@ -54,7 +51,7 @@ export default function FullScreenDialog(details) {
 
   const handleFileChange = event => {
     setFiles(event)
-    console.log(event[0]);
+    
      const fileObj = event && event[0];
      if (!fileObj) {
          return;
@@ -72,7 +69,6 @@ export default function FullScreenDialog(details) {
  
               
              }).catch((err) => {
-             console.log("error", err);
            })
        },
      });
@@ -96,8 +92,7 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      console.log("filesss");
-      console.log(values)
+      
       details.submit(values,doc)
     }
   });

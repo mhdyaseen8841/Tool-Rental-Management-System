@@ -46,8 +46,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
     requestPost(del).then((res)=>{
       if(res.errorcode ==0){
         setDialog();
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+      
       }else{
         props.getdata()
         setDialog();
@@ -55,8 +54,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
       if(res.errorcode ==0){
         
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+      
       }else{
         getdata()
         
@@ -69,8 +67,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
   }
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log('Editttttttttttt')
-  console.log(data);
+  
   setOpen(true);
 let cid= data.cid;
 
@@ -93,8 +90,7 @@ let cid= data.cid;
     requestPost(req).then((res)=>{
       if(res.errorcode ==0){
         
-        console.log(error);
-                console.log('No internet connection found. App is running in offline mode.');
+       
       }else{
         getdata()
         

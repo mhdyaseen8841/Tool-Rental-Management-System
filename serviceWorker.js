@@ -11,11 +11,8 @@ const requestPost = async (data)=>{
               Authorization: localStorage.getItem("authtoken"),
             },
           };
-        // console.log(process.env.REACT_APP_URL)
         const response = await axios.post(ServiceURL,data,config)
-        console.log(response);
         
-        // alert("Error Occured From Server")
        
             return response.data
         

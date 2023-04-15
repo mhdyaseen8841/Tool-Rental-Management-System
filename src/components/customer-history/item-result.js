@@ -48,31 +48,14 @@ const [item,setItem]=useState([{}])
 
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  console.log(data);
+ 
   setOpen(true);
 
 
   const add = (data) => {
    
 
-  //   let req={
-  //     "type" : "SP_CALL",
-  //     "requestId" : 1400002,
-  //     request: data
-  //   }
-    
-  //   requestPost(req).then((res)=>{
-  //     if(res.errorcode ==0){
-  //       let error="error happend"
-  //       console.log(error);
-  //               console.log('No internet connection found. App is running in offline mode.');
-  //     }else{
-  //       getdata()
-        
-  //     }
-
-  //   setDialog(); 
-  // });
+ 
 
 
   }
@@ -145,10 +128,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   
     setData(customers.data)
     setItem(customers.item)
-        console.log("customers:");
        
-    console.log("customerdata:");
-    console.log(customers.data)
   
     }, []);
   return (

@@ -38,8 +38,7 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      console.log('oooooooooooooooouuuuuuuuuuuuuuuuuuuuuuuuuu')
-     console.log(values)
+     
       details.submit(values)
      
 
