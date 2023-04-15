@@ -40,12 +40,12 @@ export const HistoryListToolbar = (props) => {
   const [cName, setcName] = useState(props.cName);
   const [ErrOpen, setErrOpen] = useState(false);
   const [error, setError] = useState("");
-  const [Copen , setCopen] = useState(false);
-const [confirmOpen, setConfirmOpen] = useState(false);
+  const [Copen, setCopen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-const handleConfirmClose = () => {
-  setConfirmOpen(false);
-};
+  const handleConfirmClose = () => {
+    setConfirmOpen(false);
+  };
 
   const handleErrClose = () => {
     setSOpen(false);
@@ -75,26 +75,26 @@ const handleConfirmClose = () => {
         console.log(req)
         console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
 
-        if(res.errorCode===3){
+        if (res.errorCode === 3) {
           Router
-          .push(
-          
-          {
-            pathname: '/login',
-            query: { redirect: '1' },
-          })
-          
-      }else{
-          
-        if (res.errorcode == 0) {
-          setDialog();
-          console.log(error);
-          console.log("No internet connection found. App is running in offline mode.");
+            .push(
+
+              {
+                pathname: '/login',
+                query: { redirect: '1' },
+              })
+
         } else {
-          props.getdata(props.CtableId,props.ApiData);
-                    setDialog();
+
+          if (res.errorcode == 0) {
+            setDialog();
+            console.log(error);
+            console.log("No internet connection found. App is running in offline mode.");
+          } else {
+            props.getdata(props.CtableId, props.ApiData);
+            setDialog();
+          }
         }
-      }
       });
     };
 
@@ -110,100 +110,100 @@ const handleConfirmClose = () => {
     ));
   };
 
- const handlePayment = () => {
-  console.log('Cid checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+  const handlePayment = () => {
+    console.log('Cid checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
-  setOpen(true);
+    setOpen(true);
 
-  const add = (amount) => {
-    let req = {
-      "type" : "SP_CALL",
-      "requestId" : 1700001,
-      request: {
-        "cId" : cId,
-        "amount" : amount,
-     }
-    };
-    requestPost(req).then((res) => {
-       if(res.errorCode===3){
-        Router
-        .push(
-        
-        {
-          pathname: '/login',
-          query: { redirect: '1' },
-        })
-        
-    }else{
-      if (res.errorcode == 0) {
-        setDialog();
-        console.log(error);
-        console.log("Amount not Added");
-      } else {
-        console.log('Amount Addedd')
-        console.log(props.CtableId);
-   
-        props.getdata(props.CtableId,props.ApiData);
+    const add = (amount) => {
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1700001,
+        request: {
+          "cId": cId,
+          "amount": amount,
+        }
+      };
+      requestPost(req).then((res) => {
+        if (res.errorCode === 3) {
+          Router
+            .push(
 
-        setDialog();
-        
-      }  
+              {
+                pathname: '/login',
+                query: { redirect: '1' },
+              })
+
+        } else {
+          if (res.errorcode == 0) {
+            setDialog();
+            console.log(error);
+            console.log("Amount not Added");
+          } else {
+            console.log('Amount Addedd')
+            console.log(props.CtableId);
+
+            props.getdata(props.CtableId, props.ApiData);
+
+            setDialog();
+
+          }
+        }
+
+      });
     }
-    
-    });
-  }
 
-  setDialog(() => (
-    <AddPaymetDialog
-      onClose={handleClose}
-      cId= {cId}
-      open={open}
-      submit={add}
+    setDialog(() => (
+      <AddPaymetDialog
+        onClose={handleClose}
+        cId={cId}
+        open={open}
+        submit={add}
 
-    />
-  ));
+      />
+    ));
 
 
 
-    
+
   }
 
   const handleRent = () => {
     setConfirmOpen(false)
     let req = {
-        type : "SP_CALL",
-        requestId : "returnCalculate",
-        request: {
- 	    cId : cId
-       }
-  }
+      type: "SP_CALL",
+      requestId: "returnCalculate",
+      request: {
+        cId: cId
+      }
+    }
 
 
     requestPost(req).then((res) => {
- if(res.errorCode===3){
-  Router
-  .push(
-  
-  {
-    pathname: '/login',
-    query: { redirect: '1' },
-  })
-        
-    }else{
-        
-      if (res.errorcode == 0) {
-        //erroooooorrr
+      if (res.errorCode === 3) {
+        Router
+          .push(
 
-        //
-        console.log(error);
-        console.log("No internet connection found. App is running in offline mode.");
+            {
+              pathname: '/login',
+              query: { redirect: '1' },
+            })
+
       } else {
-        props.getdata(props.CtableId,props.ApiData);
 
-        setCopen(true)
-        
+        if (res.errorcode == 0) {
+          //erroooooorrr
+
+          //
+          console.log(error);
+          console.log("No internet connection found. App is running in offline mode.");
+        } else {
+          props.getdata(props.CtableId, props.ApiData);
+
+          setCopen(true)
+
+        }
       }
-    }
     });
   }
 
@@ -214,37 +214,37 @@ const handleConfirmClose = () => {
   const handleReturn = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
 
-    const add = (note,items) => {
-      const req=  {
-        "type" : "SP_CALL",
-     "requestId" : 1400001,
-         "request": {
-   "cId":cId,
- "status":0,
-   "note" :note,
- "items":items
+    const add = (note, items) => {
+      const req = {
+        "type": "SP_CALL",
+        "requestId": 1400001,
+        "request": {
+          "cId": cId,
+          "status": 0,
+          "note": note,
+          "items": items
         }
-  }
+      }
 
-  requestPost(req).then((res) => {
+      requestPost(req).then((res) => {
 
-     if(res.errorCode===3){
-      Router
-      .push('/login')
-      
-  }else{
-      
-    if (res.errorcode == 0) {
-      setDialog();
-      console.log(error);
-      console.log("No internet connection found. App is running in offline mode.");
-    } else {
-  props.getdata(props.CtableId,props.ApiData);
-  
-      setDialog();
-    }
-  }
-  });
+        if (res.errorCode === 3) {
+          Router
+            .push('/login')
+
+        } else {
+
+          if (res.errorcode == 0) {
+            setDialog();
+            console.log(error);
+            console.log("No internet connection found. App is running in offline mode.");
+          } else {
+            props.getdata(props.CtableId, props.ApiData);
+
+            setDialog();
+          }
+        }
+      });
 
     };
 
@@ -255,7 +255,7 @@ const handleConfirmClose = () => {
         submit={add}
         updated={upd}
         button={button}
-        cId= {cId}
+        cId={cId}
         data={data}
       />
     ));
@@ -264,19 +264,19 @@ const handleConfirmClose = () => {
   const [itemButton, setButtons] = useState([{}]);
 
 
-const confirmCalculate = () => {
-  
-  setConfirmOpen(true)
+  const confirmCalculate = () => {
+
+    setConfirmOpen(true)
 
 
-}
+  }
 
 
-const ConfirmDialog = (props) => {
+  const ConfirmDialog = (props) => {
 
 
-  return (
-    <Dialog
+    return (
+      <Dialog
         open={props.open}
         onClose={props.close}
         aria-labelledby="alert-dialog-title"
@@ -287,7 +287,7 @@ const ConfirmDialog = (props) => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-          Do you want to confirm the calculate rent for the customer
+            Do you want to confirm the calculate rent for the customer
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -297,7 +297,8 @@ const ConfirmDialog = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-  )}
+    )
+  }
 
 
   function getItems() {
@@ -309,29 +310,29 @@ const ConfirmDialog = (props) => {
 
     //hello hi find if any problem in this
     requestPost(data).then((res) => {
-      
-      if(res.errorCode===3){
+
+      if (res.errorCode === 3) {
         Router
-        .push(
-        
-        {
-          pathname: '/login',
-          query: { redirect: '1' },
-        })
-    }else{
-      if (res.result) {
-        if (res.result[0] == null) {
-          setButtons([]);
-        } else {
-          setButtons(res.result);
-        }
+          .push(
+
+            {
+              pathname: '/login',
+              query: { redirect: '1' },
+            })
       } else {
-        setError("" + res);
-        setErrOpen(true);
-        setButtons([]);
+        if (res.result) {
+          if (res.result[0] == null) {
+            setButtons([]);
+          } else {
+            setButtons(res.result);
+          }
+        } else {
+          setError("" + res);
+          setErrOpen(true);
+          setButtons([]);
+        }
       }
-    }
-      
+
     });
   }
 
@@ -342,120 +343,120 @@ const ConfirmDialog = (props) => {
   return (
     <>
 
-    
-    <Box {...props}>
-      <Snackbar open={Sopen} autoHideDuration={6000} onClose={handleErrClose}>
-        <Alert onClose={handleErrClose} severity="error" sx={{ width: "100%" }}>
-          {error}
-        </Alert>
-      </Snackbar>
 
-      <Snackbar open={Copen} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Payment Caluculated Successfully
-        </Alert>
-      </Snackbar>
+      <Box {...props}>
+        <Snackbar open={Sopen} autoHideDuration={6000} onClose={handleErrClose}>
+          <Alert onClose={handleErrClose} severity="error" sx={{ width: "100%" }}>
+            {error}
+          </Alert>
+        </Snackbar>
 
-
+        <Snackbar open={Copen} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+            Payment Caluculated Successfully
+          </Alert>
+        </Snackbar>
 
 
-      <Box
-        sx={{
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          m: -1,
-        }}
-      >
-        {addDialog}
-        
+
+
+        <Box
+          sx={{
+            alignItems: "center",
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            m: -1,
+          }}
+        >
+          {addDialog}
+
           <ConfirmDialog open={confirmOpen} close={handleConfirmClose} />
-        
-        <Typography sx={{ m: 1 }} variant="h4">
-          {cName}
-        </Typography>
 
-        {sessionStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : ( <Box sx={{ m: 1 }}>
-    <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
-      Caluculate Rent
-    </Button>
-    <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
-      Add Rent
-    </Button>
-    <Button sx={{ ml: 2, mt: 2 }} color="error" variant="contained" onClick={(e)=>handleReturn(e, true, "RETURN" , {})}>
-      Add Return
-    </Button>
-    <Button sx={{ ml: 2, mt: 2 }} color="primary" variant="contained" onClick={handlePayment}>
-      Add Payment
-    </Button>
-  </Box>)}
-       
+          <Typography sx={{ m: 1 }} variant="h4">
+            {cName}
+          </Typography>
+
+          {sessionStorage.getItem('usertype') === 'owner' ? (
+            null
+          ) : (<Box sx={{ m: 1 }}>
+            <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
+              Calculate Rent
+            </Button>
+            <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
+              Add Rent
+            </Button>
+            <Button sx={{ ml: 2, mt: 2 }} color="error" variant="contained" onClick={(e) => handleReturn(e, true, "RETURN", {})}>
+              Add Return
+            </Button>
+            <Button sx={{ ml: 2, mt: 2 }} color="primary" variant="contained" onClick={handlePayment}>
+              Add Payment
+            </Button>
+          </Box>)}
+
+        </Box>
+
+
+        <Box sx={{ mt: 3 }}>
+          <Card>
+            <CardContent>
+              <Box>
+                <Button
+                  sx={{ ml: 2, mt: 2 }}
+                  color="primary"
+                  variant="contained"
+                  onClick={() => props.setTable("history")}
+                >
+                  HISTORY
+                </Button>
+
+                <Button
+                  sx={{ ml: 2, mt: 2 }}
+                  color="primary"
+                  variant="contained"
+                  onClick={() => props.setTable("items")}
+                >
+                  ITEMS
+                </Button>
+
+                {itemButton && itemButton.map(({ iName, itemId }, index) => {
+                  return (
+                    <Button
+                      sx={{ ml: 2, mt: 2 }}
+                      color="primary"
+                      variant="contained"
+                      onClick={() => props.setTable(itemId, 2)}
+                    >
+                      {iName}
+                    </Button>
+                  );
+                })}
+
+                <Button
+                  sx={{ ml: 2, mt: 2 }}
+                  color="primary"
+                  variant="contained"
+                  onClick={() => props.setTable("total")}
+                >
+                  TOTAL
+                </Button>
+                {sessionStorage.getItem('usertype') === 'owner' ? (
+                  null
+                ) : (<Button
+                  sx={{ ml: 2, mt: 2 }}
+                  color="primary"
+                  variant="contained"
+                  onClick={() => props.setTable("ratecard")}
+                >
+                  RATE CARD
+                </Button>)}
+
+
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
-     
-
-      <Box sx={{ mt: 3 }}>
-        <Card>
-          <CardContent>
-            <Box>
-              <Button
-                sx={{ ml: 2, mt: 2 }}
-                color="primary"
-                variant="contained"
-                onClick={() => props.setTable("history")}
-              >
-                HISTORY
-              </Button>
-
-              <Button
-                sx={{ ml: 2, mt: 2 }}
-                color="primary"
-                variant="contained"
-                onClick={() => props.setTable("items")}
-              >
-                ITEMS
-              </Button>
-
-              {itemButton&&itemButton.map(({ iName, itemId }, index) => {
-                return (
-                  <Button
-                    sx={{ ml: 2, mt: 2 }}
-                    color="primary"
-                    variant="contained"
-                    onClick={() => props.setTable(itemId, 2)}
-                  >
-                    {iName}
-                  </Button>
-                );
-              })}
-
-              <Button
-                sx={{ ml: 2, mt: 2 }}
-                color="primary"
-                variant="contained"
-                onClick={() => props.setTable("total")}
-              >
-                TOTAL
-              </Button>
-              {sessionStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<Button
-    sx={{ ml: 2, mt: 2 }}
-    color="primary"
-    variant="contained"
-    onClick={() => props.setTable("ratecard")}
-  >
-    RATE CARD
-  </Button>)}
-
-              
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-    </Box>
     </>
   );
 };
