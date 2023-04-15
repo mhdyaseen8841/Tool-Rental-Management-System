@@ -234,7 +234,7 @@ let cid= data.cid;
                   Address
                 </TableCell>
 
-                {sessionStorage.getItem('usertype') === 'owner' ? (
+                {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (<TableCell>
     Actions
@@ -266,7 +266,7 @@ let cid= data.cid;
                       >
                       {customer.cName?(getInitials(customer.cName)):""}  
                       </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}`}>
+                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
                       <Typography
                         color="textPrimary"
                         variant="body1"
@@ -287,7 +287,7 @@ let cid= data.cid;
                   </TableCell>
                 
                   <TableCell>
-                  {sessionStorage.getItem('usertype') === 'owner' ? (
+                  {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
   )}

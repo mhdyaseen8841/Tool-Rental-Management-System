@@ -68,7 +68,7 @@ const Page = () => {
     authContext.signIn(user);
 
     // Persist the skip for AuthProvider initialize call
-    globalThis.sessionStorage.setItem('skip-auth', 'true');
+    globalThis.localStorage.setItem('skip-auth', 'true');
 
     // Redirect to home page
     Router

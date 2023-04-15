@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
 import PropTypes from "prop-types";
 import {
   Grid,
@@ -18,57 +19,6 @@ import React from "react";
 import FadeMenu from "../more-items-btn";
 import FullScreenDialog from "./update-payment";
 
-const customers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "555-1234",
-    history: [
-      {
-        id: 1,
-        itemName: "Bike",
-        startDate: "2022-01-01",
-        endDate: "2022-01-08",
-      },
-      {
-        id: 2,
-        itemName: "Scooter",
-        startDate: "2022-02-01",
-        endDate: "2022-02-05",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    phoneNumber: "555-5678",
-    history: [
-      {
-        id: 3,
-        itemName: "Car",
-        startDate: "2022-03-01",
-        endDate: "2022-03-31",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jeev Smith",
-    email: "jeev.smith@example.com",
-    phoneNumber: "555-5678",
-    history: [
-      {
-        id: 3,
-        itemName: "Car",
-        startDate: "2022-03-01",
-        endDate: "2022-03-31",
-      },
-    ],
-  },
-];
-
 // export const HistoryListResults = ({ customers, getdata, ...rest }) => {
 export const HistoryTotalResult = ({
   customers,
@@ -84,6 +34,7 @@ export const HistoryTotalResult = ({
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
   const [advance, setAdvance] = useState(0);
+  const router = useRouter();
 
   const handleClose = () => {
     setDialog();
@@ -99,26 +50,26 @@ export const HistoryTotalResult = ({
     };
     requestPost(req).then((res) => {
 
-      if(res.errorCode===3){
+      if (res.errorCode === 3) {
         Router
-        .push(
-        
-        {
-          pathname: '/login',
-          query: { redirect: '1' },
-        })
-    }else{
+          .push(
 
-
-      if (res.errorcode == 0) {
-        console.log(error);
-        console.log("No internet connection found. App is running in offline mode.");
+            {
+              pathname: '/login',
+              query: { redirect: '1' },
+            })
       } else {
-        // getdata()
 
-        getdata(CtableId, ApiData);
+
+        if (res.errorcode == 0) {
+          console.log(error);
+          console.log("No internet connection found. App is running in offline mode.");
+        } else {
+          // getdata()
+
+          getdata(CtableId, ApiData);
+        }
       }
-    }
     });
   };
 
@@ -139,27 +90,27 @@ export const HistoryTotalResult = ({
 
       requestPost(req).then((res) => {
 
-        if(res.errorCode===3){
+        if (res.errorCode === 3) {
           Router
-          .push(
-          
-          {
-            pathname: '/login',
-            query: { redirect: '1' },
-          })
-      }else{
-  
-        if (res.errorcode == 0) {
-          let error = "error happend";
-          console.log(error);
-          console.log("No internet connection found. App is running in offline mode.");
+            .push(
+
+              {
+                pathname: '/login',
+                query: { redirect: '1' },
+              })
         } else {
-          console.log("Amount Edited succesfully");
-          setDialog();
-          getdata(CtableId, ApiData);
+
+          if (res.errorcode == 0) {
+            let error = "error happend";
+            console.log(error);
+            console.log("No internet connection found. App is running in offline mode.");
+          } else {
+            console.log("Amount Edited succesfully");
+            setDialog();
+            getdata(CtableId, ApiData);
+          }
+
         }
-  
-      }
       });
     };
     setDialog(() => (
@@ -203,142 +154,147 @@ export const HistoryTotalResult = ({
     }
   }, [customers, payments]);
 
+  const whatsAppMsg = `*AONE RENTAL* &#13; Item Total : ${total}, &#13; Total Paid : ${totalPaid}, &#13; Pending Amount : ${totalDue},&#13; Advance : ${advance}`;
+
   return (
     <>
-
-      
-
       {addDialog}
       <Grid container spacing={3}>
-        
-<Grid
-            item
-            xs={12}
-            sx={{ position: "fixed",  
-            left: 500,
-            top: 250}}
-            
-          >
-            <a href="https://wa.me/whatsappphonenumber" target="_blank" rel="noopener noreferrer">
-              <WhatsAppIcon style={{ fontSize: 50, color: "#25D366" }} />
-            </a>
+        <Grid container spacing={2} pl={2} pt={2}>
+          <Grid item xs={12} sm={3} md={3}>
+            <Paper elevation={3} sx={{ bgcolor: "#FF8E2B" }}>
+              <Typography variant="subtitle1" color={"white"} align="center">
+                Item Total
+              </Typography>
+              <Typography variant="h5" color={"white"} align="center">
+                 {total}
+              </Typography>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} sm={3} md={3}>
+            <Paper elevation={3} sx={{ bgcolor: "#4079FC" }}>
+              <Typography variant="subtitle1" color={"white"} align="center">
+                Total Paid
+              </Typography>
+              <Typography variant="h5" color={"white"} align="center">
+                {totalPaid}
+              </Typography>
+            </Paper>
           </Grid>
 
 
-      <Grid container spacing={2} pl={2}>
-            <Grid item xs={3}>
-              <Paper elevation={3} sx={{ bgcolor: "#FF8E2B" }}>
-                <Typography variant="subtitle1" color={"white"} align="center">
-                  Item Total: {total}
-                </Typography>
-              </Paper>
-            </Grid>
-        
-            <Grid item xs={3}>
-              <Paper elevation={3} sx={{ bgcolor: "#4079FC" }}>
-                <Typography variant="subtitle1" color={"white"} align="center">
-                  Total Paid : {totalPaid}
-                </Typography>
-              </Paper>
-            </Grid>
-        
-         
-            <Grid item xs={3}>
-              <Paper elevation={3} sx={{ bgcolor: "#D14343" }}>
-                <Typography variant="subtitle1" color={"white"} align="center">
-                  Pending Amount: {totalDue}
-                </Typography>
-              </Paper>
-            </Grid>
-          
-         
-            <Grid item xs={3}>
-              <Paper elevation={3} sx={{ bgcolor: "#4BB543" }}>
-                <Typography variant="subtitle1" color={"white"} align="center">
-                  Advance: {advance}
-                </Typography>
-              </Paper>
-            </Grid>
-
-            </Grid>
+          <Grid item xs={12} sm={3}  md={3}>
+            <Paper elevation={3} sx={{ bgcolor: "#D14343" }}>
+              <Typography  variant="subtitle1" color={"white"} align="center">
+                Pending Amount 
+              </Typography>
+              <Typography variant="h5" color={"white"} align="center">
+                {totalDue}
+              </Typography>
+            </Paper>
+          </Grid>
 
 
+          <Grid item xs={12} sm={3}  md={3}>
+            <Paper elevation={3} sx={{ bgcolor: "#4BB543" }}>
+              <Typography noWrap variant="subtitle1" color={"white"} align="center">
+                Advance
+              </Typography>
+              <Typography variant="h5" color={"white"} align="center">
+                {advance}
+              </Typography>
+            </Paper>
+          </Grid>
 
-            <Grid container spacing={3} pt={2}>
+        </Grid>
+        <Grid container spacing={3} pt={2}>
 
-        <Grid item xs={12} md={4}>
-          <TableContainer component={Paper}>
-            <Table>
-              {/* First table */}
-              <TableHead>
-                <TableRow>
-                  <TableCell>Item Name</TableCell>
-                  <TableCell>Amount</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {customers && customers[0]
-                  ? customers.map((item, index) => (
+          <Grid item xs={12} md={4}>
+            <TableContainer component={Paper}>
+              <Table>
+                {/* First table */}
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Item Name</TableCell>
+                    <TableCell>Amount</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {customers && customers[0]
+                    ? customers.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell>{item.itemName}</TableCell>
                         <TableCell>{item.amount}</TableCell>
                       </TableRow>
                     ))
-                  : null}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                    : null}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-</Grid>
+          </Grid>
 
-<Grid item xs={12} md={8}>
-          
-      
-          {/* Total box */}
+          <Grid item xs={12} md={8}>
+
+
+            {/* Total box */}
+
+
+            <TableContainer component={Paper} >
+              <Table>
+                {/* Second table */}
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Amount</TableCell>
+                    {localStorage.getItem('usertype') === 'owner' ? (
+                      null
+                    ) : (<TableCell>Action</TableCell>)}
+
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {payments &&
+                    payments.map((customer) => (
+                      <TableRow key={customer.pId}>
+                        <TableCell>{customer.date}</TableCell>
+                        <TableCell>{customer.amount}</TableCell>
+
+                        {localStorage.getItem('usertype') === 'owner' ? (
+                          null
+                        ) : (<TableCell>
+
+                          <FadeMenu
+                            callback={() => {
+                              deleteUser(customer.pId);
+                            }}
+                            editUser={(e) => handleAdd(customer.pId, customer.amount)}
+                          />
+                        </TableCell>)}
+
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+
+          </Grid>
+        </Grid>
         
-
-          <TableContainer component={Paper} >
-            <Table>
-              {/* Second table */}
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Amount</TableCell>
-                  {sessionStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<TableCell>Action</TableCell>)}
-                  
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {payments &&
-                  payments.map((customer) => (
-                    <TableRow key={customer.pId}>
-                      <TableCell>{customer.date}</TableCell>
-                      <TableCell>{customer.amount}</TableCell>
-                     
-                      {sessionStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<TableCell>
-                        
-    <FadeMenu
-      callback={() => {
-        deleteUser(customer.pId);
-      }}
-      editUser={(e) => handleAdd(customer.pId, customer.amount)}
-    />
-  </TableCell>)}
-                      
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-
-        </Grid>
-        </Grid>
       </Grid>
+      <div
+          style={{
+            position: "fixed",
+            right:20,
+            bottom:20
+          }}
+        >
+          <a href={`https://wa.me/91${router.query.phNo}?text=${whatsAppMsg}`} target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon style={{ fontSize: 50, color: "#25D366" }} />
+          </a>
+        </div>
     </>
   );
 };

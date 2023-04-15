@@ -107,7 +107,7 @@ return(
         Items
       </Typography>
      
-      {sessionStorage.getItem('usertype') === 'owner' ? (
+      {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (<Box sx={{ m: 1 }}>
     <Button

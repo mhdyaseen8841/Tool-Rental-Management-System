@@ -30,15 +30,15 @@ const Login = () => {
 
   useEffect(() => {
 
-    if(sessionStorage.getItem("uId")){
+    if(localStorage.getItem("uId")){
       router.push('/')
     }
 
     if(router.query.redirect){
-      sessionStorage.removeItem("uId");
-    sessionStorage.removeItem("authtoken");
-    sessionStorage.removeItem("usertype");
-    sessionStorage.removeItem("username");
+      localStorage.removeItem("uId");
+    localStorage.removeItem("authtoken");
+    localStorage.removeItem("usertype");
+    localStorage.removeItem("username");
       console.log("heloooooooooooooooooooooooooooooooooooo");
       setError(true)
       
@@ -81,10 +81,10 @@ let data={
       axios.post(ServiceURL,data).then((res)=>{
        console.log(res)
        if(res.data.errorCode===1){
-        sessionStorage.setItem('usertype',res.data.data.usertype)
-        sessionStorage.setItem('uId',res.data.data.uId)
-        sessionStorage.setItem('username',res.data.data.username)
-        sessionStorage.setItem('authtoken',res.data.token)
+        localStorage.setItem('usertype',res.data.data.usertype)
+        localStorage.setItem('uId',res.data.data.uId)
+        localStorage.setItem('username',res.data.data.username)
+        localStorage.setItem('authtoken',res.data.token)
         
         Router
         .push('/')
