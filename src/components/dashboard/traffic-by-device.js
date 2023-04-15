@@ -10,14 +10,14 @@ export const TrafficByDevice = (props) => {
   const data = {
     datasets: [
       {
-        data: [63, 15, 22],
+        data: props.data,
         backgroundColor: ['#3F51B5', '#e53935', '#FB8C00'],
         borderWidth: 8,
         borderColor: '#FFFFFF',
         hoverBorderColor: '#FFFFFF'
       }
     ],
-    labels: ['Desktop', 'Tablet', 'Mobile']
+    labels: props.label
   };
 
   const options = {
@@ -42,26 +42,7 @@ export const TrafficByDevice = (props) => {
     }
   };
 
-  const devices = [
-    {
-      title: 'Desktop',
-      value: 63,
-      icon: LaptopMacIcon,
-      color: '#3F51B5'
-    },
-    {
-      title: 'Tablet',
-      value: 15,
-      icon: TabletIcon,
-      color: '#E53935'
-    },
-    {
-      title: 'Mobile',
-      value: 23,
-      icon: PhoneIcon,
-      color: '#FB8C00'
-    }
-  ];
+  
 
   return (
     <Card {...props}>
@@ -79,43 +60,7 @@ export const TrafficByDevice = (props) => {
             options={options}
           />
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            pt: 2
-          }}
-        >
-          {devices.map(({
-            color,
-            icon: Icon,
-            title,
-            value
-          }) => (
-            <Box
-              key={title}
-              sx={{
-                p: 1,
-                textAlign: 'center'
-              }}
-            >
-              <Icon color="action" />
-              <Typography
-                color="textPrimary"
-                variant="body1"
-              >
-                {title}
-              </Typography>
-              <Typography
-                style={{ color }}
-                variant="h4"
-              >
-                {value}
-                %
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+       
       </CardContent>
     </Card>
   );

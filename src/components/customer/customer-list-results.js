@@ -259,7 +259,7 @@ let cid= data.cid;
                         sx={{ mr: 2 }}
                         
                       >
-                        {"A"}
+                      {customer.cName?(getInitials(customer.cName)):""}  
                       </Avatar>
                       <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}`}>
                       <Typography

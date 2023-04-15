@@ -32,7 +32,7 @@ function getCustomer(){
   }else{
 
     if(res.result[0] ==null){
-      setCustomers([{}])
+      setCustomers([])
     }else{
       setCustomers(res.result)
     }

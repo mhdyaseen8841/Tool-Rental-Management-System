@@ -321,14 +321,14 @@ const ConfirmDialog = (props) => {
     }else{
       if (res.result) {
         if (res.result[0] == null) {
-          setButtons([{}]);
+          setButtons([]);
         } else {
           setButtons(res.result);
         }
       } else {
         setError("" + res);
         setErrOpen(true);
-        setButtons([{}]);
+        setButtons([]);
       }
     }
       
@@ -418,7 +418,7 @@ const ConfirmDialog = (props) => {
                 ITEMS
               </Button>
 
-              {itemButton.map(({ iName, itemId }, index) => {
+              {itemButton&&itemButton.map(({ iName, itemId }, index) => {
                 return (
                   <Button
                     sx={{ ml: 2, mt: 2 }}

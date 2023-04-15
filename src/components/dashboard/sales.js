@@ -14,12 +14,12 @@ export const Sales = (props) => {
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
-        data: [18, 5, 19, 27, 29, 19, 20],
+        data: props.data,
         label: 'This year',
         maxBarThickness: 10
       },
     ],
-    labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug', '7 aug']
+    labels: props.label
   };
 
   const options = {
@@ -76,13 +76,13 @@ export const Sales = (props) => {
       <CardHeader
         action={(
           <Button
-            endIcon={<ArrowDropDownIcon fontSize="small" />}
+            
             size="small"
           >
             Last 7 days
           </Button>
         )}
-        title="Latest Sales"
+        title="Weekly Sales"
       />
       <Divider />
       <CardContent>
@@ -106,13 +106,7 @@ export const Sales = (props) => {
           p: 2
         }}
       >
-        <Button
-          color="primary"
-          endIcon={<ArrowRightIcon fontSize="small" />}
-          size="small"
-        >
-          Overview
-        </Button>
+         
       </Box>
     </Card>
   );

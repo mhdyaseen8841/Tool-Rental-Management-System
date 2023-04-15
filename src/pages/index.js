@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { Box, Container, Grid } from '@mui/material';
 import { Budget } from '../components/dashboard/budget';
 import { LatestOrders } from '../components/dashboard/latest-orders';
@@ -11,8 +11,69 @@ import { TotalProfit } from '../components/dashboard/total-profit';
 import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useRouter } from 'next/router';
+import requestPost from '../../serviceWorker'
+import Router from 'next/router';
+
 const Page = () => {
 const router=useRouter()
+
+
+
+const [graphData, setGraphData] = useState([])
+const [graphLabel, setGraphLabel] = useState([])
+const [pieData,setPieData] = useState([])
+const [pieLabel,setPieLabel] = useState([])
+const [customers, setCustomers] = useState('')
+const [items, setItems] = useState('')
+const [amount, setAmount] = useState('')
+const [users, setUsers] = useState('')
+
+function getDashboardData(){
+  let data=  {
+    "type" : "SP_CALL",
+    "requestId" : 2300005,
+    request: {
+   }
+}
+
+  requestPost(data).then((res)=>{
+    if(res.errorCode===3){
+      Router
+      .push(
+      
+      {
+        pathname: '/login',
+        query: { redirect: '1' },
+      })
+  }else{
+    console.log('elseeeeeeeiiiiiiiiiiiiiiiiiiiiiiii')
+
+  
+      console.log("heehehehehee")
+      console.log(res.result);
+      // setData(res.result)
+      setCustomers(res.result.total.tCustomer)
+      setItems(res.result.total.tItem)
+      setUsers(res.result.total.tuser)
+      setAmount(res.result.total.tAmount)
+      setGraphData(res.result.graph.data)
+      setGraphLabel(res.result.graph.label)
+   setPieData(res.result.pie.pieData)
+    setPieLabel(res.result.pie.pieLabel)
+
+  }
+  })
+  // .catch((err)=>{
+  //   setCustomers([{}])
+  //   })
+
+
+}
+
+useEffect(() => {
+  console.log("daaaaaaaaaaaaaaaaaaashboard");
+  getDashboardData()
+}, [])
 
 
   return(
@@ -41,7 +102,8 @@ const router=useRouter()
             xl={3}
             xs={12}
           >
-            <Budget />
+            <TotalCustomers  data={customers}/>
+
           </Grid>
           <Grid
             item
@@ -50,7 +112,7 @@ const router=useRouter()
             sm={6}
             xs={12}
           >
-            <TotalCustomers />
+            <Budget data={items} />
           </Grid>
           <Grid
             item
@@ -59,7 +121,7 @@ const router=useRouter()
             sm={6}
             xs={12}
           >
-            <TasksProgress />
+            <TasksProgress  data={users} />
           </Grid>
           <Grid
             item
@@ -68,7 +130,7 @@ const router=useRouter()
             sm={6}
             xs={12}
           >
-            <TotalProfit sx={{ height: '100%' }} />
+            <TotalProfit sx={{ height: '100%' }}  data={amount} />
           </Grid>
           <Grid
             item
@@ -77,7 +139,7 @@ const router=useRouter()
             xl={9}
             xs={12}
           >
-            <Sales />
+            <Sales data={graphData} label={graphLabel} />
           </Grid>
           <Grid
             item
@@ -86,7 +148,7 @@ const router=useRouter()
             xl={3}
             xs={12}
           >
-            <TrafficByDevice sx={{ height: '100%' }} />
+            <TrafficByDevice data={pieData} label={pieLabel} sx={{ height: '100%' }} />
           </Grid>
           <Grid
             item

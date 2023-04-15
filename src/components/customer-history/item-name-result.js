@@ -20,8 +20,10 @@ import {
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './update-history';
+import DateDialog from './date-dialog';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
 import Router from 'next/router';
 export const ItemNameResult = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -34,7 +36,52 @@ export const ItemNameResult = ({ customers,getdata, ...rest  }) => {
     setDialog();
   };
 
+const updateDate = (rId,date,cdate) => {
 
+  let data={
+    "date":date,
+    "rId":rId,
+    "cDate":cdate
+
+  }
+  const add=(data)=>{
+    setDialog();
+   requestPost(data).then((res)=>{
+    if(res.errorCode===3){
+      Router
+      .push(
+      
+      {
+        pathname: '/login',
+        query: { redirect: '1' },
+      })
+  }else{
+
+    if(res.errorcode ==0){
+      let error="error happend"
+      alert(error)
+      console.log(error);
+              console.log('No internet connection found. App is running in offline mode.');
+    }else{
+      getdata()
+      
+    }
+
+  }})
+
+  }
+  setDialog(() => (
+    
+    <DateDialog
+      onClose={handleClose}
+      open={true}
+       submit={add}
+       updated={false}
+       button={'Update'}
+       data={data}
+    />
+  ));
+    }
   
 
 
@@ -175,42 +222,55 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                    Total(₹)
                   </TableCell>
 
-                  {/* <TableCell>
-                   Actions
-                  </TableCell> */}
+                  <TableCell>
+                    Action
+                  </TableCell>
 
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer,index) => (
-                <TableRow
-                  hover
-                  key={customer.mId}
-                  selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
-                >
-                 
-                 
-                  <TableCell>
-                   {index+1}
-                  </TableCell>
-                  <TableCell>
-                    {customer.rentDate}
-                  </TableCell>
-                  <TableCell>
-                    {customer.days}
-                  </TableCell>
-                  <TableCell>
-                    {customer.returnDate}
-                  </TableCell>
-                  <TableCell>
-                    {customer.price}
-                  </TableCell>
-                  {/* <TableCell>
-                  <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
-                  </TableCell> */}
-                </TableRow>
-              ))}
-            </TableBody>
+  {customers.slice(0, limit).map((customer,index) => (
+    customer.days<30 ? (
+      <TableRow
+        hover
+        key={customer.mId}
+        selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+      >
+        <TableCell>{index+1}</TableCell>
+        <TableCell>{customer.rentDate}</TableCell>
+        <TableCell>{customer.days}</TableCell>
+        <TableCell>{customer.returnDate}</TableCell>
+        <TableCell>{customer.price}</TableCell>
+        <TableCell sx={{cursor:'pointer'}}>
+          <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
+        </TableCell>
+        {/* <TableCell>
+        <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
+        </TableCell> */}
+      </TableRow>
+    ) : (
+      <TableRow
+        hover
+        key={customer.mId}
+        selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+        sx={{backgroundColor:'red'}}
+      >
+        <TableCell>{index+1}</TableCell>
+        <TableCell>{customer.rentDate}</TableCell>
+        <TableCell>{customer.days}</TableCell>
+        <TableCell>{customer.returnDate}</TableCell>
+        <TableCell>{customer.price}</TableCell>
+        <TableCell sx={{cursor:'pointer'}}>
+          <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
+        </TableCell>
+        {/* <TableCell>
+        <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
+        </TableCell> */}
+      </TableRow>
+    )
+  ))}
+</TableBody>
+
           </Table>
           </TableContainer >
         </Box>

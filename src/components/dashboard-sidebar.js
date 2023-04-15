@@ -85,12 +85,12 @@ export const DashboardSidebar = (props) => {
               passHref
             >
               <a>
-                <Logo
+                {/* <Logo
                   sx={{
                     height: 42,
                     width: 42
                   }}
-                />
+                /> */}
               </a>
             </NextLink>
           </Box>

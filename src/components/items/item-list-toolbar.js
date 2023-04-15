@@ -78,7 +78,7 @@ requestPost(req).then((res)=>{
   setDialog(() => (
     <FullScreenDialog
       onClose={handleClose}
-      open={open}
+      open={true}
        submit={add}
        updated={upd}
        button={button}

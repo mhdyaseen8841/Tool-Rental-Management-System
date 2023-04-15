@@ -34,7 +34,7 @@ const Page = () => {
   }else{
 
     if(res.result[0] ==null){
-      setItems([{}])
+      setItems([])
     }else{
       console.log(res);
       setItems(res.result)

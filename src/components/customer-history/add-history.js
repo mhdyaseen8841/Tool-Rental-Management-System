@@ -97,11 +97,8 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      
-      let notes="";
-      if(values.Notes){
-        notes=values.Notes;
-      }
+      let notes = values.Notes?values.Notes:"";
+     
       let itemsArr = []
      console.log("submitttttttttttttttttttttttttttttttttt");
     console.log(selectedItems);
@@ -170,6 +167,7 @@ if(selectedItems[ind]){
       }
     
     }
+    console.log("items array:::ffffffffff")
 console.log(itemsArr);
 
 if(qterr===false){
@@ -178,6 +176,7 @@ console.log("array null");
 setQtyError('Add atleast one item')
 setqtErr(true)
 }else{
+  console.log("array not null");
   setQtyError('')
   setqtErr(false)
   details.submit(itemsArr,notes,1)

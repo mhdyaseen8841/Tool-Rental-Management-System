@@ -65,7 +65,7 @@ export const DashboardNavbar = (props) => {
                   }}       
                         
                       >
-                        {getInitials(sessionStorage.getItem("username"))}
+                        { sessionStorage.getItem("username")?  getInitials(sessionStorage.getItem("username") ) : getInitials("Admin" )}
                       </Avatar>
           
         </Toolbar>
