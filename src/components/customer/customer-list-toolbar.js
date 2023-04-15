@@ -109,7 +109,7 @@ return(
       <Box sx={{ m: 1 }}>
         
 
-      {sessionStorage.getItem('usertype') === 'owner' ? (
+      {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (<Button
     color="primary"

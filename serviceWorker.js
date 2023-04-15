@@ -8,7 +8,7 @@ const requestPost = async (data)=>{
 
         const config = {
             headers: {
-              Authorization: sessionStorage.getItem("authtoken"),
+              Authorization: localStorage.getItem("authtoken"),
             },
           };
         // console.log(process.env.REACT_APP_URL)

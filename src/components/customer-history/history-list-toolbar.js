@@ -377,7 +377,7 @@ export const HistoryListToolbar = (props) => {
             {cName}
           </Typography>
 
-          {sessionStorage.getItem('usertype') === 'owner' ? (
+          {localStorage.getItem('usertype') === 'owner' ? (
             null
           ) : (<Box sx={{ m: 1 }}>
             <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
@@ -440,7 +440,7 @@ export const HistoryListToolbar = (props) => {
                 >
                   TOTAL
                 </Button>
-                {sessionStorage.getItem('usertype') === 'owner' ? (
+                {localStorage.getItem('usertype') === 'owner' ? (
                   null
                 ) : (<Button
                   sx={{ ml: 2, mt: 2 }}

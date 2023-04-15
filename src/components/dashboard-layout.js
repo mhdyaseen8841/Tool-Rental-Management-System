@@ -21,7 +21,7 @@ export const DashboardLayout = (props) => {
 
   const router=useRouter()
   useEffect(() => {
-    if(!sessionStorage.getItem("uId")){
+    if(!localStorage.getItem("uId")){
       router.push('/login')
     }
     }, [])

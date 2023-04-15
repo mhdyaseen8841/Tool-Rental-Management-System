@@ -12,10 +12,10 @@ export const AccountPopover = (props) => {
   const handleSignOut = async () => {
 
 
-    sessionStorage.removeItem("uId");
-    sessionStorage.removeItem("authtoken");
-    sessionStorage.removeItem("usertype");
-    sessionStorage.removeItem("username");
+    localStorage.removeItem("uId");
+    localStorage.removeItem("authtoken");
+    localStorage.removeItem("usertype");
+    localStorage.removeItem("username");
     Router.push('/login')
     
   };
@@ -47,14 +47,14 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-         {sessionStorage.getItem("username")}
+         {localStorage.getItem("username")}
         
         </Typography>
         <Typography
           color="text.secondary"
           variant="body2"
         >
-        Usertype: {sessionStorage.getItem("usertype")}
+        Usertype: {localStorage.getItem("usertype")}
         
         </Typography>
       </Box>

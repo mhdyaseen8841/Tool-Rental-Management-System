@@ -185,7 +185,7 @@ console.log("hehehehehehehehe")
                   Feedback
                 </TableCell>
                 
-                {/* {sessionStorage.getItem('usertype') === 'owner' ? (
+                {/* {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (<TableCell>
     Actions
@@ -221,7 +221,7 @@ console.log("hehehehehehehehe")
                     {customer.feedback}
                   </TableCell>
                  
-                  {/* {sessionStorage.getItem('usertype') === 'owner' ? (
+                  {/* {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : ( <TableCell>
     <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />

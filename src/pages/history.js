@@ -148,11 +148,11 @@ console.log(datas)
             }
       }else if(tableid==2){
       
-          
+          console.log(res.result);
         if(res.result){
           console.log("result kitidooooooo");
           console.log(res.result);
-          if((res.result[0][0] ==null) && (res.result[0][1] ==null)){
+          if((res.result[0][0] ==null) && (res.result[1][0] == null)){
             console.log("hloooooooooooo hiiiiiiiiiii hoiii")
             setCustomers([])
             setPayments([])
@@ -161,12 +161,11 @@ console.log(datas)
               console.log("first nuluuuuuuuuuuuuuuuuuuuuuuu");
               setCustomers([])
               setPayments(res.result[1])
-            }else if(res.result[1]==null){
+            }else if(res.result[1][0] == null){
               console.log("second nulllllllllllllllllll");
-              console.log(res.result[1]);
+              console.log(res.result[1])
               setCustomers(res.result[0])
               setPayments([])
-            
             }else{
               console.log("both not-----------------------------")
               setCustomers(res.result[0])

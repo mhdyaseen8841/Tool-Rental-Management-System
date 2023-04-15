@@ -75,7 +75,7 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
      }
     return(
       <>
-     {sessionStorage.getItem('usertype') === 'owner' ? (
+     {localStorage.getItem('usertype') === 'owner' ? (
    <Button ref={ref} variant="contained" sx={{ cursor: 'pointer', userSelect: 'none' }} color={prop.status === "admin" ? 'primary' : 'error'}  >
    {prop.status === "admin" ? 'admin' : 'owner'}
  </Button>
@@ -211,7 +211,7 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
                 <TableCell>
                   Type
                 </TableCell>
-                {sessionStorage.getItem('usertype') === 'owner' ? (
+                {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : ( <TableCell>
     Actions
@@ -237,7 +237,7 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
   </TableCell>
                  
           
-                  {sessionStorage.getItem('usertype') === 'owner' ? (
+                  {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (<TableCell>
     <DeleteOutlined onClick={()=>{deleteUser(users.uId)}} sx={{cursor:"pointer", color: red[500]}} />
