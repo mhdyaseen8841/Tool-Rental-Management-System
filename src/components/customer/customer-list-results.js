@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import Router from 'next/router';
 import SearchIcon from '@mui/icons-material/Search';
-
+import { filter } from 'lodash';
 import Link from 'next/link';
 import {
   Avatar,
@@ -28,7 +28,35 @@ import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
-import { DataUsageSharp } from '@mui/icons-material';
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function applySortFilter(array, comparator, query) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+  if (query) {
+    return filter(array, (_user) => _user.cName.toLowerCase().indexOf(query.toLowerCase()) !== -1 || _user.mobile.indexOf(query) !== -1);
+  }
+  return stabilizedThis.map((el) => el[0]);
+}
 
 export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -36,6 +64,14 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
+
+  const [order, setOrder] = useState('asc');
+
+  const [orderBy, setOrderBy] = useState('name');
+
+  const [filterName, setFilterName] = useState('');
+
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleClose = () => {
     setDialog();
@@ -98,14 +134,12 @@ let cid= data.cid;
       if(res.errorCode===3){
         Router
         .push(
-        
         {
           pathname: '/login',
           query: { redirect: '1' },
         })
         
     }else if(res.errorcode ==0){
-        
         console.log(error);
                 console.log('No internet connection found. App is running in offline mode.');
       }else{
@@ -132,43 +166,6 @@ let cid= data.cid;
     />
   ));
 };
-
-
-
-
-
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
-
-    if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.cId);
-    } else {
-      newSelectedCustomerIds = [];
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
-
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
-
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
   };
@@ -177,8 +174,15 @@ let cid= data.cid;
     setPage(newPage);
   };
 
-  
+  const handleFilterByName = (event) => {
+    if(event.target.value.length >=3){
+      setFilterName(event.target.value);
+    }else{
+      setFilterName("");
+    }
+  };
 
+  const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
   return (
     <>
     <Box sx={{ mt: 3, mb:3 }}>
@@ -187,6 +191,7 @@ let cid= data.cid;
           <Box sx={{ maxWidth: 500 }}>
             <TextField
               fullWidth
+              onChange={handleFilterByName}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -239,7 +244,7 @@ let cid= data.cid;
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {filteredUsers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
                   key={customer.cId}

@@ -208,14 +208,16 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                 </TableCell>
                 
                 <TableCell>
-                  Date
+                  Rent Date
                 </TableCell>
-                
+                <TableCell>
+                   Return Date
+                  </TableCell>
                   <TableCell>
                    Days
                   </TableCell>
                   <TableCell>
-                   Return Date
+                   quantity
                   </TableCell>
 
                   <TableCell>
@@ -232,16 +234,17 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   {customers.slice(0, limit).map((customer,index) => (
     customer.days<30 ? (
       <TableRow
-        hover
         key={customer.mId}
         selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+        sx={{backgroundColor: "#4BB543"}}
       >
-        <TableCell>{index+1}</TableCell>
-        <TableCell>{customer.rentDate}</TableCell>
-        <TableCell>{customer.days}</TableCell>
-        <TableCell>{customer.returnDate}</TableCell>
-        <TableCell>{customer.price}</TableCell>
-        <TableCell sx={{cursor:'pointer'}}>
+        <TableCell sx={{color:"white"}}>{index+1}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.rentDate}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.returnDate}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.days}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.qty}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.price}</TableCell>
+        <TableCell sx={{cursor:'pointer',color:"white"}}>
           <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
         </TableCell>
         {/* <TableCell>
@@ -250,17 +253,17 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       </TableRow>
     ) : (
       <TableRow
-        hover
         key={customer.mId}
         selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
-        sx={{backgroundColor:'red'}}
+        sx={{backgroundColor:'#DC3545'}}
       >
-        <TableCell>{index+1}</TableCell>
-        <TableCell>{customer.rentDate}</TableCell>
-        <TableCell>{customer.days}</TableCell>
-        <TableCell>{customer.returnDate}</TableCell>
-        <TableCell>{customer.price}</TableCell>
-        <TableCell sx={{cursor:'pointer'}}>
+        <TableCell sx={{color:"white"}}>{index+1}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.rentDate}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.returnDate}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.days}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.qty}</TableCell>
+        <TableCell sx={{color:"white"}}>{customer.price}</TableCell>
+        <TableCell sx={{cursor:'pointer',color:"white"}}>
           <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
         </TableCell>
         {/* <TableCell>

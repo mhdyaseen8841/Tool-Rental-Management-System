@@ -15,7 +15,7 @@ export const Sales = (props) => {
         borderRadius: 4,
         categoryPercentage: 0.5,
         data: props.data,
-        label: 'This year',
+        label: 'week payments',
         maxBarThickness: 10
       },
     ],
