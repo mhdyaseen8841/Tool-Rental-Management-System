@@ -147,8 +147,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                  Date
                 </TableCell>
                 
-                {item.map((itemHead) => (
-                <TableCell>
+                {item.map((itemHead,ind) => (
+                <TableCell key={ind}>
                   {itemHead.name}
                 </TableCell>
                 )
@@ -161,15 +161,15 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
               {data.map((customer) => (
                 <TableRow
                   hover
-                //   key={customer.mId}
+                  key={customer.mId}
                 //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
                 >
                   <TableCell sx={{whiteSpace:'nowrap'}}>
                     {customer[0]}
                   </TableCell>
                   {
-                      customer.slice(1,customer.length).map((item) => (
-<TableCell>
+                      customer.slice(1,customer.length).map((item,ind) => (
+<TableCell key={ind}>
 <Stack spacing={2}>
   <div style={{ color: 'red' }}>Outgoing: {item.outgoing.qty}</div>
   <div style={{ color: 'green' }}>Incoming: {item.incoming.qty}</div>

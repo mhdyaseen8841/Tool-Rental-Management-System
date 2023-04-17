@@ -51,8 +51,7 @@ const Register = () => {
         )
     }),
     onSubmit: () => {
-      Router
-        .push('/')
+     Router.push('/dashboard')
         .catch(console.error);
     }
   });
@@ -75,7 +74,7 @@ const Register = () => {
       >
         <Container maxWidth="sm">
           <NextLink
-            href="/"
+            href="/dashboard"
             passHref
           >
             <Button

@@ -19,9 +19,8 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from '../customer/add-customer';
 import requestPost from '../../../serviceWorker'
-import { DataUsageSharp } from '@mui/icons-material';
 
 export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);

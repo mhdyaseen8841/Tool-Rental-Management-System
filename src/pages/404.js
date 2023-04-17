@@ -55,7 +55,7 @@ const Page = () => (
             />
           </Box>
           <NextLink
-            href="/"
+            href="/dashboard"
             passHref
           >
             <Button

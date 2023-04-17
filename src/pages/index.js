@@ -1,170 +1,199 @@
 import Head from 'next/head';
-import { useEffect,useState } from 'react';
-import { Box, Container, Grid } from '@mui/material';
-import { Budget } from '../components/dashboard/budget';
-import { LatestOrders } from '../components/dashboard/latest-orders';
-import { LatestProducts } from '../components/dashboard/latest-products';
-import { Sales } from '../components/dashboard/sales';
-import { TasksProgress } from '../components/dashboard/tasks-progress';
-import { TotalCustomers } from '../components/dashboard/total-customers';
-import { TotalProfit } from '../components/dashboard/total-profit';
-import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
-import { DashboardLayout } from '../components/dashboard-layout';
-import { useRouter } from 'next/router';
-import requestPost from '../../serviceWorker'
+import NextLink from 'next/link';
 import Router from 'next/router';
+import { useRouter } from 'next/router';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Alert, Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Facebook as FacebookIcon } from '../icons/facebook';
+import { Google as GoogleIcon } from '../icons/google';
+import requestPost from '../../serviceWorker'
+import axios from "axios";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-const Page = () => {
-const router=useRouter()
 
+const ServiceURL = 'https://aonerentals.in/tools/src/API/'
 
+const Login = () => {
 
-const [graphData, setGraphData] = useState([])
-const [graphLabel, setGraphLabel] = useState([])
-const [pieData,setPieData] = useState([])
-const [pieLabel,setPieLabel] = useState([])
-const [customers, setCustomers] = useState('')
-const [items, setItems] = useState('')
-const [amount, setAmount] = useState('')
-const [users, setUsers] = useState('')
+   
+  const router = useRouter();
 
-function getDashboardData(){
-  let data=  {
-    "type" : "SP_CALL",
-    "requestId" : 2300005,
-    request: {
-   }
-}
-
-  requestPost(data).then((res)=>{
-    if(res.errorCode===3){
-      Router
-      .push(
-      
-      {
-        pathname: '/login',
-        query: { redirect: '1' },
-      })
-  }else{
-
+  const [error,setError]=useState(false)
   
-      // setData(res.result)
-      setCustomers(res.result.total.tCustomer)
-      setItems(res.result.total.tItem)
-      setUsers(res.result.total.tuser)
-      setAmount(res.result.total.tAmount)
-      setGraphData(res.result.graph.data)
-      setGraphLabel(res.result.graph.label)
-   setPieData(res.result.pie.pieData)
-    setPieLabel(res.result.pie.pieLabel)
-
-  }
-  })
-  // .catch((err)=>{
-  //   setCustomers([{}])
-  //   })
 
 
+
+  useEffect(() => {
+
+    if(localStorage.getItem("uId")){
+      Router.push('/dashboard')
+    }
+
+    if(router.query.redirect){
+      localStorage.removeItem("uId");
+    localStorage.removeItem("authtoken");
+    localStorage.removeItem("usertype");
+    localStorage.removeItem("username");
+      setError(true)
+      
+        }
+  }, [])
+  
+
+const [open,setOpen]=useState(false)
+
+const handleClose = ()=>{
+  setOpen(false)
+  setError(false)
+}
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      password: ''
+    },
+    validationSchema: Yup.object({
+      username: Yup
+        .string()
+        .max(255)
+        .required('Email is required'),
+      password: Yup
+        .string()
+        .max(255)
+        .required('Password is required')
+    }),
+    onSubmit:  (res) => {
+     
+let data={
+  "type" : "Authetication",
+   "request": {
+      "username" :res.username,
+      "password" : res.password
+      }
 }
 
-useEffect(() => {
-  getDashboardData()
-}, [])
 
-
-  return(
-  <>
-    <Head>
-      <title>
-        Dashboard | AONERENTALS
-      </title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth={false}>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            item
-            lg={3}
-            sm={6}
-            xl={3}
-            xs={12}
-          >
-            <TotalCustomers  data={customers}/>
-
-          </Grid>
-          <Grid
-            item
-            xl={3}
-            lg={3}
-            sm={6}
-            xs={12}
-          >
-            <Budget data={items} />
-          </Grid>
-          <Grid
-            item
-            xl={3}
-            lg={3}
-            sm={6}
-            xs={12}
-          >
-            <TasksProgress  data={users} />
-          </Grid>
-          <Grid
-            item
-            xl={3}
-            lg={3}
-            sm={6}
-            xs={12}
-          >
-            <TotalProfit sx={{ height: '100%' }}  data={amount} />
-          </Grid>
-          <Grid
-            item
-            lg={8}
-            md={12}
-            xl={9}
-            xs={12}
-          >
-            <Sales data={graphData} label={graphLabel} />
-          </Grid>
-          <Grid
-            item
-            lg={4}
-            md={6}
-            xl={3}
-            xs={12}
-          >
-            <TrafficByDevice data={pieData} label={pieLabel} sx={{ height: '100%' }} />
-          </Grid>
-          <Grid
-            item
-            lg={4}
-            md={6}
-            xl={3}
-            xs={12}
-          >
+      axios.post(ServiceURL,data).then((res)=>{
+       if(res.data.errorCode===1){
+        localStorage.setItem('usertype',res.data.data.usertype)
+        localStorage.setItem('uId',res.data.data.uId)
+        localStorage.setItem('username',res.data.data.username)
+        localStorage.setItem('authtoken',res.data.token)
         
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
-  </>
-);
-    }
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+       Router.push('/dashboard')
+       }else{
+        //erroorrrr
+        formik.setSubmitting(false)
+        setOpen(true)
 
-export default Page;
+       }
+
+      }).catch((err)=>{
+        formik.setSubmitting(false)
+      })
+     
+      
+        
+    }
+  });
+
+  return (
+    <>
+      <Head>
+        <title>Login | AONE</title>
+      </Head>
+
+
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+    Login Failed!
+  </Alert>
+</Snackbar>
+
+<Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
+  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+    Session Expired! Please Login Again
+  </Alert>
+</Snackbar>
+
+
+      <Box
+        component="main"
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          flexGrow: 1,
+          minHeight: '100%'
+        }}
+      >
+        <Container maxWidth="sm">
+         
+          <form onSubmit={formik.handleSubmit}>
+            <Box sx={{ my: 3 }}>
+              <Typography
+                color="textPrimary"
+                variant="h4"
+              >
+                Sign in
+              </Typography>
+              <Typography
+                color="textSecondary"
+                gutterBottom
+                variant="body2"
+              >
+                Sign in to A-ONE RENTALS
+              </Typography>
+            </Box>
+            
+            
+            <TextField
+              error={Boolean(formik.touched.username && formik.errors.username)}
+              fullWidth
+              helperText={formik.touched.username && formik.errors.username}
+              label="username"
+              margin="normal"
+              name="username"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="text"
+              value={formik.values.username}
+              variant="outlined"
+            />
+            <TextField
+              error={Boolean(formik.touched.password && formik.errors.password)}
+              fullWidth
+              helperText={formik.touched.password && formik.errors.password}
+              label="Password"
+              margin="normal"
+              name="password"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="password"
+              value={formik.values.password}
+              variant="outlined"
+            />
+            <Box sx={{ py: 2 }}>
+              <Button
+                color="primary"
+                disabled={formik.isSubmitting}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+              >
+                Sign In Now
+              </Button>
+            </Box>
+          </form>
+        </Container>
+      </Box>
+    </>
+  );
+};
+
+export default Login;

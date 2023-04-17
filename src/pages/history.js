@@ -115,12 +115,12 @@ getCustomer(3,data)
 
     requestPost(datas).then((res)=>{
 
-      if(res.errorCode===3){
+      if(res.errorcode===3){
         Router
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
     }else{
@@ -202,7 +202,7 @@ if(router.query){
       setCid( router.query.cId)
     }
     if(!router.query.cId){
-router.push('/')
+Router.push('/dashboard')
     }
    let data= {
       "type" : "SP_CALL",

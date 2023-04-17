@@ -224,7 +224,7 @@ export default function ReturnDialog(details) {
 
 
             return (
-              <Stack direction="row" pt={2} spacing={2}>
+              <Stack direction="row" key={ind} pt={2} spacing={2}>
 
                 <TextField
                   id={`item${ind}`}

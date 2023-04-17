@@ -26,7 +26,7 @@ function getUser(){
   requestPost(data).then((res)=>{
  
     if(res.errorCode===3){
-        Router.push('/login')
+        Router.push('/')
     }else{
         if(res.result[0] ==null){
             setUsers([{}])

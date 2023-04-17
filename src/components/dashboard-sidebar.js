@@ -19,7 +19,7 @@ import { NavItem } from './nav-item';
 
 let items = [
   {
-    href: '/',
+    href: '/dashboard',
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Dashboard'
   },
@@ -81,7 +81,7 @@ export const DashboardSidebar = (props) => {
         <div>
           <Box sx={{ p: 3 }}>
             <NextLink
-              href="/"
+              href="/dashboard"
               passHref
             >
               <a>

@@ -410,7 +410,8 @@ export const HistoryListToolbar = (props) => {
 
                 {itemButton && itemButton.map(({ iName, itemId }, index) => {
                   return (
-                    <Button
+                    <Button 
+                      key={index}
                       sx={{ ml: 2, mt: 2 }}
                       color="primary"
                       variant="contained"
