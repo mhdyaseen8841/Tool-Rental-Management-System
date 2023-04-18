@@ -366,7 +366,7 @@ CREATE  PROCEDURE `1500002` (IN `request` JSON)   BEGIN
 END$$
 
 CREATE  PROCEDURE `1500005` (IN `request` JSON)   BEGIN
-	declare items JSON;
+	  declare items JSON;
     declare dates JSON;
     declare cid int;
     declare bdata1 JSON;
@@ -381,10 +381,19 @@ CREATE  PROCEDURE `1500005` (IN `request` JSON)   BEGIN
     declare cmpData2 JSON;
     declare output JSON;
     set cid = JSON_VALUE(request,'$.cId');
-	set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT('id',itemId,'name',iName)),']') from items);
+	set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT('id',itemId,'name',iName)),']') from (select i.itemId as itemId, i.iName as iName from renthistory rh INNER JOIN renthistorymaster rhm on rh.mId = rhm.mId inner join items i on i.itemId = rh.itemId where rhm.cId = cid GROUP BY i.itemId) as datatbl);
+    
     set dates = (select concat('[',GROUP_CONCAT(JSON_OBJECT('date', hDate)),']') from (select hDate from renthistory where cId=cid group by hDate) as rh);
-    set cnt = JSON_LENGTH(dates) - 1;
+    if JSON_EXTRACT(dates,'$[0]') is null THEN
+    	set dates = (SELECT JSON_ARRAY());
+    end if;
+    if JSON_EXTRACT(items,'$[0]') is null THEN
+    	set items = (SELECT JSON_ARRAY());
+    end if;
+    
+set cnt = JSON_LENGTH(dates) - 1;
     set cct = JSON_LENGTH(items) - 1;
+    
     set i = 0;
     set datas = (SELECT JSON_ARRAY());
 		cmpinsert:  LOOP
