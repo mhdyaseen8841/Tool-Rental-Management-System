@@ -18,15 +18,16 @@ import { Logo } from './logo';
 import { NavItem } from './nav-item';
 
 let items = [
-  {
-    href: '/dashboard',
-    icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard'
-  },
+  
   {
     href: '/customers',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Customers'
+  },
+  {
+    href: '/dashboard',
+    icon: (<ChartBarIcon fontSize="small" />),
+    title: 'Dashboard'
   },
   {
     href: '/items',

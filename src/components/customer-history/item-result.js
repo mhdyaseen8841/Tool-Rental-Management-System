@@ -38,7 +38,7 @@ export const ItemResult = ({ customers,getdata, ...rest  }) => {
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
 const [data,setData]=useState([])
-const [item,setItem]=useState([{}])
+const [item,setItem]=useState([])
   const handleClose = () => {
     setDialog();
   };
@@ -125,11 +125,8 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   };
 
   useEffect(() => {
-  
     setData(customers.data)
     setItem(customers.item)
-       
-  
     }, []);
   return (
     
@@ -138,7 +135,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       <PerfectScrollbar>
         <Box >
         <TableContainer >
-          <Table>
+          <Table sx={{}}>
             <TableHead>
               <TableRow>
                 
@@ -171,8 +168,10 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                       customer.slice(1,customer.length).map((item,ind) => (
 <TableCell key={ind}>
 <Stack spacing={2}>
-  <div style={{ color: 'red' }}>Outgoing: {item.outgoing.qty}</div>
-  <div style={{ color: 'green' }}>Incoming: {item.incoming.qty}</div>
+  {item.outgoing.qty != 0 ? <div style={{ color: 'white',background: 'red', maxWidth:'60px',textAlign:'center' }}>
+    {item.outgoing.qty}</div> : <div/>}
+  {item.incoming.qty != 0 ? <div style={{ color: 'white',background: 'green', maxWidth:'60px',textAlign:'center'  }}>
+    {item.incoming.qty}</div> : <div/>}
 </Stack>
                  
                   
@@ -190,7 +189,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.data.length}
+        count={data.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}

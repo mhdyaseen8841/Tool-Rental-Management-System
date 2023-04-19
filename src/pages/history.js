@@ -127,13 +127,8 @@ getCustomer(3,data)
 
       if(tableid==3){
         if(res.result){
-          if(res.result.item[0] ==null){
-            setItemHistory([])
-          }else{
             setItemHistory(res.result)
-      
-          }
-          setTable(tableid)
+            setTable(tableid)
         }else{
           setError(""+res)
               setOpen(true)

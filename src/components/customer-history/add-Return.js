@@ -113,7 +113,6 @@ export default function ReturnDialog(details) {
         var numberAsInt = parseInt(element.value, 10);
         if (checkelement.checked) {
           if (items[ind].pending < numberAsInt) {
-
             setqtErr(true);
             flag = true;
             break;
@@ -131,12 +130,15 @@ export default function ReturnDialog(details) {
           }
         }
       }
+      if(itemsArr.length == 0){
+        setqtErr(true);
+        setQtyError("check one of the list");
+      }else{
       // details.submit(notes,itemsArr);
       if (flag == false) {
         details.submit(notes, itemsArr);
-      } else {
-
-      }
+      } 
+    }
     }
 
 
@@ -178,8 +180,6 @@ export default function ReturnDialog(details) {
     <>
       {
         qterr &&
-
-
         <Snackbar open={open} onClose={handleClose}>
           <Alert onClose={handleClose} autoHideDuration={4000} severity="error" sx={{ width: '100%' }}>
             {qtyerror}

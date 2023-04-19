@@ -110,6 +110,9 @@ CREATE  PROCEDURE `1100003` (IN `request` JSON)   BEGIN
     IF num IS NULL THEN
      SELECT JSON_OBJECT('errorCode',0,'errorMsg','User Not Found') as result;
     ELSE
+      DELETE FROM renthistorymaster WHERE cId = json_value(request,'$.cId');
+      DELETE FROM paymentcollection WHERE cId = json_value(request,'$.cId');
+      DELETE FROM ratecard WHERE cId = json_value(request,'$.cId');
       UPDATE customermaster set status = 1
       where cId= json_value(request,'$.cId');
       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Delete Successful') as result;
@@ -738,6 +741,7 @@ CREATE TABLE `renthistory` (
   `itemId` int(10) NOT NULL,
   `qty` int(10) NOT NULL,
   `hDate` date NOT NULL,
+  `note` text NOT NULL,
   `status` int(3) NOT NULL,
   `pending` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -864,62 +868,66 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customermaster`
 --
 ALTER TABLE `customermaster`
-  MODIFY `cId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `cId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `itemId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `login_session`
 --
 ALTER TABLE `login_session`
-  MODIFY `sId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `sId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `paymentcollection`
 --
 ALTER TABLE `paymentcollection`
-  MODIFY `pId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `pId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `ratecard`
 --
 ALTER TABLE `ratecard`
-  MODIFY `rId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `rId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `rentcalculations`
 --
 ALTER TABLE `rentcalculations`
-  MODIFY `rId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `rId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `renthistory`
 --
 ALTER TABLE `renthistory`
-  MODIFY `hId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
+  MODIFY `hId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `renthistorymaster`
 --
 ALTER TABLE `renthistorymaster`
-  MODIFY `mId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
+  MODIFY `mId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `stockupdate`
 --
 ALTER TABLE `stockupdate`
-  MODIFY `sId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `sId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+ALTER TABLE `renthistory`
+  ADD FOREIGN KEY (`mId`) REFERENCES `renthistorymaster`(`mId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `uId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 COMMIT;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
