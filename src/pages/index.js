@@ -31,7 +31,7 @@ const Login = () => {
   useEffect(() => {
 
     if(localStorage.getItem("uId")){
-      Router.push('/dashboard')
+      Router.push('/customers')
     }
 
     if(router.query.redirect){

@@ -510,6 +510,10 @@ CREATE  PROCEDURE `1800005` (IN `request` JSON)   BEGIN
     ))) as result FROM ratecard rc INNER JOIN items i on i.itemId = rc.itemId where rc.cId = JSON_VALUE(request,'$.cId');
 END$$
 
+
+
+
+
 CREATE  PROCEDURE `2300005` (IN `request` JSON)   BEGIN
 	declare tcustomer int;
     declare titems int;
@@ -580,6 +584,98 @@ CREATE  PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `
     	set pric = unitp * qtyy;
     end if;
     insert into rentcalculations(itemId,rentDate,returnDate,cId,price,qty) values(itemid,dat,CURDATE(),cid,pric,qtyy);
+END$$
+
+
+CREATE  PROCEDURE `2300006` (IN `request` JSON)   BEGIN
+BEGIN
+	DECLARE itemData JSON;
+    DECLARE customerData JSON;
+    DECLARE id JSON;
+    DECLARE label JSON;
+    DECLARE datas JSON;
+    DECLARE fdata JSON;
+    DECLARE i int;
+    DECLARE j int;
+    DECLARE itId JSON;
+    DECLARE idatas JSON;
+    DECLARE cnt int;
+    DECLARE sts int;
+    DECLARE rentstock int;
+    DECLARE retrunStock int;
+    DECLARE pendingStock int;
+    DECLARE cntitem int;
+    
+    set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
+   	
+    set customerData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('cId',`cId`,'name',`cName`,'Phone',`mobile`)),']') from customermaster where status =0);
+
+    if JSON_EXTRACT(itemData,'$[0]') is null THEN
+    	set itemData = (select JSON_ARRAY());
+    end if;
+    
+    if JSON_EXTRACT(customerData,'$[0]') is null THEN
+    	set customerData = (select JSON_ARRAY());
+    end if;
+
+   	set i=0;
+    set cnt = JSON_LENGTH(customerData) - 1;
+    set cntitem = JSON_LENGTH(itemData) - 1;
+
+    set datas = (SELECT JSON_ARRAY());
+    set label = (SELECT JSON_ARRAY());
+
+    StartLoop : LOOP
+    	IF i > cnt THEN
+        		LEAVE StartLoop;
+        end if;
+			set fdata = (SELECT JSON_ARRAY());
+            set label = (select JSON_ARRAY_APPEND(label,'$',"customer Name"));    
+        	set id = (select json_extract(customerData, concat('$[',i,']')));
+
+        	set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('name',JSON_VALUE(id,'$.name'),'mobile',JSON_VALUE(id,'$.Phone'))));
+			set j=0;
+            		InnerLoop : LOOP
+                    	  IF j > cntitem THEN
+                        		LEAVE InnerLoop;
+                        END IF;
+
+                            set itId= (select json_extract(itemData, concat('$[',j,']')));
+        	                set idatas =(select JSON_ARRAY(JSON_VALUE(itId,'$.itemId')));
+
+                               set label = (select JSON_ARRAY_APPEND(label,'$',JSON_VALUE(itId,'$.itemName')));
+                            	set rentstock = (SELECT SUM(rhc.qty) from renthistory rhc 
+                                            inner join renthistorymaster rhm on rhc.mId = rhm.mId 
+                                            where 
+                                            rhm.cId = JSON_VALUE(id,'$.cId') AND 
+                                            rhc.`itemId` = JSON_VALUE(itId,'$.itemId') 
+                                            AND rhc.status = 1);
+                                set retrunStock = (SELECT SUM(rhc.qty) from renthistory rhc 
+                                            inner join renthistorymaster rhm on rhc.mId = rhm.mId 
+                                            where 
+                                            rhm.cId = JSON_VALUE(id,'$.cId') AND 
+                                            rhc.`itemId` = JSON_VALUE(itId,'$.itemId') 
+                                            AND rhc.status = 0);
+                                 if rentStock is null THEN
+                                 	set rentStock = 0;
+                                 end if;
+                                 if retrunStock is null THEN
+                                 	set retrunStock = 0;
+                                 end if;
+                                set pendingStock = rentstock - retrunStock;
+                          set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingStock',pendingStock)));
+                          set j=j+1;
+                    END LOOP;
+                    set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingAmount',0)));
+                    set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
+        set i = i+1;
+    END LOOP;
+    
+    set label =(select JSON_ARRAY_APPEND(label,'$','PendingAmount'));
+    if cnt = -1 THEN
+     set label =(select JSON_ARRAY());
+    end if;
+    select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',label,'data',datas)) as result;
 END$$
 
 CREATE  PROCEDURE `returnCalculate` (IN `request` JSON)   BEGIN

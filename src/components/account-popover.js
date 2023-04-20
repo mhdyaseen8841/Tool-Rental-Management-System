@@ -16,7 +16,7 @@ export const AccountPopover = (props) => {
     localStorage.removeItem("authtoken");
     localStorage.removeItem("usertype");
     localStorage.removeItem("username");
-    Router.push('/login')
+    Router.push('/')
     
   };
 
