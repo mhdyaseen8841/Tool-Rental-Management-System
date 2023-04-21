@@ -678,6 +678,112 @@ BEGIN
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',label,'data',datas)) as result;
 END$$
 
+CREATE  PROCEDURE `2300007` (IN `request` JSON)   BEGIN
+BEGIN	DECLARE date1 date;
+        DECLARE date2 date;
+        DECLARE datas JSON;
+        DECLARE dt JSON;
+        DECLARE items JSON;
+        DECLARE dates JSON;
+        DECLARE label JSON;
+        DECLARE itemData JSON;
+        DECLARE fdata JSON;
+        DECLARE perData JSON;
+        DECLARE iqty int;
+        DECLARE icnt int;
+        DECLARE itemCount int;
+        DECLARE i int;
+        DECLARE j int;
+        DECLARE sts int; 
+        set sts = 0;
+
+        set date1 = IFNULL(JSON_VALUE(request,'$.from'),0);
+        set date2 = IFNULL(JSON_VALUE(request,'$.to'),0);
+        
+
+        set dates =
+        (
+            select concat('[',GROUP_CONCAT(JSON_OBJECT('hDate',hDate)),']') 
+                from  
+                (
+                select hDate from renthistory 
+                where status =1 AND hDate BETWEEN date1 AND date2 GROUP BY `hDate`
+                ) as rh
+        );
+
+        if JSON_EXTRACT(dates,'$[0]') is null THEN
+            set dates = (select JSON_ARRAY());
+        end if;
+
+
+        set itemData = (
+            select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',itemName)),']') 
+            from  
+            (
+            select i.itemId as itemId,i.iName as itemName from renthistory rh 
+            inner join items i on rh.itemId = i.itemId
+            where rh.status = 1 AND rh.hDate BETWEEN date1 AND date2 GROUP BY rh.itemId
+            ) as ii
+        );
+        
+
+        if JSON_EXTRACT(itemData,'$[0]') is null THEN
+            set itemData = (select JSON_ARRAY());
+        end if;
+
+
+        set icnt = JSON_LENGTH(dates) - 1; 
+        set itemCount = JSON_LENGTH(itemData) -1;
+        
+        
+        
+        set label = (SELECT JSON_ARRAY());
+        set fdata = (SELECT JSON_ARRAY());
+        set i = 0;
+        
+        FirstLoop : LOOP
+            IF i > itemCount THEN
+                LEAVE FirstLoop;
+            END IF;
+        set datas = (SELECT JSON_ARRAY());
+
+        set items = (select json_extract(itemData, concat('$[',i,']')));
+                        set j=0;
+                        
+                        InnerLoop : LOOP 
+                            IF j > icnt THEN
+                                LEAVE InnerLoop;
+                            END IF;
+                                set dt = (select json_extract(dates, concat('$[',j,']')));
+                                set iqty = IFNULL((
+                            select SUM(rh.qty) from renthistory rh 
+                            where rh.itemId = JSON_VALUE(items,'$.itemId') AND rh.hDate=JSON_VALUE(dt,'$.hDate') and rh.status = 1
+                            ),0);  
+                        set datas = ((select JSON_ARRAY_APPEND(datas,'$',iqty)));
+                            if sts = 0 THEN
+                             set label = (select JSON_ARRAY_APPEND(label,'$',JSON_VALUE(dt,'$.hDate'))); 
+                            END IF;
+                        set j=j+1;
+                        END LOOP;
+                        set perData = (select JSON_OBJECT('itemName',JSON_VALUE(items,'$.itemName'), 'dataSet',datas));
+                        set fdata = (select JSON_ARRAY_APPEND(fdata,'$',perData));
+            set i = i+1;
+            set sts = 1;
+        END LOOP;
+        
+        if icnt = -1 THEN
+        set label = (select JSON_ARRAY()); 
+        end if;
+
+        if itemCount = -1 THEN
+        set fdata =(select JSON_ARRAY());
+        end if;
+
+        select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',label,'data',fdata)) as result;
+    
+    END$$
+
+
 CREATE  PROCEDURE `returnCalculate` (IN `request` JSON)   BEGIN
 	DECLARE pqty int;
     DECLARE qty1 int;

@@ -1,7 +1,11 @@
-import { Bar } from 'react-chartjs-2';
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
+import { Bar,Line } from 'react-chartjs-2';
+import dayjs from 'dayjs';
+import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, TextField } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers';
 
 export const Sales = (props) => {
   const theme = useTheme();
@@ -14,9 +18,14 @@ export const Sales = (props) => {
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
-        data: props.data,
-        label: 'week payments',
+        data: [17,24,56,23,54,12,23],
+        label: 'Shutter',
         maxBarThickness: 10
+      },
+      {
+        backgroundColor: '#4753f2',
+        data: [65,32,54,12,98,36,24],
+        label: 'Jackey',
       },
     ],
     labels: props.label
@@ -70,17 +79,32 @@ export const Sales = (props) => {
       titleFontColor: theme.palette.text.primary
     }
   };
+  const datesPick = () =>{
+    return (
+      <><Button
+
+        size="small"
+      >
+        Last 7 days
+      </Button><Button
+
+        size="small"
+      >
+          Last 7 days
+        </Button></>
+    )
+  }
 
   return (
     <Card {...props}>
       <CardHeader
         action={(
-          <Button
-            
-            size="small"
-          >
-            Last 7 days
-          </Button>
+          <>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker label="From" defaultValue={dayjs().startOf('month').format('MM/DD/YYYY')} renderInput={(params) => <TextField {...params} />}/>
+            <DatePicker label="To" defaultValue={dayjs()} renderInput={(params) => <TextField {...params} />}/>
+            </LocalizationProvider>
+            </>
         )}
         title="Weekly Sales"
       />
@@ -92,7 +116,7 @@ export const Sales = (props) => {
             position: 'relative'
           }}
         >
-          <Bar
+          <Line
             data={data}
             options={options}
           />
