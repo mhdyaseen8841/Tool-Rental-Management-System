@@ -60,7 +60,7 @@ export default function ReturnDialog(details) {
           .push(
 
             {
-              pathname: '/login',
+              pathname: '',
               query: { redirect: '1' },
             })
       } else {

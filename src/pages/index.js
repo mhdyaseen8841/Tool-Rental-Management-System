@@ -84,7 +84,7 @@ let data={
         localStorage.setItem('username',res.data.data.username)
         localStorage.setItem('authtoken',res.data.token)
         
-       Router.push('/dashboard')
+       Router.push('/customers')
        }else{
         //erroorrrr
         formik.setSubmitting(false)

@@ -40,7 +40,6 @@ function getDashboardData(){
     if(res.errorCode===3){
       Router
       .push(
-      
       {
         pathname: '/',
         query: { redirect: '1' },
@@ -140,20 +139,11 @@ useEffect(() => {
           <Grid
             item
             lg={4}
-            md={6}
+            md={12}
             xl={3}
             xs={12}
           >
             <TrafficByDevice data={pieData} label={pieLabel} sx={{ height: '100%' }} />
-          </Grid>
-          <Grid
-            item
-            lg={4}
-            md={6}
-            xl={3}
-            xs={12}
-          >
-        
           </Grid>
         </Grid>
       </Container>

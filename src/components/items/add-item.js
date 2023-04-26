@@ -78,7 +78,6 @@ export default function FullScreenDialog(details) {
   const validSchema = Yup.object().shape({
     ItemName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
     MonthlyRent: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Monthly Rent is required'),
-    DailyRent: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Daily Rent is required'),
     Stock: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Stock is required'),
   });
 
@@ -87,7 +86,6 @@ export default function FullScreenDialog(details) {
     initialValues: {
       ItemName: update ? details.data.name :'',
       MonthlyRent: update ? details.data.mRent : '',
-      DailyRent: update ? details.data.dRent : '',
       Stock: update ? details.data.tStock : '',
     },
     validationSchema: validSchema,
@@ -154,19 +152,6 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.MonthlyRent && errors.MonthlyRent || alertMsg)}
               helperText={touched.MonthlyRent && errors.MonthlyRent || alertMsg}
             />
-          
-            
-          <TextField
-           
-           fullWidth
-           type="text"
-           label="Daily Rent"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('DailyRent')}
-           error={Boolean(touched.DailyRent && errors.DailyRent || alertMsg)}
-           helperText={touched.DailyRent && errors.DailyRent || alertMsg}
-         />
            <TextField
            
            fullWidth

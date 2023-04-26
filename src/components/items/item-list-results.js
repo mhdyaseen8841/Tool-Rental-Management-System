@@ -216,9 +216,6 @@ setDialog();
                   Monthly Rent
                 </TableCell>
                 <TableCell>
-                  Daily Rent
-                </TableCell>
-                <TableCell>
                   Available Stocks
                 </TableCell>
                 <TableCell>
@@ -261,13 +258,10 @@ setDialog();
                     {items.mRent}
                   </TableCell>
                   <TableCell>
-                    {items.dRent}
+                    {items.aStock}
                   </TableCell>
                   <TableCell>
-                    {items.astock}
-                  </TableCell>
-                  <TableCell>
-                    {items.tstock}
+                    {items.tStock}
                   </TableCell>
                   {localStorage.getItem('usertype') === 'owner' ? (
     null

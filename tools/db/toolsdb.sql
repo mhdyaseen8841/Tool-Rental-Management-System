@@ -54,27 +54,31 @@ CREATE  PROCEDURE `1000005` (IN `request` JSON)   BEGIN
     )))) as result from users where status =1;
 END$$
 
-CREATE  PROCEDURE `1100001` (IN `request` JSON)   BEGIN
+DELIMITER $$
+CREATE PROCEDURE `1100001`(IN `request` JSON)
+BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
-	DECLARE num varchar(20);
+    DECLARE num varchar(20);
+    DECLARE exeName varchar(100);
     DECLARE alterNum varchar(20);
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
     SET plac = json_value(request, '$.address');
     SET alterNum = json_value(request, '$.altermobile');
     set num = (select mobile from customermaster where mobile = mob);
-    IF num IS NOT NULL THEN
-     SELECT JSON_OBJECT('errorCode',0,'errorMsg','Mobile number already registered') as result;
+    set exeName = (select cName from customermaster where cName = nam);
+    IF exeName IS NOT NULL THEN
+        SELECT JSON_OBJECT('errorCode',0,'errorMsg','Name Already Exist!') as result;
+    ELSEIF num IS NOT NULL THEN
+        SELECT JSON_OBJECT('errorCode',0,'errorMsg','Mobile number already registered') as result;
     ELSE
-      INSERT INTO customermaster(cName,mobile,alterMobile,address,proof) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'));
-      SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT(
-                               'name',nam,
-                               'mobile',mob,
-                                'address',plac)) as result;
+        INSERT INTO customermaster(cName,mobile,alterMobile,address,proof) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'));
+        SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT('name',nam,'mobile',mob,'address',plac)) as result;
     END IF;
 END$$
+
 
 CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
@@ -130,22 +134,35 @@ CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
                                )))) as result from customermaster WHERE status = 0;
 
 END$$
+ 
 
-CREATE  PROCEDURE `1200001` (IN `request` JSON)   BEGIN
-    DECLARE nam varchar(30);
+CREATE  PROCEDURE `1100006`(IN `request` JSON)
+BEGIN
+	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
+                               'cId',cId,
+                               'cName',cName,
+                               'mobile',mobile,
+                               'altermobile',altermobile,
+                               'address',address,
+                               'proof',proof
+                               )))) as result from customermaster WHERE status = 1;
+
+END$$
+
+CREATE  PROCEDURE `1200001` (IN `request` JSON)   
+BEGIN
+    DECLARE nam varchar(50);
     DECLARE mont decimal(10,2);
-    DECLARE daily decimal(10,2);
-	DECLARE stck int;
-    DECLARE num varchar(20);
+	  DECLARE stck int;
+    DECLARE num varchar(50);
     SET nam = json_value(request, '$.itemName');
     SET mont = json_value(request, '$.monthly');
-    SET daily = json_value(request, '$.daily');
     SET stck = json_value(request, '$.stock');
     set num = (select iName from items where iName = nam);
     IF num IS NOT NULL THEN
 	  SELECT JSON_OBJECT('errorCode',0,'errorMsg','item already exist') as result;
     ELSE
-      INSERT INTO items(iName,mRent,dRent,tStock,aStock,status) VALUES(nam,mont,daily,stck,stck,0);
+      INSERT INTO items(iName,mRent,tStock,status) VALUES(nam,mont,stck,0);
       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT(
                                'ItemName',nam,
                                'month',mont,
@@ -157,21 +174,16 @@ CREATE  PROCEDURE `1200002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mont decimal(10,2);
     DECLARE daily decimal(10,2);
-	DECLARE stck int;
     DECLARE num varchar(20);
     SET nam = json_value(request, '$.itemName');
     SET mont = json_value(request, '$.monthly');
-    SET daily = json_value(request, '$.daily');
-    SET stck = json_value(request, '$.stock');
     set num = (select iName from items where iName = nam and itemId != json_value(request,'$.itemId'));
     IF num IS NOT NULL THEN
 	  SELECT JSON_OBJECT('errorCode',0,'errorMsg','item already exist') as result;
     ELSE
        UPDATE items
       SET iName = nam,
-      mRent = mont,
-      dRent=daily,
-      tStock=stck
+      mRent = mont
       where itemId= json_value(request,'$.itemId');
       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT(
                                'ItemName',nam,
@@ -180,16 +192,70 @@ CREATE  PROCEDURE `1200002` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1200005` (IN `request` JSON)   BEGIN
-	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
-                               'itemId',itemId,
+CREATE PROCEDURE `1200005`(IN `request` JSON)
+BEGIN
+
+	DECLARE itemData JSON;
+	DECLARE items JSON;
+	DECLARE datas JSON;
+	DECLARE fdata JSON;
+	DECLARE i int;
+	DECLARE icnt int;
+	DECLARE aStock int;
+	DECLARE rentStock int;
+	DECLARE returnStock int;
+	DECLARE pStock int;
+
+
+
+	set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,
                                'iName',iName,
                                'mRent',mRent,
-                               'dRent',dRent,
-                               'tstock',tstock,
-                               'astock',astock,
-                               'status',status)))) as result from items;
+                               'tStock',tstock,
+                               'status',status)),']') 
+        from  
+        (
+        select i.itemId ,i.iName,i.mRent,i.tstock,i.status from items i GROUP BY i.itemId
+        ) as rh);
 
+	if JSON_EXTRACT(itemData,'$[0]') is null THEN
+    	set itemData = (select JSON_ARRAY());
+    end if;
+
+	    set icnt = JSON_LENGTH(itemData) - 1; 
+		
+		set datas = (SELECT JSON_ARRAY());
+		set fdata = (SELECT JSON_ARRAY());
+		set i = 0;
+		OuterLoop : LOOP
+			IF  i > icnt THEN
+				LEAVE OuterLoop;
+			END IF;	
+			
+				
+
+				set items = (select json_extract(itemData, concat('$[',i,']')));
+
+				set rentStock = (SELECT SUM(rhc.qty) from renthistory rhc  
+                                            where 
+                                            rhc.`itemId` = JSON_VALUE(items,'$.itemId') 
+                                            AND rhc.status = 1);
+
+				set returnStock = (SELECT SUM(rhc.qty) from renthistory rhc  
+                                            where 
+                                            rhc.`itemId` = JSON_VALUE(items,'$.itemId') 
+                                            AND rhc.status = 0);
+
+
+				set pStock = IFNULL(rentStock-returnStock,0);
+				set aStock = IFNULL(JSON_VALUE(items,'$.tStock')-pStock,0);
+
+				set items = (select JSON_SET(items,'$.aStock',aStock));
+
+				set fdata = (select JSON_ARRAY_APPEND(fdata,'$',items));
+		set i = i+1;
+		END LOOP;
+		select JSON_OBJECT('errorCode',1,'result',fdata) as result;
 END$$
 
 CREATE  PROCEDURE `1300001` (IN `request` JSON)   BEGIN
@@ -198,16 +264,16 @@ CREATE  PROCEDURE `1300001` (IN `request` JSON)   BEGIN
     declare sqty int;
     set stats = JSON_VALUE(request,'$.status');
     set qtty = JSON_VALUE(request,'$.qty');
-    set sqty = (select astock from items where itemId = JSON_VALUE(request,'$.itemId'));
+    set sqty = (select tStock from items where itemId = JSON_VALUE(request,'$.itemId'));
     insert into stockupdate(sDate,qty,itemId,updateStatus) values(curdate(),qtty,JSON_VALUE(request,'$.itemId'),stats);
     if stats = 1 then
-		update items set tstock = tstock + qtty, astock = astock + qtty where itemId = JSON_VALUE(request,'$.itemId');
+		update items set tstock = tstock + qtty where itemId = JSON_VALUE(request,'$.itemId');
         select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
 	else
 		if sqty < qtty then
 			select JSON_OBJECT("errorCode",0,"msg","QUATITY is higher than stock QUATITY") as result;
         else
-			update items set tstock = tstock - qtty, astock = astock - qtty where itemId = JSON_VALUE(request,'$.itemId');
+			update items set tstock = tstock - qtty where itemId = JSON_VALUE(request,'$.itemId');
             select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
 		end if;
 	end if;
@@ -242,7 +308,6 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 			END IF;
 			set cmpData1 = json_extract(request, concat('$.items[',i,']'));
 			insert into renthistory(mId,itemId,qty,hDate,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,stats,json_value(cmpData1,'$.qty'));
-			update items set astock = astock - json_value(cmpData1,'$.qty') where itemId = json_value(cmpData1,'$.itemId');
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			if ratest = 0 then
 				set mrate = (select mRent from items where itemId = json_value(cmpData1,'$.itemId'));
@@ -262,7 +327,6 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 			END IF;
 			set cmpData1 = json_extract(request, concat('$.items[',i,']'));
 			insert into renthistory(mId,itemId,qty,hDate,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,stats,1);
-			update items set astock = astock + json_value(cmpData1,'$.qty') where itemId = json_value(cmpData1,'$.itemId');
             set hid = (select LAST_INSERT_ID());
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			SET  i = i + 1;
@@ -285,7 +349,6 @@ CREATE  PROCEDURE `1400002` (IN `request` JSON)   BEGIN
         qty = json_value(request,'$.qty')
         where hId = json_value(request,'$.hId');
         update dailynotes set nDate = json_value(request,'$.date') where cId = (select cId from renthistory where hId = json_value(request,'$.hId') );
-        update items set aStock = astock + qsty where itemId = id;
 		select JSON_OBJECT("errorCode",1,"errorMsg","Update Successfully") as result;
 	else
 		select JSON_OBJECT("errorCode",0,"errorMsg","Wrong Status") as result;
@@ -587,7 +650,7 @@ CREATE  PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `
 END$$
 
 
-CREATE  PROCEDURE `2300006` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `2300006` (IN `request` JSON)
 BEGIN
 	DECLARE itemData JSON;
     DECLARE customerData JSON;
@@ -678,7 +741,7 @@ BEGIN
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',label,'data',datas)) as result;
 END$$
 
-CREATE  PROCEDURE `2300007` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `2300007` (IN `request` JSON)
 BEGIN	DECLARE date1 date;
         DECLARE date2 date;
         DECLARE datas JSON;
@@ -784,7 +847,8 @@ BEGIN	DECLARE date1 date;
     END$$
 
 
-CREATE  PROCEDURE `returnCalculate` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `returnCalculate` (IN `request` JSON)   
+BEGIN
 	DECLARE pqty int;
     DECLARE qty1 int;
     DECLARE iId int;
@@ -860,9 +924,7 @@ CREATE TABLE `items` (
   `itemId` int(10) NOT NULL,
   `iName` varchar(60) NOT NULL,
   `mRent` decimal(10,2) NOT NULL,
-  `dRent` decimal(10,2) NOT NULL,
   `tStock` int(10) NOT NULL,
-  `aStock` int(10) NOT NULL,
   `status` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
