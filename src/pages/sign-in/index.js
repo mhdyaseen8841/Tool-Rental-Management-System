@@ -113,7 +113,7 @@ const Page = () => {
               }}
             >
               <NextLink
-                href="/"
+                href="/dashboard"
                 passHref
               >
                 <a>

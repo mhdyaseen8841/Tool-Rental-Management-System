@@ -92,7 +92,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
     }else if(res.errorcode ==0){
@@ -133,7 +133,7 @@ let cid= data.cid;
         Router
         .push(
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
         

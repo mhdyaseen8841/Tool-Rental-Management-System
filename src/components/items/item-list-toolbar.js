@@ -37,8 +37,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
      "itemName": data.ItemName,
      "monthly": data.MonthlyRent,
      "daily": data.DailyRent,
-     "stock": data.Stock,
-     "proof" : file
+     "stock": data.Stock
    }
 }
 
@@ -50,7 +49,7 @@ requestPost(req).then((res)=>{
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
 }else{

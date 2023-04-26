@@ -79,8 +79,8 @@ export default function FullScreenDialog(details) {
   const validSchema = Yup.object().shape({
     CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
     Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
-    AltMobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Altnum is required'),
-    Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Address is required'),
+    AltMobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
+    Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
   });
 
   const [alertMsg, setAlert] = useState();

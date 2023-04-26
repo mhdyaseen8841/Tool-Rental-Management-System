@@ -11,7 +11,7 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from '../customer/add-customer';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router';
 export const CustomerListToolbar = (props) => 
@@ -34,6 +34,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
    let req={
       "type" : "SP_CALL",
       "requestId" : 1100001,
+      
       request: {
        "name":data.CustomerName,
        "mobile" : data.Mobnum,
@@ -41,6 +42,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
        "altermobile" : data.AltMobnum,
  "proof" : file
      }
+
 }
 
 
@@ -52,7 +54,7 @@ requestPost(req).then((res)=>{
     .push(
     
     {
-      pathname: '/login',
+      pathname: '/',
       query: { redirect: '1' },
     })
 }else{

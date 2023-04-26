@@ -59,7 +59,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
       }else{

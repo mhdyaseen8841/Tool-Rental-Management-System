@@ -49,7 +49,7 @@ import {
       .push(
       
       {
-        pathname: '/login',
+        pathname: '/',
         query: { redirect: '1' },
       })
   }else{

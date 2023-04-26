@@ -63,7 +63,7 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
           .push(
           
           {
-            pathname: '/login',
+            pathname: '/',
             query: { redirect: '1' },
           })
       }else{
@@ -122,12 +122,12 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
     
     requestPost(del).then((res)=>{
 
-      if(res.errorCode===3){
+      if(res.errorcode===3){
         Router
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
     }else{
@@ -217,10 +217,10 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.slice(0, limit).map((users) => (
+              {users.slice(0, limit).map((users,ind) => (
                 <TableRow
                   hover
-                 
+                  key={ind}
                   selected={selectedCustomerIds.indexOf(users.uId) !== -1}
                 >
                 
