@@ -6,16 +6,16 @@ import TabletIcon from '@mui/icons-material/Tablet';
 
 export const TrafficByDevice = (props) => {
   const theme = useTheme();
-
+console.log(props);
   const data = {
     datasets: [
       {
         data: props.data,
-        backgroundColor: ['#3F51B5', '#e53935', '#FB8C00'],
+        backgroundColor: ['#3F51B5','#3D3635', '#e53935', '#FB8C00','#006A4E','#FFA600','#F75D59','#5865F2',],
         borderWidth: 8,
         borderColor: '#FFFFFF',
         hoverBorderColor: '#FFFFFF'
-      }
+      },
     ],
     labels: props.label
   };
