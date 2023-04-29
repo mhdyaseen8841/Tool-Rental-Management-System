@@ -39,6 +39,11 @@ let items = [
     href: '/users',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Users'
+  },
+  {
+    href: '/report',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'Report'
   }
   // {
   //   href: '/history',
