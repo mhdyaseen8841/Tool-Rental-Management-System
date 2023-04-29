@@ -73,7 +73,7 @@ export default function GetHistoryDialog(details) {
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
       }else{

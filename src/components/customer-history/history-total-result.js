@@ -56,7 +56,7 @@ export const HistoryTotalResult = ({
           .push(
 
             {
-              pathname: '/login',
+              pathname: '/',
               query: { redirect: '1' },
             })
       } else {
@@ -86,7 +86,7 @@ export const HistoryTotalResult = ({
         Router
           .push(
             {
-              pathname: '/login',
+              pathname: '/',
               query: { redirect: '1' },
             })
       } else {
@@ -125,7 +125,7 @@ export const HistoryTotalResult = ({
             .push(
 
               {
-                pathname: '/login',
+                pathname: '/',
                 query: { redirect: '1' },
               })
         } else {

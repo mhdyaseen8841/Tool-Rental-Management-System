@@ -22,7 +22,7 @@ export const DashboardLayout = (props) => {
   const router=useRouter()
   useEffect(() => {
     if(!localStorage.getItem("uId")){
-      router.push('/login')
+      router.push('/')
     }
     }, [])
 

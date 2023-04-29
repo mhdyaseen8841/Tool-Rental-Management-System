@@ -56,12 +56,12 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     
     requestPost(req).then((res)=>{
 
-      if(res.errorCode===3){
+      if(res.errorcode===3){
         Router
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
     }else{

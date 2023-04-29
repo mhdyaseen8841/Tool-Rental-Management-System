@@ -78,7 +78,7 @@ export const HistoryListToolbar = (props) => {
             .push(
 
               {
-                pathname: '/login',
+                pathname: '/',
                 query: { redirect: '1' },
               })
 
@@ -126,7 +126,7 @@ export const HistoryListToolbar = (props) => {
             .push(
 
               {
-                pathname: '/login',
+                pathname: '/',
                 query: { redirect: '1' },
               })
 
@@ -179,7 +179,7 @@ export const HistoryListToolbar = (props) => {
           .push(
 
             {
-              pathname: '/login',
+              pathname: '/',
               query: { redirect: '1' },
             })
 
@@ -220,7 +220,7 @@ export const HistoryListToolbar = (props) => {
 
         if (res.errorCode === 3) {
           Router
-            .push('/login')
+            .push('/')
 
         } else {
 
@@ -305,7 +305,7 @@ export const HistoryListToolbar = (props) => {
           .push(
 
             {
-              pathname: '/login',
+              pathname: '/',
               query: { redirect: '1' },
             })
       } else {

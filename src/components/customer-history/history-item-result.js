@@ -56,7 +56,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
       if(res.errorcode ==3){
 
         Router
-        .push('/login')
+        .push('/')
       }else{
         if(res.errorcode ==0){
           let error="error happend"

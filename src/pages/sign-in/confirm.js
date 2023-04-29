@@ -40,8 +40,7 @@ const Page = () => {
 
     // Token missing, redirect to home
     if (!token) {
-      Router
-        .push('/')
+     Router.push('/dashboard')
         .catch(console.error);
       return;
     }
@@ -57,8 +56,7 @@ const Page = () => {
       authContext.signIn(user);
 
       // Redirect to home page
-      Router
-        .push('/')
+     Router.push('/dashboard')
         .catch(console.error);
     } catch (err) {
       console.error(err);
@@ -98,7 +96,7 @@ const Page = () => {
       >
         <Box sx={{ p: 3 }}>
           <NextLink
-            href="/"
+            href="/dashboard"
             passHref
           >
             <a>

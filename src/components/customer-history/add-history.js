@@ -66,7 +66,7 @@ export default function FullScreenDialog(details) {
         .push(
         
         {
-          pathname: '/login',
+          pathname: '/',
           query: { redirect: '1' },
         })
       }else{
@@ -229,7 +229,7 @@ setqtErr(true)
               {[...Array(noOfRows)].map((elementInArray, ind) => {
                   return (
                  
-                     <Stack direction="row" spacing={2}>
+                     <Stack direction="row" key={ind} spacing={2}>
                     <FormControl fullWidth key={ind}> 
                    
                     <InputLabel id={`item${ind}`}>Items</InputLabel> 
