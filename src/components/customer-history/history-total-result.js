@@ -90,20 +90,17 @@ export const HistoryTotalResult = ({
               query: { redirect: '1' },
             })
       } else {
-        console.log(res.result);
         if (res.result[0] != null) {
           var msg = "*ITEMS PENDING*%0a";
           res.result.map((item)=>{
            msg =  `${msg}%0a${item.itemName} : ${item.pending}`
           })
           setPendingItems(msg);
-          console.log(msg);
         } else {
           setItems(res.result);
         }
       }
     }).catch(err => {
-      console.log(err);
     })
   }
 
