@@ -20,9 +20,11 @@ import {
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-item';
+import FullScreenDialogPopup from './popup';
 import FullScreenDialogUpdate from './update-item';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router';
+
 export const ItemListResults = ({ items,getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -34,6 +36,20 @@ export const ItemListResults = ({ items,getdata, ...rest }) => {
     setDialog();
   };
   
+  const handlePopup = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+    setOpen(true);
+    setDialog(() => (
+  
+      <FullScreenDialogPopup
+        onClose={handleClose}
+        open={open}
+       
+         updated={upd}
+         button={button}
+         data={data}
+      />
+    ));
+  };
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
@@ -115,6 +131,7 @@ const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
   "itemId": itemId,
     "qty": data.StockNumber,
     "status": data.Status,
+    "notes": data.Notes,
      }
 }
 
@@ -248,6 +265,7 @@ setDialog();
                       <Typography
                         color="textPrimary"
                         variant="body1"
+                        onClick={handlePopup}
                       >
                         {items.iName}
                       </Typography>
