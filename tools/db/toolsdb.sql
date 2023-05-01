@@ -702,10 +702,12 @@ BEGIN
         		LEAVE StartLoop;
         end if;
 			set fdata = (SELECT JSON_ARRAY());
-            set label = (select JSON_ARRAY_APPEND(label,'$',"customer Name"));    
+      if i=0 then
+            set label = (select JSON_ARRAY_APPEND(label,'$',"customer Name"));   
+            end if; 
         	set id = (select json_extract(customerData, concat('$[',i,']')));
 
-        	set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('name',JSON_VALUE(id,'$.name'),'mobile',JSON_VALUE(id,'$.Phone'))));
+        	set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('id',JSON_VALUE(id,'$.cId'),'name',JSON_VALUE(id,'$.name'),'mobile',JSON_VALUE(id,'$.Phone'))));
 			set j=0;
             		InnerLoop : LOOP
                     	  IF j > cntitem THEN
@@ -714,8 +716,9 @@ BEGIN
 
                             set itId= (select json_extract(itemData, concat('$[',j,']')));
         	                set idatas =(select JSON_ARRAY(JSON_VALUE(itId,'$.itemId')));
-
+                               if i=0 then
                                set label = (select JSON_ARRAY_APPEND(label,'$',JSON_VALUE(itId,'$.itemName')));
+                               end if;
                             	set rentstock = (SELECT SUM(rhc.qty) from renthistory rhc 
                                             inner join renthistorymaster rhm on rhc.mId = rhm.mId 
                                             where 
@@ -742,7 +745,6 @@ BEGIN
                     set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
         set i = i+1;
     END LOOP;
-    
     set label =(select JSON_ARRAY_APPEND(label,'$','PendingAmount'));
     if cnt = -1 THEN
      set label =(select JSON_ARRAY());
