@@ -13,11 +13,12 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import ItemTable from './item-table';
+
+import UpdatedTable from './updated-table';
 
 
 
-export default function FullScreenDialogPopup(details) {
+export default function FullScreenDialogUpdated(details) {
     
   const [update, setUpdate] = useState(details.updated);
 
@@ -66,14 +67,14 @@ export default function FullScreenDialogPopup(details) {
 
   useEffect(() => {
     setDialog(() => (
-      <ItemTable />
+      <UpdatedTable />
     ));
   }, []);
   
   return (
     <div>
 
-      <ItemTable/>
+      <UpdatedTable/>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
@@ -81,7 +82,7 @@ export default function FullScreenDialogPopup(details) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-            {details.button} Items
+                Updated Items List
             </Typography>
            
           </Toolbar>

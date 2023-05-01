@@ -213,7 +213,7 @@ let cid= data.cid;
         {addDialog}
       <PerfectScrollbar>
         <Box >
-        <TableContainer >
+        <TableContainer style={{ maxHeight: '400px' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -224,23 +224,13 @@ let cid= data.cid;
                 <TableCell>
                   Mobile Number
                 </TableCell>
-                <TableCell>
-                  Alternative number
-                </TableCell>
-                <TableCell>
-                  Address
-                </TableCell>
-
-                {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<TableCell>
-    Actions
-   </TableCell>)}
+      
+            
 
                 
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody style={{ overflowY: 'scroll' }}>
               {filteredUsers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
@@ -274,21 +264,11 @@ let cid= data.cid;
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.mobile}
-                  </TableCell>
-                  <TableCell>
-                    {customer.altermobile}
-                  </TableCell>
-                  <TableCell>
-                    {customer.address}
-                  </TableCell>
+            {customer.mobile}
+             <br />
+               {customer.altermobile}
+             </TableCell>
                 
-                  <TableCell>
-                  {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
-  )}
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -296,15 +276,7 @@ let cid= data.cid;
           </TableContainer>
         </Box>
       </PerfectScrollbar>
-      <TablePagination
-        component="div"
-        count={customers.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleLimitChange}
-        page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
+    
     </Card>
     </>
   );

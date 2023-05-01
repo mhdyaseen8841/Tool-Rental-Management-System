@@ -20,7 +20,7 @@ import {
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './add-item';
-import FullScreenDialogPopup from './popup';
+import FullScreenDialogPopup from './item-popup';
 import FullScreenDialogUpdate from './update-item';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router';
@@ -128,7 +128,7 @@ const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
       "type" : "SP_CALL",
       "requestId" : 1300001,
       request: {
-  "itemId": itemId,
+      "itemId": itemId,
     "qty": data.StockNumber,
     "status": data.Status,
     "notes": data.Notes,
