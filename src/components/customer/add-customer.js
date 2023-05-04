@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Stack, Container, Typography, TextField, Checkbox, Alert } from '@mui/material';
+import { Stack, Container, Typography, TextField, Checkbox, Alert, Grid } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
@@ -20,66 +20,66 @@ export default function FullScreenDialog(details) {
  
  
   const [update, setUpdate] = useState(details.updated);
-  const [files, setFiles] = useState();
-  const [doc,setDoc]= useState(update?details.data.proof:'');
-
-  const [imgPreview, setImgPreview] = useState();
-
-
+  const [files, setFiles] = useState([]);
+  const [docs, setDocs] = useState([]);
+  const [imgPreviews, setImgPreviews] = useState([]);
+  
   const getBase64 = (file) => {
-
-   
     return new Promise((resolve) => {
-      // Make new FileReader
       const reader = new FileReader();
-      // Convert the file to base64 text
       reader.readAsDataURL(file);
-      // on reader load somthing...
       reader.onload = () => {
-        // Make a fileInfo Object
         let baseURL = '';
         baseURL = reader.result;
-        
-        setDoc(baseURL)
         resolve(baseURL);
       };
     });
   };
-
   
-
-  const handleFileChange = event => {
-    setFiles(event)
-   
-     const fileObj = event && event[0];
-     if (!fileObj) {
-         return;
-     }
-    
- 
-     setImgPreview(URL.createObjectURL(event[0]))
-     new Compressor(event[0], {      
-       quality: 0.6,
-       success: (compressedResult) => {
-           getBase64(compressedResult).then((result) => {
-               
-              
-               setImgPreview();
- 
-              
-             }).catch((err) => {
-            
-           })
-       },
-     });
-   }
+  const handleFileChange = (event) => {
+    setFiles(event);
+    const fileObjs = event && event.length ? Array.from(event) : [];
+    if (!fileObjs.length) {
+      return;
+    }
+  
+    const promises = fileObjs.map((fileObj) => {
+      return new Promise((resolve, reject) => {
+        new Compressor(fileObj, {
+          quality: 0.6,
+          success: (compressedResult) => {
+            getBase64(compressedResult).then((result) => {
+              resolve(result);
+            }).catch((err) => {
+              reject(err);
+            });
+          },
+          error: (err) => {
+            reject(err);
+          },
+        });
+      });
+    });
+  
+    Promise.all(promises).then((results) => {
+      setImgPreviews((prevPreviews) => {
+        return [...prevPreviews, ...results];
+      });
+      setDocs((prevDocs) => {
+        return [...prevDocs, ...results];
+      });
+    }).catch((err) => {
+      console.error(err);
+    });
+  };
+  
  
 
 
   const validSchema = Yup.object().shape({
     CustomerName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
-    Mobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Mobnum is required'),
-    AltMobnum: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
+    Mobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits').required('Mobile number is required'),
+    AltMobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
     Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
   });
 
@@ -153,7 +153,7 @@ export default function FullScreenDialog(details) {
            label="Mobile Number"
            variant="outlined"
            value={details.update ? details.data.name : ''}
-           {...getFieldProps('Mobnum')}
+           {...getFieldProps('Mob num')}
            error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
            helperText={touched.Mobnum && errors.Mobnum || alertMsg}
          />
@@ -168,6 +168,35 @@ export default function FullScreenDialog(details) {
            error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
            helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
          />
+
+         
+         <Grid container spacing={0} >
+  <Grid item xs={6} sm={6}> 
+    <TextField
+      fullWidth
+      type="text"
+      label="Care of name"
+      variant="outlined"
+      value={details.update ? details.data.name : ''}
+      {...getFieldProps('Carename')}
+      error={Boolean(touched.Carename && errors.Carename || alertMsg)}
+      helperText={touched.Carename && errors.Carename || alertMsg}
+    />
+  </Grid>
+  <Grid item xs={6} sm={6} style={{paddingLeft: '10px'}} >
+    <TextField
+      fullWidth
+      type="text"
+      label="Mobile Number"
+      variant="outlined"
+      value={details.update ? details.data.name : ''}
+      {...getFieldProps('AltMobnum')}
+      error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
+      helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
+    />
+  </Grid>
+</Grid>
+
             <TextField
               fullWidth
               type="text"
@@ -178,24 +207,18 @@ export default function FullScreenDialog(details) {
               helperText={touched.Address && errors.Address}
             />
             
-          { doc ? 
-         <img
-        
-          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"  }}
-          src={`${doc}`}
+            {imgPreviews.map((preview, index) => {
+      return (
+        <img
+          key={index}
+          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"}}
+          src={`${preview}`}
           role="presentation"
           alt="no network"
         />
-       :  
-       <Typography variant="subtitle2" sx={{cursor: "pointer"}}
-     >
-        No Image
-      </Typography>
-
-         }
-
-          <FileUpload accept="image/*" value={files} onChange={handleFileChange} />
-
+      );
+    })}
+    <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
           
           </Stack>
         </Container>

@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -31,48 +31,48 @@ import { DataUsageSharp } from '@mui/icons-material';
 
 
 
-export const ItemResult = ({ customers,getdata, ...rest  }) => {
+export const ItemResult = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
-const [data,setData]=useState([])
-const [item,setItem]=useState([])
+  const [data, setData] = useState([])
+  const [item, setItem] = useState([])
   const handleClose = () => {
     setDialog();
   };
 
 
-  
 
 
-const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
- 
-  setOpen(true);
+
+  const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+
+    setOpen(true);
 
 
-  const add = (data) => {
-   
-
- 
+    const add = (data) => {
 
 
-  }
 
 
-  setDialog(() => (
-    
-    <FullScreenDialog
-      onClose={handleClose}
-      open={open}
-       submit={add}
-       updated={upd}
-       button={button}
-       data={data}
-    />
-  ));
-};
+
+    }
+
+
+    setDialog(() => (
+
+      <FullScreenDialog
+        onClose={handleClose}
+        open={open}
+        submit={add}
+        updated={upd}
+        button={button}
+        data={data}
+      />
+    ));
+  };
 
 
 
@@ -88,7 +88,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-    //   newSelectedCustomerIds = customers.map((customer) => customer.mId);
+      //   newSelectedCustomerIds = customers.map((customer) => customer.mId);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -131,61 +131,58 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   
     }, []);
   return (
-    
+
     <Card {...rest}>
-      
+
       <PerfectScrollbar>
         <Box >
-        <TableContainer >
-          <Table sx={{}}>
-            <TableHead>
-              <TableRow>
-                
-              
-                <TableCell>
-                 Date
-                </TableCell>
-                
-                {item.map((itemHead,ind) => (
-                <TableCell key={ind}>
-                  {itemHead.name}
-                </TableCell>
-                )
-                )}
-                
-               
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((customer) => (
-                <TableRow
-                  hover
-                  key={customer.mId}
-                //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
-                >
-                  <TableCell sx={{whiteSpace:'nowrap'}}>
-                    {customer[0]}
+          <TableContainer >
+            <Table>
+              <TableHead>
+                <TableRow>
+
+
+                  <TableCell>
+                    Date
                   </TableCell>
-                  {
-                      customer.slice(1,customer.length).map((item,ind) => (
-<TableCell key={ind}>
-<Stack spacing={2}>
-  {item.outgoing.qty != 0 ? <div style={{ color: 'white',background: 'red', maxWidth:'60px',textAlign:'center' }}>
-    {item.outgoing.qty}</div> : <div/>}
-  {item.incoming.qty != 0 ? <div style={{ color: 'white',background: 'green', maxWidth:'60px',textAlign:'center'  }}>
-    {item.incoming.qty}</div> : <div/>}
-</Stack>
-                 
-                  
-                 
-                  </TableCell>
+
+                  {item.map((itemHead, ind) => (
+                    <TableCell key={ind}>
+                      {itemHead.name}
+                    </TableCell>
+                  )
+                  )}
+
+
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((customer) => (
+                  <TableRow
+                    hover
+                    key={customer.mId}
+                  //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
+                  >
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      {customer[0]}
+                    </TableCell>
+                    {
+                      customer.slice(1, customer.length).map((item, ind) => (
+                        <TableCell key={ind}>
+                          <Stack>
+                            {item.outgoing.qty != 0 ? <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
+                              {item.outgoing.qty}</div> : <div />}
+                            {item.incoming.qty != 0 ? <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center' }}>
+                              {item.incoming.qty}</div> : <div />}
+                          </Stack>
+                        </TableCell>
                       ))
-                  }
+                    }
                   </TableRow>
-              ))}
-             
-            </TableBody>
-          </Table>
+                ))}
+
+              </TableBody>
+            </Table>
           </TableContainer >
         </Box>
       </PerfectScrollbar>

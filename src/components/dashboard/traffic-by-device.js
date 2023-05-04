@@ -1,8 +1,5 @@
 import { Doughnut } from 'react-chartjs-2';
 import { Box, Card, CardContent, CardHeader, Divider, Typography, useTheme } from '@mui/material';
-import LaptopMacIcon from '@mui/icons-material/LaptopMac';
-import PhoneIcon from '@mui/icons-material/Phone';
-import TabletIcon from '@mui/icons-material/Tablet';
 
 export const TrafficByDevice = (props) => {
   const theme = useTheme();
@@ -10,14 +7,14 @@ console.log(props);
   const data = {
     datasets: [
       {
-        data: props.data,
+        data: props.data ? props.data  : [],
         backgroundColor: ['#3F51B5','#3D3635', '#e53935', '#FB8C00','#006A4E','#FFA600','#F75D59','#5865F2',],
         borderWidth: 8,
         borderColor: '#FFFFFF',
         hoverBorderColor: '#FFFFFF'
       },
     ],
-    labels: props.label
+    labels: props.label ? props.label : []
   };
 
   const options = {

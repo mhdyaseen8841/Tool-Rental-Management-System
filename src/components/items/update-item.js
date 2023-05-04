@@ -42,7 +42,7 @@ export default function FullScreenDialogUpdate(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values) => {
-    
+    console.log(values)
       details.submit(values)
     }
   });
@@ -104,6 +104,19 @@ export default function FullScreenDialogUpdate(details) {
            {...getFieldProps('StockNumber')}
            error={Boolean(touched.StockNumber && errors.StockNumber || alertMsg)}
            helperText={touched.StockNumber && errors.StockNumber || alertMsg}
+         />
+
+
+          <TextField
+           
+           fullWidth
+           type="text"
+           label="Notes"
+           variant="outlined"
+          
+           {...getFieldProps('Notes')}
+           error={Boolean(touched.Notes && errors.Notes || alertMsg)}
+           helperText={touched.Notes && errors.Notes || alertMsg}
          />
             
           
