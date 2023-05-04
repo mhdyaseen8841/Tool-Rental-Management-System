@@ -1,120 +1,140 @@
-import { useState } from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import Router from 'next/router';
-import SearchIcon from '@mui/icons-material/Search';
-import { filter } from 'lodash';
-import Link from 'next/link';
-import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  Checkbox,
-  InputAdornment,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TextField,
-  Typography,
-  SvgIcon
-} from '@mui/material';
-import { getInitials } from '../../utils/get-initials';
-import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
+import { useState, useEffect } from 'react';
+
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import { Stack, Container, Typography, TextField, Checkbox, Alert, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Card, Avatar, Link } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Compressor from 'compressorjs';
 import requestPost from '../../../serviceWorker'
+import { getInitials } from '../../utils/get-initials';
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import FileUpload from 'react-material-file-upload';
+import { Box } from '@mui/system';
 
-// function descendingComparator(a, b, orderBy) {
-//   if (b[orderBy] < a[orderBy]) {
-//     return -1;
-//   }
-//   if (b[orderBy] > a[orderBy]) {
-//     return 1;
-//   }
-//   return 0;
-// }
 
-// function getComparator(order, orderBy) {
-//   return order === 'desc'
-//     ? (a, b) => descendingComparator(a, b, orderBy)
-//     : (a, b) => -descendingComparator(a, b, orderBy);
-// }
 
-// function applySortFilter(array, comparator, query) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   if (query) {
-//     return filter(array, (_user) => _user.cName.toLowerCase().indexOf(query.toLowerCase()) !== -1 || _user.mobile.indexOf(query) !== -1);
-//   }
-//   return stabilizedThis.map((el) => el[0]);
-// }
+export default function FullScreenDialog(details) {
 
-export const ActiveInactiveCustomers = ({ customers,getdata, ...rest  }) => {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(0);
-  const [open, setOpen] = useState(true);
-  const [addDialog, setDialog] = useState();
 
   const [order, setOrder] = useState('asc');
-
+  const [limit, setLimit] = useState(10);
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
+  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [customers, setCustomers] = useState([{}])
 
-
-
-  const handleFilterByName = (event) => {
-    if(event.target.value.length >=3){
-      setFilterName(event.target.value);
+  function getCustomer(){
+    let data=  {
+      "type" : "SP_CALL",
+      "requestId" : 1100006,
+      request: {
+     }
+  }
+  
+    requestPost(data).then((res)=>{
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/',
+          query: { redirect: '1' },
+        })
     }else{
-      setFilterName("");
+  
+      if(res.result[0] ==null){
+        setCustomers([])
+      }else{
+        setCustomers(res.result)
+      }
+     
+  
     }
+    })
+    // .catch((err)=>{
+    //   setCustomers([{}])
+    //   })
+  
+  
+  }
+  
+  useEffect(() => {
+  
+   getCustomer()
+  }, [])
+  
+
+ 
+  const [alertMsg, setAlert] = useState();
+  const formik = useFormik({
+ 
+  });
+  
+
+  const onclose = () => {
+    formik.resetForm();
+    details.onClose();
   };
 
-//   const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
+
+  function applySortFilter(array, comparator, query) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    if (query) {
+      return filter(array, (_user) => _user.cName.toLowerCase().indexOf(query.toLowerCase()) !== -1 || _user.mobile.indexOf(query) !== -1);
+    }
+    return stabilizedThis.map((el) => el[0]);
+  }
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+
+  const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
+
   return (
-    <>
-    <Box sx={{ mt: 3, mb:3 }}>
-      <Card >
-        <CardContent>
-          <Box sx={{ maxWidth: 500 }}>
-            <TextField
-              fullWidth
-              onChange={handleFilterByName}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SvgIcon
-                      color="action"
-                      fontSize="small"
-                    >
-                      <SearchIcon />
-                    </SvgIcon>
-                  </InputAdornment>
-                )
-              }}
-              placeholder="Search customer"
-              variant="outlined"
-            />
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
-    <Card {...rest}>
+    <div>
+      <Dialog fullScreen open={details.open} onClose={details.onClose}>
+        <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+               Active or Inactive Customer
+            </Typography>
+            
+          </Toolbar>
+        </AppBar>
+        <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+
+
+          
+        <Card >
       
-        {addDialog}
+      
       <PerfectScrollbar>
         <Box >
         <TableContainer style={{ maxHeight: '400px' }}>
@@ -128,6 +148,9 @@ export const ActiveInactiveCustomers = ({ customers,getdata, ...rest  }) => {
                 <TableCell>
                   Mobile Number
                 </TableCell>
+                <TableCell>
+                  Active/Inactive
+                </TableCell>
       
             
 
@@ -135,7 +158,7 @@ export const ActiveInactiveCustomers = ({ customers,getdata, ...rest  }) => {
               </TableRow>
             </TableHead>
             <TableBody style={{ overflowY: 'scroll' }}>
-              {/* {filteredUsers.slice(0, limit).map((customer) => (
+              {filteredUsers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
                   key={customer.cId}
@@ -172,9 +195,15 @@ export const ActiveInactiveCustomers = ({ customers,getdata, ...rest  }) => {
              <br />
                {customer.altermobile}
              </TableCell>
+              <TableCell>
+              <Button
+              variant="contained"
+              color="primary"
+              ></Button>
+              </TableCell>
                 
                 </TableRow>
-              ))} */}
+              ))}
             </TableBody>
           </Table>
           </TableContainer>
@@ -182,11 +211,8 @@ export const ActiveInactiveCustomers = ({ customers,getdata, ...rest  }) => {
       </PerfectScrollbar>
     
     </Card>
-    </>
+        </Container>
+      </Dialog>
+    </div>
   );
-};
-
-
-ActiveInactiveCustomers.propTypes = {
-  customers: PropTypes.array.isRequired
-};
+}
