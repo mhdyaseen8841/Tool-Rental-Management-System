@@ -231,9 +231,6 @@ BEGIN
 			IF  i > icnt THEN
 				LEAVE OuterLoop;
 			END IF;	
-			
-				
-
 				set items = (select json_extract(itemData, concat('$[',i,']')));
 
 				set rentStock = (SELECT SUM(rhc.qty) from renthistory rhc  
@@ -247,7 +244,7 @@ BEGIN
                                             AND rhc.status = 0);
 
 
-				set pStock = IFNULL(rentStock-returnStock,0);
+				set pStock = IFNULL(rentStock-IFNULL(returnStock,0),0);
 				set aStock = IFNULL(JSON_VALUE(items,'$.tStock')-pStock,0);
 
 				set items = (select JSON_SET(items,'$.aStock',aStock));
@@ -277,6 +274,18 @@ CREATE  PROCEDURE `1300001` (IN `request` JSON)   BEGIN
             select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
 		end if;
 	end if;
+END$$
+
+
+CREATE PROCEDURE `1300005`(IN `request` JSON)
+BEGIN
+	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
+                               'sId',sId,
+                               'date',sDate,
+                               'qty',qty,
+                               'status',updateStatus
+                               )))) as result from stockupdate WHERE itemId=JSON_VALUE(request,'$.itemId');
+
 END$$
 
 CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
@@ -622,8 +631,8 @@ CREATE  PROCEDURE `2300005` (IN `request` JSON)   BEGIN
            set grphData = (select JSON_ARRAY_APPEND(grphData, '$', amt));
             set i = i+1;
         end loop;
-       set pielabel =  (select JSON_ARRAY(GROUP_CONCAT(name)) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=1) as tbl);
-        set piedata =(select JSON_ARRAY(cast(GROUP_CONCAT(qty) as signed)) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=1) as tbl);
+       set pielabel =  (select JSON_ARRAYAGG(name) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=1 group by i.itemId) as tbl);
+        set piedata =(select JSON_ARRAYAGG(cast(qty as signed)) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=1 group by i.itemId) as tbl);
         if json_value(pielabel,'$[0]') = "" THEN
         	set pielabel = (select JSON_ARRAY());
             set piedata = (select JSON_ARRAY());
