@@ -73,7 +73,7 @@ export default function FullScreenDialog(details) {
         if(res.result[0] ==null){
           setItems([{}])
         }else{
-          setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.astock  } }));
+          setItems(res.result.map((value) => { return { label: value.iName, itemId: value.itemId,astock: value.aStock  } }));
          
         }
       }

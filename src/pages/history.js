@@ -11,6 +11,7 @@ import { ItemNameResult } from '../components/customer-history/item-name-result'
 
 import { HistoryListToolbar } from '../components/customer-history/history-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
+import { CustomerLayout } from "../components/customer-layout";
 import requestPost from '../../serviceWorker'
 
 import { useRouter } from 'next/router';
@@ -251,9 +252,9 @@ Router.push('/dashboard')
 
     }
 Page.getLayout = (page) => (
-  <DashboardLayout>
+  <CustomerLayout>
     {page}
-  </DashboardLayout>
+  </CustomerLayout>
 );
 
 export default Page;
