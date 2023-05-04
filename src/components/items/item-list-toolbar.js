@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import FullScreenDialog from './add-item';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router';
+import FullScreenDialogUpdated from './updated-list-popup';
 export const ItemListToolbar = (props) => 
 {
 
@@ -25,6 +26,18 @@ export const ItemListToolbar = (props) =>
     setDialog();
   };
 
+const handleUpdate = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+  setOpen(true);
+
+  setDialog(() => (
+    <FullScreenDialogUpdated
+      onClose={handleClose}
+      open={true}
+
+
+    />
+  ));
+};
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
   const add = (data,file) => {
@@ -83,7 +96,6 @@ requestPost(req).then((res)=>{
   ));
 };
 
-
 return(
   <Box {...props}>
     <Box
@@ -106,6 +118,17 @@ return(
       {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (<Box sx={{ m: 1 }}>
+
+<Button
+  color="primary"
+  variant="contained"
+  onClick={handleUpdate}
+  style={{ marginRight: '10px' }}
+>
+  Updated Lists
+</Button>
+
+
     <Button
       color="primary"
       variant="contained"

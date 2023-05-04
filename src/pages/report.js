@@ -79,7 +79,7 @@ console.log(res.result.label)
       }}
     >
       <Container maxWidth={false}>
-        <ReportListToolbar getdata={getItems}/>
+        <ReportListToolbar getdata={getItems} label={label}/>
         <Box sx={{ mt: 3 }}>
           <ReportListResults data={data} label={label} getdata={getItems} />
         </Box>

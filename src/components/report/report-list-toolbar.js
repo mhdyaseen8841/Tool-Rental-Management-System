@@ -1,30 +1,30 @@
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    TextField,
-    InputAdornment,
-    SvgIcon, Typography
-  } from '@mui/material';
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  InputAdornment,
+  SvgIcon,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
+import { useState } from 'react';
 
-  import { useState, useEffect } from 'react';
+export const ReportListToolbar = (props) => {
+  const [open, setOpen] = useState(false);
+  const [addDialog, setDialog] = useState();
+  const handleClose = () => {
+    setDialog();
+  };
 
-
-  export const ReportListToolbar = (props) => 
-  {
   
-    const [open, setOpen] = useState(false);
-  
-    const [addDialog, setDialog] = useState();
-  
-    const handleClose = () => {
-      setDialog();
-    };
-  
-  
-  
-  return(
+  return (
     <Box {...props}>
       <Box
         sx={{
@@ -32,31 +32,16 @@ import {
           display: 'flex',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          m: -1
+          m: -1,
         }}
       >
-         {addDialog}
-        <Typography
-          sx={{ m: 1 }}
-          variant="h4"
-        >
+        {addDialog}
+        <Typography sx={{ m: 1 }} variant="h4">
           Report
         </Typography>
-       
-        {localStorage.getItem('usertype') === 'owner' ? (
-      null
-    ) : (<Box sx={{ m: 1 }}>
-      <Button
-        color="primary"
-        variant="contained"
-        // onClick={handleAdd}
-      >
-        Print
-      </Button>
-    </Box>)}
+
         
       </Box>
-      
     </Box>
   );
-              }
+};
