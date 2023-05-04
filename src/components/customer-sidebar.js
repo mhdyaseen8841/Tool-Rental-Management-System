@@ -28,22 +28,17 @@ let items = [
   {
     href: '/customers',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Add Rent'
+    title: 'Customers'
   },
   {
     href: '/items',
     icon: (<InventoryIcon fontSize="small" />),
-    title: 'Add Payment'
+    title: 'Items'
   },
   {
     href: '/users',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Add Return'
-  },
-  {
-    href: '/report',
-    icon: (<UsersIcon fontSize="small" />),
-    title: 'Report'
+    title: 'Users'
   }
   // {
   //   href: '/history',
@@ -118,7 +113,7 @@ export const CustomerSidebar = (props) => {
                   color="inherit"
                   variant="subtitle1"
                 >
-                  Customer A-ONE RENTALS
+                  A-ONE RENTALS
                 </Typography>
                 
               </div>

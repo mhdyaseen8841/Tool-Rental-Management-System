@@ -677,10 +677,13 @@ BEGIN
     DECLARE retrunStock int;
     DECLARE pendingStock int;
     DECLARE cntitem int;
+    declare activeCust int;
     
-    set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
-   	
-    set customerData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('cId',`cId`,'name',`cName`,'Phone',`mobile`)),']') from customermaster where status =0);
+    set itemData = JSON_VALUE(request,'$.items') ;
+        if JSON_LENGTH(itemData) = 0  or itemData is null then 
+              set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
+        end if;
+    set customerData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('cId',`cId`,'name',`cName`,'Phone',`mobile`)),']') from customermaster where status = 0);
 
     if JSON_EXTRACT(itemData,'$[0]') is null THEN
     	set itemData = (select JSON_ARRAY());
@@ -701,21 +704,23 @@ BEGIN
     	IF i > cnt THEN
         		LEAVE StartLoop;
         end if;
+        set activeCust = 0;
 			set fdata = (SELECT JSON_ARRAY());
-            set label = (select JSON_ARRAY_APPEND(label,'$',"customer Name"));    
+      if i=0 then
+            set label = (select JSON_ARRAY_APPEND(label,'$',"customer Name"));   
+            end if; 
         	set id = (select json_extract(customerData, concat('$[',i,']')));
-
-        	set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('name',JSON_VALUE(id,'$.name'),'mobile',JSON_VALUE(id,'$.Phone'))));
+        	set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('id',JSON_VALUE(id,'$.cId'),'name',JSON_VALUE(id,'$.name'),'mobile',JSON_VALUE(id,'$.Phone'))));
 			set j=0;
             		InnerLoop : LOOP
                     	  IF j > cntitem THEN
                         		LEAVE InnerLoop;
                         END IF;
-
                             set itId= (select json_extract(itemData, concat('$[',j,']')));
         	                set idatas =(select JSON_ARRAY(JSON_VALUE(itId,'$.itemId')));
-
+                               if i=0 then
                                set label = (select JSON_ARRAY_APPEND(label,'$',JSON_VALUE(itId,'$.itemName')));
+                               end if;
                             	set rentstock = (SELECT SUM(rhc.qty) from renthistory rhc 
                                             inner join renthistorymaster rhm on rhc.mId = rhm.mId 
                                             where 
@@ -735,14 +740,19 @@ BEGIN
                                  	set retrunStock = 0;
                                  end if;
                                 set pendingStock = rentstock - retrunStock;
+                                if pendingStock > 0 then
+                                  set activeCust = 1;
+                                end if;
                           set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingStock',pendingStock)));
                           set j=j+1;
                     END LOOP;
                     set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingAmount',0)));
                     set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
+                    if activeCust = 0 then
+                      set datas = (select JSON_REMOVE(datas,concat('$[',JSON_LENGTH(datas)-1,']')));
+                    end if;
         set i = i+1;
     END LOOP;
-    
     set label =(select JSON_ARRAY_APPEND(label,'$','PendingAmount'));
     if cnt = -1 THEN
      set label =(select JSON_ARRAY());
@@ -786,8 +796,8 @@ BEGIN	DECLARE date1 date;
         if JSON_EXTRACT(dates,'$[0]') is null THEN
             set dates = (select JSON_ARRAY());
         end if;
-
-
+        set itemData = JSON_VALUE(request,'$.items');
+        if JSON_EXTRACT(itemData,'$[0]') is null THEN
         set itemData = (
             select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',itemName)),']') 
             from  
@@ -797,6 +807,7 @@ BEGIN	DECLARE date1 date;
             where rh.status = 1 AND rh.hDate BETWEEN date1 AND date2 GROUP BY rh.itemId
             ) as ii
         );
+        end if;
         
 
         if JSON_EXTRACT(itemData,'$[0]') is null THEN
