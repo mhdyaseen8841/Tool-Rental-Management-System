@@ -6,13 +6,12 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Stack, Container, Typography, TextField, Checkbox, Alert, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { Stack, Container, Typography, TextField, Checkbox, Alert, Grid } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
 
 import FileUpload from 'react-material-file-upload';
-import { Box } from '@mui/system';
 
 
 
@@ -134,67 +133,94 @@ export default function FullScreenDialog(details) {
         </AppBar>
         <Container maxWidth="sm">
           
-        <TableContainer style={{ maxHeight: '400px' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Mobile Number
-                </TableCell>
-      
+          <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
+            <Typography variant="h4">CUSTOMER DETAILS</Typography>
             
+            {}
+            <TextField
+              fullWidth
+              type="text"
+              label="Customer Name"
+              variant="outlined"
+              {...getFieldProps('CustomerName')}
+              error={Boolean(touched.CustomerName && errors.CustomerName)}
+              helperText={touched.CustomerName && errors.CustomerName}
+            />
+            <TextField
+           
+           fullWidth
+           type="text"
+           label="Mobile Number"
+           variant="outlined"
+           value={details.update ? details.data.name : ''}
+           {...getFieldProps('Mob num')}
+           error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
+           helperText={touched.Mobnum && errors.Mobnum || alertMsg}
+         />
+         <TextField
+           
+           fullWidth
+           type="text"
+           label="Alternative Number"
+           variant="outlined"
+           value={details.update ? details.data.name : ''}
+           {...getFieldProps('AltMobnum')}
+           error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
+           helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
+         />
 
-                
-              </TableRow>
-            </TableHead>
-            <TableBody style={{ overflowY: 'scroll' }}>
-              {/* {filteredUsers.slice(0, limit).map((customer) => ( */}
-                <TableRow
-                  hover
-                  // key={customer.cId}
-                  // selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
-                >
-                
-                  <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {/* <Avatar
-                        
-                        sx={{ mr: 2 }}
-                        
-                      >
-                      {customer.cName?(getInitials(customer.cName)):""}  
-                      </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}> */}
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                         {/* {customer.cName}  */}
-                      </Typography>
-                      {/* </Link> */}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-            {/* {customer.mobile} */}
-             <br />
-               {/* {customer.altermobile} */}
-             </TableCell>
-                
-                </TableRow>
-            {/* ))} */}
-            </TableBody>
-          </Table>
-          </TableContainer>
+         
+         <Grid container spacing={0} >
+  <Grid item xs={6} sm={6}> 
+    <TextField
+      fullWidth
+      type="text"
+      label="Care of name"
+      variant="outlined"
+      value={details.update ? details.data.name : ''}
+      {...getFieldProps('Carename')}
+      error={Boolean(touched.Carename && errors.Carename || alertMsg)}
+      helperText={touched.Carename && errors.Carename || alertMsg}
+    />
+  </Grid>
+  <Grid item xs={6} sm={6} style={{paddingLeft: '10px'}} >
+    <TextField
+      fullWidth
+      type="text"
+      label="Mobile Number"
+      variant="outlined"
+      value={details.update ? details.data.name : ''}
+      {...getFieldProps('AltMobnum')}
+      error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
+      helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
+    />
+  </Grid>
+</Grid>
+
+            <TextField
+              fullWidth
+              type="text"
+              label="Address"
+              variant="outlined"
+              {...getFieldProps('Address')}
+              error={Boolean(touched.Address && errors.Address)}
+              helperText={touched.Address && errors.Address}
+            />
+            
+            {imgPreviews.map((preview, index) => {
+      return (
+        <img
+          key={index}
+          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"}}
+          src={`${preview}`}
+          role="presentation"
+          alt="no network"
+        />
+      );
+    })}
+    <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
+          
+          </Stack>
         </Container>
       </Dialog>
     </div>

@@ -115,7 +115,7 @@ return(
     variant="contained"
     onClick={handleAdd}
   >
-    Add Customers
+    Active/Inactive Customers
   </Button>)}
        
       </Box>

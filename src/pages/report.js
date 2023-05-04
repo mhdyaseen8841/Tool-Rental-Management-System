@@ -61,9 +61,6 @@ console.log(res.result.label)
    
 
 
-
-
-
   return(
   <>
     <Head>
