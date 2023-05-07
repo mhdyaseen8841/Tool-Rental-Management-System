@@ -127,7 +127,9 @@ export const ItemResult = ({ customers, getdata, ...rest }) => {
   useEffect(() => {
     setData(customers.data)
     setItem(customers.item)
-  }, []);
+         
+  
+    }, []);
   return (
 
     <Card {...rest}>

@@ -136,10 +136,15 @@ if(selectedItems[ind]){
       setQtyError('')
       setqtErr(false)
 
+    let Inote = document.getElementById(`notes${ind}`).value;
+if(!Inote){
+Inote=""
+}
+
       itemsArr.push({
         "itemId":selectedItems[ind],
         "qty":element.value,
-  
+         "notes":Inote
       })
   
      
@@ -210,7 +215,7 @@ setqtErr(true)
             </Button>
           </Toolbar>
         </AppBar>
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
           
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Typography variant="h4">RENT HISTORY</Typography>
@@ -251,7 +256,19 @@ setqtErr(true)
                       <FormControl>
                         
                       <TextField label="Quantity" variant="outlined" type='number'  id={`qty${ind}`} labelId={`qty-label-${ind}`} defaultValue={1}  />
+                      
                         
+                      </FormControl>
+   <FormControl>
+                        <TextField
+              medium
+              type="text"
+              label="Notes"
+              variant="outlined"
+             id={`notes${ind}`} labelId={`notes-label-${ind}`}
+              error={Boolean(touched.Notes && errors.Notes)}
+              helperText={touched.Notes && errors.Notes}
+            /> 
                       </FormControl>
                       </Stack>
                   
