@@ -18,6 +18,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
   TablePagination,
   TableRow,
@@ -128,6 +129,23 @@ if (index !== -1) {
     setPage(newPage);
   };
 
+
+  const labelCounts = {};
+
+// Loop through the data to count the labels
+data.forEach((row) => {
+  row.forEach((cell, index) => {
+    if (index !== 0 && index !== row.length - 1) { // Ignore the first and last cells
+      const label = heading[index - 1];
+      if (!labelCounts[label]) {
+        labelCounts[label] = cell.pendingStock;
+      } else {
+        labelCounts[label] += cell.pendingStock;
+      }
+    }
+  });
+});
+
   return (
 
     <Card {...rest}>
@@ -170,80 +188,63 @@ if (index !== -1) {
         </Box>
       )}
 
-      <TableContainer >
-        <Table>
-          <TableHead>
-            <TableRow>
+<TableContainer>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>{label[0]}</TableCell>
+        {filter ? (
+          selectedOptions.map((label) => {
+            return (
+              <TableCell key={label}>{label}</TableCell>
+            )
+          })
+        ) : (
+          heading.map((label) => {
+            return (
+              <TableCell key={label}>{label}</TableCell>
+            )
+          })
+        )}
+        <TableCell>{label[label.length - 1]}</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {data.map((row, index) => {
+        let firstValue = row[0];
+        let lastValue = row[row.length - 1];
+        let middleValues = row.slice(1, -1);
+        return (
+          <TableRow key={index}>
+            <TableCell>{firstValue.name}<br />{firstValue.mobile}</TableCell>
+            {filter ? (
+              selectedIndex.map((index) => {
+                return (
+                  <TableCell key={index}>{middleValues[index].pendingStock}</TableCell>
+                )
+              })
+            ) : (
+              middleValues.map((cell, index) => (
+                <TableCell key={index}>{cell.pendingStock}</TableCell>
+              ))
+            )}
+            <TableCell>{lastValue.pendingAmount}</TableCell>
+          </TableRow>
+        )
+      })}
+    </TableBody>
+    <TableFooter style={{ borderTop: '1px solid lightgray'}}>
+      <TableRow>
+        <TableCell>Total Stock</TableCell>
+        {heading.map((label) => (
+          <TableCell key={label}>{labelCounts[label]}</TableCell>
+        ))}
+        <TableCell></TableCell>
+      </TableRow>
+    </TableFooter>
+  </Table>
+</TableContainer>
 
-              <TableCell>
-                {label[0]}
-              </TableCell>
-
-              {filter ? (
-
-                selectedOptions.map((label) => {
-                  return (
-                    <TableCell>
-                      {label}
-                    </TableCell>
-                  )
-                })
-              ) : (
-
-                heading.map((label) => {
-                  return (
-                    <TableCell>
-                      {label}
-                    </TableCell>
-                  )
-                })
-
-              )}
-
-              <TableCell>
-                {label[label.length - 1]}
-              </TableCell>
-
-            </TableRow>
-          </TableHead>
-          <TableBody>
-
-            {data.map((row, index) => {
-
-              let firstValue = row[0];
-              let lastValue = row[row.length - 1];
-              let middleValues = row.slice(1, -1);
-              return (
-
-                <TableRow key={index}>
-                  <TableCell key={index}>{firstValue.name}<br />{firstValue.mobile}</TableCell>
-
-{filter ? (
-  
-
-  selectedIndex.map((index) => {
-    return (
-      <TableCell key={index}>{middleValues[index].pendingStock}</TableCell>
-    )
-  }
-  )
-  ):(
-    middleValues.map((cell, index) => (
-      <TableCell key={index}>{cell.pendingStock}</TableCell>
-    ))
-  )}
-             
-
-                  <TableCell key={index}>{lastValue.pendingAmount}</TableCell>
-                </TableRow>
-
-              )
-
-            })}
-
-          </TableBody>
-        </Table>
-      </TableContainer>
     </Card>
   );
 };

@@ -29,6 +29,10 @@ export default function FullScreenDialog(details) {
 
   const [customers, setCustomers] = useState([{}])
 
+
+
+
+
   function getCustomer(){
     let data=  {
       "type" : "SP_CALL",
@@ -36,6 +40,8 @@ export default function FullScreenDialog(details) {
       request: {
      }
   }
+
+
   
     requestPost(data).then((res)=>{
       if(res.errorCode===3){
