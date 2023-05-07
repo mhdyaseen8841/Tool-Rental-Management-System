@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -16,29 +16,30 @@ import { Users as UsersIcon } from '../icons/users';
 import { XCircle as XCircleIcon } from '../icons/x-circle';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
+import requestPost from '../../serviceWorker'
 
 let items = [
   
   
   {
-    href: '/dashboard',
+    href: '/history',
     icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard'
+    title: 'History'
   },
   {
-    href: '/customers',
+    href: '/History',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Customers'
+    title: 'Items'
   },
   {
     href: '/items',
     icon: (<InventoryIcon fontSize="small" />),
-    title: 'Items'
+    title: 'Total'
   },
   {
     href: '/users',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Users'
+    title: 'Rate Card'
   }
   // {
   //   href: '/history',
@@ -51,6 +52,10 @@ let items = [
 
 export const CustomerSidebar = (props) => {
   const { open, onClose } = props;
+  const [buttons, setButtons] = useState([]);
+  const [error, setError] = useState('');
+  const [errOpen, setErrOpen] = useState(false);
+
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
     defaultMatches: true,
@@ -70,6 +75,66 @@ export const CustomerSidebar = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [router.asPath]
   );
+  function getItems() {
+    let data = {
+      type: "SP_CALL",
+      requestId: 1200005,
+      request: {},
+    };
+
+    //hello hi find if any problem in this
+    requestPost(data).then((res) => {
+
+      if (res.errorCode === 3) {
+        router
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else {
+        if (res.result) {
+          if (res.result[0] == null) {
+            setButtons([]);
+          } else {
+            setButtons(res.result);
+            console.log(res.result);
+            items.push(
+  ...res.result.map((dt) => {
+    // Check if the item already exists in the array
+    const exists = items.some((item) => item.title === dt.iName);
+
+    // Only add the item if it doesn't already exist
+    if (!exists) {
+      return {
+        href: '/' + dt.iName,
+        icon: <ShoppingBagIcon fontSize="small" />,
+        title: dt.iName,
+      };
+    }
+
+    return null; // Skip this item if it already exists
+  }).filter(Boolean) // Filter out any null values (i.e., items that already exist)
+);
+          }
+        } else {
+          setError("" + res);
+          setErrOpen(true);
+          setButtons([]);
+        }
+      }
+
+    });
+  }
+
+  useEffect(() => {
+    if(!localStorage.getItem("uId")){
+      router.push('/')
+    }else{
+      getItems()
+    }
+    }, [])
 
   const content = (
     <>
