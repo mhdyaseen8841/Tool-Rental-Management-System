@@ -200,77 +200,60 @@ export default function ReturnDialog(details) {
             </Button>
           </Toolbar>
         </AppBar>
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
 
-          <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">RENT HISTORY</Typography>
+<Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
+  <Typography variant="h4">RENT HISTORY</Typography>
+</Stack>
 
-            { }
+{items.map((item, ind) => {
+  return (
+    <Stack direction="row" key={ind} pt={2} spacing={2}>
+      <TextField
+        id={`item${ind}`}
+        label="Item Name"
+        defaultValue={item.itemName}
+        disabled={true}
+        variant="outlined"
+        InputProps={{ style: styles.disabled }}
+        InputLabelProps={{ style: styles.disabled }}
+      />
 
-            <TextField
-              fullWidth
-              type="text"
-              label="Notes"
-              variant="outlined"
-              {...getFieldProps('Notes')}
-              error={Boolean(touched.notes && errors.notes)}
-              helperText={touched.notes && errors.notes}
-            />
+      <TextField
+        id={`pending${ind}`}
+        label="Outgoing Items"
+        defaultValue={item.pending}
+        disabled={true}
+        variant="outlined"
+        InputProps={{ style: styles.disabled }}
+        InputLabelProps={{ style: styles.disabled }}
+      />
 
+      <TextField
+        id={`return${ind}`}
+        label="Return Items"
+        variant="outlined"
+        InputProps={{ style: styles.disabled }}
+        InputLabelProps={{ style: styles.disabled }}
+      />
 
-          </Stack>
+      <TextField
+        fullWidth
+        type="text"
+        label="Notes"
+        variant="outlined"
+        {...getFieldProps(`notes${ind}`)}
+        error={Boolean(touched[`notes${ind}`] && errors[`notes${ind}`])}
+        helperText={touched[`notes${ind}`] && errors[`notes${ind}`]}
+      />
 
-          {items.map((item, ind) => {
+      <Checkbox id={`tick${ind}`} color="success" />
+    </Stack>
+  );
+})}
 
+</Container>
 
-            return (
-              <Stack direction="row" key={ind} pt={2} spacing={2}>
-
-                <TextField
-                  id={`item${ind}`}
-                  label="Item Name"
-                  defaultValue={item.itemName}
-                  disabled={true}
-                  variant="outlined"
-                  InputProps={{ style: styles.disabled }}
-                  InputLabelProps={{ style: styles.disabled }}
-                />
-
-
-                <TextField
-                  id={`pending${ind}`}
-                  label="Outgoing Items"
-                  defaultValue={item.pending}
-                  disabled={true}
-                  variant="outlined"
-
-                  InputProps={{ style: styles.disabled }}
-                  InputLabelProps={{ style: styles.disabled }}
-                />
-
-                <TextField
-                  id={`return${ind}`}
-                  label="Return Items"
-
-                  variant="outlined"
-
-                  InputProps={{ style: styles.disabled }}
-                  InputLabelProps={{ style: styles.disabled }}
-                />
-
-                <Checkbox id={`tick${ind}`} color="success" />
-
-              </Stack>
-
-            )
-          }
-          )}
-
-
-
-
-
-        </Container>
       </Dialog>
     </>
   );

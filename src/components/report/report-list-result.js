@@ -233,15 +233,17 @@ data.forEach((row) => {
         )
       })}
     </TableBody>
+    
     <TableFooter style={{ borderTop: '1px solid lightgray'}}>
       <TableRow>
-        <TableCell>Total Stock</TableCell>
+        <TableCell>Total each label count</TableCell>
         {heading.map((label) => (
           <TableCell key={label}>{labelCounts[label]}</TableCell>
         ))}
         <TableCell></TableCell>
       </TableRow>
     </TableFooter>
+    
   </Table>
 </TableContainer>
 
