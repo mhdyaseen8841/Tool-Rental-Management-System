@@ -26,7 +26,7 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from './active-inactive';
 import requestPost from '../../../serviceWorker'
 
 function descendingComparator(a, b, orderBy) {
@@ -224,6 +224,11 @@ let cid= data.cid;
                 <TableCell>
                   Mobile Number
                 </TableCell>
+                {localStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (<TableCell>
+    Actions
+   </TableCell>)}
       
             
 
@@ -268,7 +273,9 @@ let cid= data.cid;
              <br />
                {customer.altermobile}
              </TableCell>
-                
+             <TableCell>
+    <FadeMenu   updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
+    </TableCell>
                 </TableRow>
               ))}
             </TableBody>
