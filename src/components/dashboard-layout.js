@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { AuthGuard } from './auth-guard';
 import { DashboardNavbar } from './dashboard-navbar';
 import { DashboardSidebar } from './dashboard-sidebar';
+import { CustomerSidebar } from './customer-sidebar';
 import { useRouter } from 'next/router';
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -42,10 +43,16 @@ export const DashboardLayout = (props) => {
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} />
+
+      
       <DashboardSidebar
         onClose={() => setSidebarOpen(false)}
         open={isSidebarOpen}
       />
+        {/* <CustomerSidebar
+        onClose={() => setSidebarOpen(false)}
+        open={isSidebarOpen}
+      /> */}
     </AuthGuard>
   );
 };
