@@ -75,7 +75,7 @@ let data={
       "password" : res.password
       }
 }
-
+console.log(data)
 
       axios.post(ServiceURL,data).then((res)=>{
        if(res.data.errorCode===1){
