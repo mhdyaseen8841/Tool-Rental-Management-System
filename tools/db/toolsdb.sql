@@ -123,6 +123,17 @@ CREATE  PROCEDURE `1100003` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
+CREATE  PROCEDURE `1100004` (IN `request` JSON)   BEGIN
+	DECLARE num int;
+    set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
+    IF num IS NULL THEN
+     SELECT JSON_OBJECT('errorCode',0,'errorMsg','User Not Found') as result;
+    ELSE
+      update customermaster set status = 0 where cId = num ;
+      SELECT JSON_OBJECT('errorCode',1,'errorMsg','Activated successfully') as result;
+    END IF;
+END$$
+
 CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
@@ -145,7 +156,7 @@ BEGIN
                                'altermobile',altermobile,
                                'address',address,
                                'proof',proof
-                               )))) as result from customermaster WHERE status = 1;
+                               )))) as result from customermaster WHERE status=1;
 
 END$$
 
@@ -931,7 +942,7 @@ CREATE TABLE `customermaster` (
   `alterMobile` varchar(20) NOT NULL,
   `address` varchar(150) NOT NULL,
   `proof` longtext NOT NULL,
-  `status` int(10) NOT NULL DEFAULT 0
+  `status` int(10) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
