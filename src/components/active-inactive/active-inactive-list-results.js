@@ -26,7 +26,8 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './active-inactive';
+// import FullScreenDialog from './active-inactive';
+import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
 
 function descendingComparator(a, b, orderBy) {
@@ -58,7 +59,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
+export const ActiveInactiveListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -293,6 +294,6 @@ let cid= data.cid;
 };
 
 
-CustomerListResults.propTypes = {
+ActiveInactiveListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };

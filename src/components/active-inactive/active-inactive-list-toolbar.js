@@ -11,10 +11,11 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './active-inactive';
+// import FullScreenDialog from './active-inactive';
+import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router'
-export const CustomerListToolbar = (props) => 
+export const ActiveInactiveListToolbar = (props) => 
 {
 
   const [open, setOpen] = useState(true);
@@ -103,9 +104,9 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-        Customers
+        Active/Inactive Customers
       </Typography>
-      {/* <Box sx={{ m: 1 }}>
+      <Box sx={{ m: 1 }}>
         
 
       {localStorage.getItem('usertype') === 'owner' ? (
@@ -115,10 +116,10 @@ return(
     variant="contained"
     onClick={handleAdd}
   >
-    Active/Inactive Customers
+    Add Customer
   </Button>)}
        
-      </Box> */}
+      </Box>
     </Box>
     
   </Box>

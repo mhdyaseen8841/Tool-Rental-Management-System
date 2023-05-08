@@ -44,6 +44,11 @@ let items = [
     href: '/report',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Report'
+  },
+  {
+    href: '/active-inactive',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'Active/Inactive'
   }
   // {
   //   href: '/history',
