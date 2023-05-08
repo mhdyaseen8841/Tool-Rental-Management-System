@@ -22,7 +22,8 @@ import {
   TableRow,
   TextField,
   Typography,
-  SvgIcon
+  SvgIcon,
+  Button
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
@@ -59,7 +60,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export const ActiveInactiveListResults = ({ customers,getdata, ...rest  }) => {
+export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -79,91 +80,92 @@ export const ActiveInactiveListResults = ({ customers,getdata, ...rest  }) => {
   };
 
 
-  const deleteUser = (cid)=>{
-    let del = {
-      "type" : "SP_CALL",
-      "requestId" : 1100003,
+
+  const handleActive = (cid) => {
+    let req = {
+      "type": "SP_CALL",
+      "requestId": 1100004,
       request: {
-       "cId": cid
-     }
-    }
-    requestPost(del).then((res)=>{
-      if(res.errorCode===3){
-        Router
-        .push(
-        
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-    }else if(res.errorcode ==0){
-        
-     
-      }else{
-        getdata()
-        
+        "cId": cid
       }
-     
+    }
+    requestPost(req).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else if (res.errorcode == 0) {
+
+
+      } else {
+        getdata()
+
+      }
+
     })
 
 
   }
-const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
- 
-  setOpen(true);
-let cid= data.cid;
+  const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
-  const add = (data,file) => {
-   
+    setOpen(true);
+    let cid = data.cid;
 
-    let req={
-      "type" : "SP_CALL",
-      "requestId" : 1100002,
-      request: {
-       "cId":cid,
-       "name":data.CustomerName,
-       "mobile" : data.Mobnum,
-       "address" : data.Address,
-       "altermobile" : data.AltMobnum,
- "proof" : file
-     }
-    }
-    
-    requestPost(req).then((res)=>{
-      if(res.errorCode===3){
-        Router
-        .push(
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-        
-    }else if(res.errorcode ==0){
-       
-      }else{
-        getdata()
-        
+    const add = (data, file) => {
+
+
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1100002,
+        request: {
+          "cId": cid,
+          "name": data.CustomerName,
+          "mobile": data.Mobnum,
+          "address": data.Address,
+          "altermobile": data.AltMobnum,
+          "proof": file
+        }
       }
 
-    setDialog(); 
-  });
+      requestPost(req).then((res) => {
+        if (res.errorCode === 3) {
+          Router
+            .push(
+              {
+                pathname: '/',
+                query: { redirect: '1' },
+              })
+
+        } else if (res.errorcode == 0) {
+
+        } else {
+          getdata()
+
+        }
+
+        setDialog();
+      });
 
 
-  }
+    }
 
 
-  setDialog(() => (
-    
-    <FullScreenDialog
-      onClose={handleClose}
-      open={open}
-       submit={add}
-       updated={upd}
-       button={button}
-       data={data}
-    />
-  ));
-};
+    setDialog(() => (
+
+      <FullScreenDialog
+        onClose={handleClose}
+        open={open}
+        submit={add}
+        updated={upd}
+        button={button}
+        data={data}
+      />
+    ));
+  };
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
   };
@@ -173,122 +175,122 @@ let cid= data.cid;
   };
 
   const handleFilterByName = (event) => {
-    if(event.target.value.length >=3){
+    if (event.target.value.length >= 3) {
       setFilterName(event.target.value);
-    }else{
+    } else {
       setFilterName("");
     }
   };
 
+
   const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
   return (
     <>
-    <Box sx={{ mt: 3, mb:3 }}>
-      <Card >
-        <CardContent>
-          <Box sx={{ maxWidth: 500 }}>
-            <TextField
-              fullWidth
-              onChange={handleFilterByName}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SvgIcon
-                      color="action"
-                      fontSize="small"
-                    >
-                      <SearchIcon />
-                    </SvgIcon>
-                  </InputAdornment>
-                )
-              }}
-              placeholder="Search customer"
-              variant="outlined"
-            />
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
-    <Card {...rest}>
-      
-        {addDialog}
-      <PerfectScrollbar>
-        <Box >
-        <TableContainer style={{ maxHeight: '400px' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Mobile Number
-                </TableCell>
-                {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<TableCell>
-    Actions
-   </TableCell>)}
-      
-            
+      <Box sx={{ mt: 3, mb: 3 }}>
+        <Card >
+          <CardContent>
+            <Box sx={{ maxWidth: 500 }}>
+              <TextField
+                fullWidth
+                onChange={handleFilterByName}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SvgIcon
+                        color="action"
+                        fontSize="small"
+                      >
+                        <SearchIcon />
+                      </SvgIcon>
+                    </InputAdornment>
+                  )
+                }}
+                placeholder="Search customer"
+                variant="outlined"
+              />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+      <Card {...rest}>
 
-                
-              </TableRow>
-            </TableHead>
-            <TableBody style={{ overflowY: 'scroll' }}>
-              {filteredUsers.slice(0, limit).map((customer) => (
-                <TableRow
-                  hover
-                  key={customer.cId}
-                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
-                >
-                
-                  <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex',
-                        cursor: 'pointer'
-                      }}
+        {addDialog}
+        <PerfectScrollbar>
+          <Box >
+            <TableContainer style={{ maxHeight: '400px' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      Name
+                    </TableCell>
+                    <TableCell>
+                      Mobile Number
+                    </TableCell>
+
+                    {localStorage.getItem('usertype') === 'owner' ? (
+                      null
+                    ) : (<TableCell />)}
+                  </TableRow>
+                </TableHead>
+                <TableBody style={{ overflowY: 'scroll' }}>
+                  {filteredUsers.slice(0, limit).map((customer) => (
+                    <TableRow
+                      hover
+                      key={customer.cId}
+                      selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
                     >
-                      <Avatar
+
+                      <TableCell>
+                        <Box
+                          sx={{
+                            alignItems: 'center',
+                            display: 'flex',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Avatar
+
+                            sx={{ mr: 2 }}
+
+                          >
+                            {customer.cName ? (getInitials(customer.cName)) : ""}
+                          </Avatar>
+                          <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
+                            <Typography
+                              color="textPrimary"
+                              variant="body1"
+                            >
+                              {customer.cName}
+                            </Typography>
+                          </Link>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        {customer.mobile}
+                        <br />
+                        {customer.altermobile}
+                      </TableCell>
+                      <TableCell>
+                      {localStorage.getItem('usertype') === 'owner' ? 
+                        null
+                       :
                         
-                        sx={{ mr: 2 }}
+                       <><Button
+                       onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.alterMobile, address: customer.address, proof: customer.proof, cid: customer.cId })}
+                     >Edit</Button><Button onClick={()=>handleActive(customer.cId)}>Active</Button></>
                         
-                      >
-                      {customer.cName?(getInitials(customer.cName)):""}  
-                      </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                         {customer.cName} 
-                      </Typography>
-                      </Link>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-            {customer.mobile}
-             <br />
-               {customer.altermobile}
-             </TableCell>
-             <TableCell>
-                  {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
-  )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          </TableContainer>
-        </Box>
-      </PerfectScrollbar>
-    
-    </Card>
+                      }
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </PerfectScrollbar>
+
+      </Card>
     </>
   );
 };

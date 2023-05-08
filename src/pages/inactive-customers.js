@@ -15,7 +15,7 @@ const Page = () => {
 function getCustomer(){
   let data=  {
     "type" : "SP_CALL",
-    "requestId" : 1100005,
+    "requestId" : 1100006,
     request: {
    }
 }

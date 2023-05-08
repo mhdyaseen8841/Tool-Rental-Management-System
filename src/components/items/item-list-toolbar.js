@@ -42,7 +42,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
   const add = (data,file) => {
     
-    
+    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
    let req={
     "type" : "SP_CALL",
     "requestId" : 1200001,

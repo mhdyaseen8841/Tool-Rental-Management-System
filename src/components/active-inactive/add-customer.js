@@ -24,6 +24,7 @@ export default function FullScreenDialog(details) {
   const [docs, setDocs] = useState([]);
   const [imgPreviews, setImgPreviews] = useState([]);
   
+  
   const getBase64 = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -73,6 +74,13 @@ export default function FullScreenDialog(details) {
     });
   };
   
+  const handleRemoveImage = (index) => {
+    setImgPreviews((prevPreviews) => {
+      const newPreviews = [...prevPreviews];
+      newPreviews.splice(index, 1);
+      return newPreviews;
+    });
+  };
  
 
 
@@ -81,6 +89,8 @@ export default function FullScreenDialog(details) {
     Mobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits').required('Mobile number is required'),
     AltMobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
     Address: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
+    Carename: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
+    CareMobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
   });
 
   const [alertMsg, setAlert] = useState();
@@ -94,7 +104,7 @@ export default function FullScreenDialog(details) {
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
      
-      details.submit(values,doc)
+      details.submit(values,docs)
      
 
     }
@@ -153,7 +163,7 @@ export default function FullScreenDialog(details) {
            label="Mobile Number"
            variant="outlined"
            value={details.update ? details.data.name : ''}
-           {...getFieldProps('Mob num')}
+           {...getFieldProps('Mobnum')}
            error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
            helperText={touched.Mobnum && errors.Mobnum || alertMsg}
          />
@@ -190,9 +200,9 @@ export default function FullScreenDialog(details) {
       label="Mobile Number"
       variant="outlined"
       value={details.update ? details.data.name : ''}
-      {...getFieldProps('AltMobnum')}
-      error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
-      helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
+      {...getFieldProps('CareMobnum')}
+      error={Boolean(touched.CareMobnum && errors.CareMobnum || alertMsg)}
+      helperText={touched.CareMobnum && errors.CareMobnum || alertMsg}
     />
   </Grid>
 </Grid>
@@ -208,16 +218,18 @@ export default function FullScreenDialog(details) {
             />
             
             {imgPreviews.map((preview, index) => {
-      return (
-        <img
-          key={index}
-          style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"}}
-          src={`${preview}`}
-          role="presentation"
-          alt="no network"
-        />
-      );
-    })}
+  return (
+    <div key={index}>
+      <img
+        style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"}}
+        src={`${preview}`}
+        role="presentation"
+        alt="no network"
+      />
+      <button onClick={() => handleRemoveImage(index)}>Remove</button>
+    </div>
+  );
+})}
     <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
           
           </Stack>

@@ -30,7 +30,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
   const add = (data,file) => {
-   
+   console.log("llllllllllllllllllllllllllllllllllllllllllllllllllll")
     
    let req={
       "type" : "SP_CALL",
