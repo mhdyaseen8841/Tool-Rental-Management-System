@@ -234,7 +234,7 @@ data.forEach((row) => {
       })}
     </TableBody>
     
-    <TableFooter style={{ borderTop: '1px solid lightgray'}}>
+    <TableFooter style={{ backgroundColor: 'rgba(212, 212, 212, 0.4)'}}>
       <TableRow>
         <TableCell>Total each label count</TableCell>
         {heading.map((label) => (
