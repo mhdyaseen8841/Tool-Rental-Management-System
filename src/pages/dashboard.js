@@ -11,13 +11,11 @@ import { TotalProfit } from '../components/dashboard/total-profit';
 import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useRouter } from 'next/router';
-import requestPost from '../../serviceWorker'
+import requestPost from '../../serviceWorker';
 import Router from 'next/router';
 
 const Page = () => {
 const router=useRouter()
-
-
 
 const [graphData, setGraphData] = useState([])
 const [graphLabel, setGraphLabel] = useState([])

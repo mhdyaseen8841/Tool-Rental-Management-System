@@ -1,11 +1,11 @@
 import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, TextField, Stack, FormControl, InputLabel, Select, OutlinedInput, MenuItem, Checkbox, ListItemText } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers';
-import { format } from 'date-fns';
 import requestPost from '../../../serviceWorker';
 
 export const Sales = (props) => {
@@ -16,12 +16,13 @@ export const Sales = (props) => {
   const [datas, setDatas] = useState([]);
   const [data, setData] = useState();
   const [selectedItem, setSelectedItems] = useState([]);
+  const Router = useRouter();
   useEffect(() => {
     getData()
     getItems();
   }, [])
 
-  const getItems = () =>{
+  const getItems = () => {
     let data = {
       "type": "SP_CALL",
       "requestId": 1200005,
@@ -39,9 +40,9 @@ export const Sales = (props) => {
             })
       } else {
         if (res.errorCode === 1) {
-          if(res.result[0] != null){
+          if (res.result[0] != null) {
             console.log(res.result);
-            setItems(res.result.map((dt)=>{return {itemName:dt.iName,itemId:dt.itemId}}))
+            setItems(res.result.map((dt) => { return { itemName: dt.iName, itemId: dt.itemId } }))
           }
         }
       }
@@ -55,7 +56,7 @@ export const Sales = (props) => {
       request: {
         from: dayjs(from).format("YYYY-MM-DD"),
         to: dayjs(to).format("YYYY-MM-DD"),
-        items:selectedItem
+        items: selectedItem
       }
     }
     console.log(data);
@@ -169,7 +170,7 @@ export const Sales = (props) => {
   }
 
   const handleChange = (event) => {
-    
+
     const {
       target: { value },
     } = event;
@@ -206,9 +207,9 @@ export const Sales = (props) => {
                   value={selectedItem}
                   onChange={handleChange}
                   input={<OutlinedInput label="items" />}
-                  renderValue={(selected) => {return selected.map((s)=>s.itemName).join()}}
+                  renderValue={(selected) => { return selected.map((s) => s.itemName).join() }}
                 >
-                
+
                   {items.map((item) => (
                     <MenuItem key={item.itemId} value={item}>
                       <Checkbox checked={selectedItem.indexOf(item) > -1} />
@@ -217,7 +218,7 @@ export const Sales = (props) => {
                   ))}
                 </Select>
               </FormControl>
-              <Button variant="contained" onClick={()=>{getData(fromDate,toDate)}}>Submit</Button>
+              <Button variant="contained" onClick={() => { getData(fromDate, toDate) }}>Submit</Button>
             </Stack>
           </Stack>
         )}
@@ -249,7 +250,6 @@ export const Sales = (props) => {
           p: 2
         }}
       >
-
       </Box>
     </Card>
   );

@@ -84,7 +84,7 @@ CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
-	DECLARE num varchar(20);
+	  DECLARE num varchar(20);
     DECLARE alterNum varchar(20);
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
@@ -123,6 +123,7 @@ CREATE  PROCEDURE `1100003` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
+
 CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
@@ -134,6 +135,8 @@ CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
                                )))) as result from customermaster WHERE status = 0;
 
 END$$
+
+
  
 
 CREATE  PROCEDURE `1100006`(IN `request` JSON)
@@ -147,6 +150,12 @@ BEGIN
                                'proof',proof
                                )))) as result from customermaster WHERE status = 1;
 
+END$$
+
+CREATE  PROCEDURE `1100007`(IN `request` JSON)
+BEGIN
+update customermaster set status = 0 where cId = json_value(request,'$.cId');
+select JSON_OBJECT("errorCode",1,"errorMsg","Customer Activated");
 END$$
 
 CREATE  PROCEDURE `1200001` (IN `request` JSON)   
