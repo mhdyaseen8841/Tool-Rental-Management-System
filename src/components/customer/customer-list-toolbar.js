@@ -11,7 +11,7 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-customer';
+import FullScreenDialog from './active-inactive';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router'
 export const CustomerListToolbar = (props) => 
@@ -115,7 +115,7 @@ return(
     variant="contained"
     onClick={handleAdd}
   >
-    Add Customers
+    Active/Inactive Customers
   </Button>)}
        
       </Box>

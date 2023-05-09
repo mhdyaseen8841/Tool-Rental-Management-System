@@ -21,6 +21,7 @@ export const CustomerLayout = (props) => {
 
   const router=useRouter()
   useEffect(() => {
+    console.log("useEffect----------------------------------------------")
     if(!localStorage.getItem("uId")){
       router.push('/')
     }
