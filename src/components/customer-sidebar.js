@@ -20,10 +20,14 @@ import requestPost from '../../serviceWorker'
 
 let items = [
   
-  
-
   {
     href: '/History',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'History'
+  },
+
+  {
+    href: '/historyItems',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Items'
   },
@@ -189,13 +193,7 @@ export const CustomerSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-           <NavItem
-              key="history"
-              icon={<ChartBarIcon fontSize="small" />}
-                onClick={() => props.setTable("history")}
-              title="History"
-              href={""}
-            />
+          
           {items.map((item) => (
             <NavItem
               key={item.title}

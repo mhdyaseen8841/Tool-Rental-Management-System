@@ -195,6 +195,7 @@ getCustomer(3,data)
   
   useEffect(() => {
 if(router.query){
+  sessionStorage.setItem("Cid", router.query.cId)
       setCid( router.query.cId)
     }
     if(!router.query.cId){

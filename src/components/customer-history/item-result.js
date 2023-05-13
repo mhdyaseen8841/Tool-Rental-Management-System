@@ -31,7 +31,7 @@ import { DataUsageSharp } from '@mui/icons-material';
 
 
 
-export const ItemResult = ({ customers, getdata, ...rest }) => {
+export const ItemResult = ({ customers,items, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -125,11 +125,13 @@ export const ItemResult = ({ customers, getdata, ...rest }) => {
   };
 
   useEffect(() => {
-    setData(customers.data)
-    setItem(customers.item)
-         
+    console.log('customerffffffffffffffffffffffffffs')
+    console.log(customers)
+    console.log(items)
+    setData(customers)
+    setItem(items)
   
-    }, []);
+    }, [customers]);
   return (
 
     <Card {...rest}>
