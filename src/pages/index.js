@@ -83,7 +83,9 @@ let data={
         localStorage.setItem('uId',res.data.data.uId)
         localStorage.setItem('username',res.data.data.username)
         localStorage.setItem('authtoken',res.data.token)
+
         
+        console.log(res.data.token)
        Router.push('/customers')
        }else{
         //erroorrrr

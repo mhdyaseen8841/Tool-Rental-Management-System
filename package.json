@@ -35,6 +35,8 @@
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "formik": "2.2.9",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.28",
     "lodash": "^4.17.21",
     "material-ui-dropzone": "^3.5.0",
     "next": "12.3.0",

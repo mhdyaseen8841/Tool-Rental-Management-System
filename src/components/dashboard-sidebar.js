@@ -28,7 +28,7 @@ let items = [
   {
     href: '/customers',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Customers'
+    title: 'Active Customers'
   },
   {
     href: '/items',
@@ -44,6 +44,11 @@ let items = [
     href: '/report',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Report'
+  },
+  {
+    href: '/inactive-customers',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'Inactive Customers'
   }
   // {
   //   href: '/history',
