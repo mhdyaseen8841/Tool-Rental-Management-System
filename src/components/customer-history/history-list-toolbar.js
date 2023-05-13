@@ -15,6 +15,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import Link from 'next/link';
 import { Search as SearchIcon } from "../../icons/search";
 import { Upload as UploadIcon } from "../../icons/upload";
 import { Download as DownloadIcon } from "../../icons/download";
@@ -88,7 +89,7 @@ export const HistoryListToolbar = (props) => {
             setDialog();
            
           } else {
-            props.getdata(props.CtableId, props.ApiData);
+            props.getdata();
             setDialog();
           }
         }
@@ -137,7 +138,7 @@ export const HistoryListToolbar = (props) => {
           } else {
            
 
-            props.getdata(props.CtableId, props.ApiData);
+            props.getdata();
 
             setDialog();
 
@@ -188,7 +189,7 @@ export const HistoryListToolbar = (props) => {
         if (res.errorcode == 0) {
          
         } else {
-          props.getdata(props.CtableId, props.ApiData);
+          props.getdata();
 
           setCopen(true)
 
@@ -228,7 +229,7 @@ export const HistoryListToolbar = (props) => {
             setDialog();
         
           } else {
-            props.getdata(props.CtableId, props.ApiData);
+            props.getdata();
 
             setDialog();
           }
@@ -394,19 +395,20 @@ export const HistoryListToolbar = (props) => {
                   sx={{ ml: 2, mt: 2 }}
                   color="primary"
                   variant="contained"
-                  onClick={() => props.setTable("history")}
+                  // onClick={() => props.setTable("history")}
                 >
                   HISTORY
                 </Button>
-
+<Link href={"/history-items"}>
                 <Button
                   sx={{ ml: 2, mt: 2 }}
                   color="primary"
                   variant="contained"
-                  onClick={() => props.setTable("items")}
+                
                 >
                   ITEMS
                 </Button>
+</Link>
 
                 {itemButton && itemButton.map(({ iName, itemId }, index) => {
                   return (
@@ -415,7 +417,7 @@ export const HistoryListToolbar = (props) => {
                       sx={{ ml: 2, mt: 2 }}
                       color="primary"
                       variant="contained"
-                      onClick={() => props.setTable(itemId, 2)}
+                      // onClick={() => props.setTable(itemId, 2)}
                     >
                       {iName}
                     </Button>
@@ -426,7 +428,7 @@ export const HistoryListToolbar = (props) => {
                   sx={{ ml: 2, mt: 2 }}
                   color="primary"
                   variant="contained"
-                  onClick={() => props.setTable("total")}
+                  // onClick={() => props.setTable("total")}
                 >
                   TOTAL
                 </Button>
@@ -436,7 +438,7 @@ export const HistoryListToolbar = (props) => {
                   sx={{ ml: 2, mt: 2 }}
                   color="primary"
                   variant="contained"
-                  onClick={() => props.setTable("ratecard")}
+                  // onClick={() => props.setTable("ratecard")}
                 >
                   RATE CARD
                 </Button>)}

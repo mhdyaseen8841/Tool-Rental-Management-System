@@ -251,10 +251,16 @@ Router.push('/dashboard')
 );
 
     }
-Page.getLayout = (page) => (
-  <CustomerLayout>
+
+
+Page.getLayout = (page) =>{
+
+
+ return(
+  <CustomerLayout setTable={page.changeTable}>
     {page}
   </CustomerLayout>
 );
+}
 
 export default Page;
