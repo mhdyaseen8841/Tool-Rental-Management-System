@@ -30,8 +30,6 @@ const Page = () => {
   const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
-  const [cName, setCname] = useState('');
-  const [phNo, setPhNo] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
@@ -48,17 +46,20 @@ const handleClose = ()=>{
 
 
  function getCustomer(){
-  console.log(cId)
-  let  data =  {
-    "type" : "SP_CALL",
-  "requestId" : 1500005,
-     request: {
-  "cId":cId
-    }
+  console.log(cId)   
+  console.log(router.query.id)
+ let  data=   {
+  "type" : "SP_CALL",
+"requestId" : 1600005,
+   "request": {
+"cId":cId,
+"itemId":router.query.id
   }
+}
  
    requestPost(data).then((res)=>{
-    console.log("fdsfsdffffffffffff" )
+     console.log("fdsfsdffffffffffff" )
+     console.log(res)
      if(res.errorCode===3){
        Router
        .push(
@@ -70,26 +71,30 @@ const handleClose = ()=>{
        console.log("sdfasfsfafass")
    }else{
 
-     if(res.result.data[0] ==null){
-      setCustomers([])
-      setItem([])
-     }else{
+    if(res.result){
+      if(res.result[0] ==null){
+        setCustomers([])
+      }else{
+        setCustomers(res.result)
+      }
+
+    }else{
+      setError(""+res)
+          setOpen(true)
+          setCustomers([])
     
-       console.log(res.result)
-       console.log(res.result.data)
-       console.log(res.result.item)
-       setCustomers(res.result.data)
-       setItem(res.result.item)
-     }
-    
- 
    }
-   })
+   }
+  })
    .catch((err)=>{
     console.log("eeeeeeeeeeeeeeeeeeee")
     console.log(err)
-     setCustomers([])
-     setItem([])
+    setCustomers([
+        
+       ])
+     
+
+    
      })
  
  
@@ -97,18 +102,14 @@ const handleClose = ()=>{
  
  useEffect(() => {
  let id = sessionStorage.getItem("Cid")
- let name = sessionStorage.getItem("Cname")
- let phone = sessionStorage.getItem("Cphone")
   if(!id){
 Router.push('/dashboard')
   }else{
-    setCname(name)
-    setPhNo(phone)
-    setCid( id)
+    setCid(id)
     getCustomer()
   }
   
- }, [cId])
+ }, [cId,router.query])
  
 
 
@@ -127,7 +128,7 @@ Router.push('/dashboard')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer}   cId={cId} cName={cName} />
+        <HistoryListToolbar  getdata={getCustomer}   cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
@@ -136,7 +137,7 @@ Router.push('/dashboard')
 </Snackbar>
 
 
-     <ItemResult customers={customers} items={item} getdata={getCustomer} />
+  <ItemNameResult customers={customers}  getdata={getCustomer} />
      
 
 

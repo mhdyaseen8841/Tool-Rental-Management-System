@@ -24,11 +24,14 @@ const Page = () => {
  
   const router = useRouter();
 
-
+let cName;
+let phNo;
   const [customers, setCustomers] = useState([])
+  const [item,setItem] = useState([])
   const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
+ 
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
@@ -40,177 +43,95 @@ const handleClose = ()=>{
   setOpen(false)
  }
 
- const changeTable=(btnName, Btnstatus=1)=>{
-if(Btnstatus===2){
-  
-  
+
+
+
+
+ function getCustomer(){
+  console.log(cId)   
+  console.log(router.query.id)
  let  data=   {
-    "type" : "SP_CALL",
- "requestId" : 1600005,
-     "request": {
-"cId":router.query.cId,
- "itemId":btnName
-    }
-}
-setData(data)
-getCustomer(0,data)
-  //not done
-  // setTable(0)
-
-}else{
-  if(btnName==="history"){
-
-    let data=  {
-      "type" : "SP_CALL",
-   "requestId" : 1400006,
-       request: {
- "cId":router.query.cId
-      }
-}
-setData(data)
-getCustomer(1,data)
-}else if(btnName==="total"){
-  
-  let data = {
-    "type" : "SP_CALL",
-    "requestId" : 1700005,
-    request: {
-      "cId" : cId,
-   }
-}
-setData(data)
-getCustomer(2,data)
-
-
-}else if(btnName==="ratecard"){
-  
-  let data={
-    "type" : "SP_CALL",
-    "requestId" : 1800005,
-    "request": {
-      "cId" : cId,
-   }
-}
-setData(data)
-getCustomer(4,data)
-
-
-}else{
- let  data =  {
-    "type" : "SP_CALL",
- "requestId" : 1500005,
-     request: {
-"cId":router.query.cId
-    }
-}
-setData(data)
-getCustomer(3,data)
- 
-}
- }
-}
- 
- 
- function getCustomer(tableid,datas){
-
-
-    requestPost(datas).then((res)=>{
-
-      if(res.errorcode===3){
-        Router
-        .push(
-        
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-    }else{
-
-      if(tableid==3){
-        if(res.result){
-            setItemHistory(res.result)
-            setTable(tableid)
-        }else{
-          setError(""+res)
-              setOpen(true)
-              setCustomers([])
-            }
-      }else if(tableid==2){
-      
-        if(res.result){
-         
-          if((res.result[0][0] ==null) && (res.result[1][0] == null)){
-            setCustomers([])
-            setPayments([])
-          }else{
-            if(res.result[0][0] ==null){
-              setCustomers([])
-              setPayments(res.result[1])
-            }else if(res.result[1][0] == null){
-             
-              setCustomers(res.result[0])
-              setPayments([])
-            }else{
-              setCustomers(res.result[0])
-              setPayments(res.result[1])
-            }
-            
-          }
-          setTable(tableid)
-        }else{
-          setError(""+res)
-              setOpen(true)
-              setCustomers([
-                []
-               ])
-               setPayments([
-                []
-               ])
-      
-            }
-          
-      
-      }else{
-      
-            if(res.result){
-            if(res.result[0] ==null){
-              setCustomers([])
-            }else{
-              setCustomers(res.result)
-            }
-            setTable(tableid)
-          }else{
-            setError(""+res)
-                setOpen(true)
-                setCustomers([])
-      
-                
-      
-              }
-            }
-    }
-
-      })
+  "type" : "SP_CALL",
+"requestId" : 1400006,
+   "request": {
+"cId":cId
   }
-  
-  useEffect(() => {
-if(router.query){
-  sessionStorage.setItem("Cid", router.query.cId)
-      setCid( router.query.cId)
-    }
-    if(!router.query.cId){
-Router.push('/dashboard')
-    }
-   let data= {
-      "type" : "SP_CALL",
-    "requestId" : 1400006,
-       request: {
-    "cId":router.query.cId
+}
+ 
+   requestPost(data).then((res)=>{
+     console.log("fdsfsdffffffffffff" )
+     console.log(res)
+     if(res.errorCode===3){
+       Router
+       .push(
+       
+       {
+         pathname: '/',
+         query: { redirect: '1' },
+       })
+       console.log("sdfasfsfafass")
+   }else{
+
+    if(res.result){
+      if(res.result[0] ==null){
+        setCustomers([])
+      }else{
+        setCustomers(res.result)
       }
-    };
-    setData(data)
-   getCustomer(1,data)
-  }, [])
+
+    }else{
+      setError(""+res)
+          setOpen(true)
+          setCustomers([])
+    
+   }
+   }
+  })
+   .catch((err)=>{
+    console.log("eeeeeeeeeeeeeeeeeeee")
+    console.log(err)
+    setCustomers([
+        
+       ])
+     
+
+    
+     })
+ 
+ 
+ }
+ 
+ useEffect(() => {
+  if(router.query.cId){
+    sessionStorage.setItem("Cid", router.query.cId)
+    sessionStorage.setItem("Cname", router.query.cName)
+    sessionStorage.setItem("Cphone", router.query.phNo)
+        setCid(router.query.cId)
+        cName= router.query.cName
+        phNo = router.query.phNo
+        getCustomer()
+      }
+      else {
+
+   let id = sessionStorage.getItem("Cid")
+   cName= sessionStorage.getItem("Cname")
+    phNo = sessionStorage.getItem("Cphone")
+    
+   console.log(id)
+   if(id){
+    console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
+    setCid(id)
+    console.log(id)
+    getCustomer()
+   }else{
+  console.log(id)
+    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+  Router.push('/dashboard')
+   }
+      }
+  
+    }, [cId])
+ 
 
 
   return(
@@ -228,37 +149,33 @@ Router.push('/dashboard')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer} setTable={changeTable} ApiData={data} CtableId={table} cId={router.query.cId} cName={router.query.cName} />
+        <HistoryListToolbar  getdata={getCustomer}   cId={cId} cName={cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
     {error}
   </Alert>
 </Snackbar>
-{
-  table===0?  <ItemNameResult customers={customers} getdata={getCustomer} />:table===1?
-  <HistoryListResults customers={customers} getdata={getCustomer} />:table===2?
- //total page to be added
-  <HistoryTotalResult customers={customers} ApiData={data} CtableId={table} payments={payment} getdata={getCustomer} />: 
-  table===3?
-     <ItemResult customers={itemhistory} getdata={getCustomer} />:
-      <RateCardResult  CtableId={table} ApiData={data}  customers={customers} getdata={getCustomer} />
-}
+
+
+  <HistoryListResults customers={customers}  getdata={getCustomer} />
+     
+
 
         </Box>
       </Container>
     </Box>
   </>
 );
-
     }
+    
 
 
 Page.getLayout = (page) =>{
 
 
  return(
-  <CustomerLayout setTable={page.changeTable}>
+  <CustomerLayout >
     {page}
   </CustomerLayout>
 );
