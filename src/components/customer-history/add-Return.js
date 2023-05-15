@@ -54,7 +54,7 @@ export default function ReturnDialog(details) {
     }
     requestPost(requestdata2).then((res) => {
 
-
+      console.log(res.result);
       if (res.errorCode === 3) {
         Router
           .push(
@@ -67,6 +67,7 @@ export default function ReturnDialog(details) {
         if (res.result[0] == null) {
           setItems([])
         } else {
+          console.log(res.result);
           setItems(res.result);
          
         }

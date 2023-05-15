@@ -72,7 +72,7 @@ export const HistoryListToolbar = (props) => {
       };
 
       requestPost(req).then((res) => {
-       
+
 
         if (res.errorCode === 3) {
           Router
@@ -87,7 +87,7 @@ export const HistoryListToolbar = (props) => {
 
           if (res.errorcode == 0) {
             setDialog();
-           
+
           } else {
             props.getdata();
             setDialog();
@@ -134,9 +134,9 @@ export const HistoryListToolbar = (props) => {
         } else {
           if (res.errorcode == 0) {
             setDialog();
-           
+
           } else {
-           
+
 
             props.getdata();
 
@@ -187,7 +187,7 @@ export const HistoryListToolbar = (props) => {
       } else {
 
         if (res.errorcode == 0) {
-         
+
         } else {
           props.getdata();
 
@@ -227,7 +227,7 @@ export const HistoryListToolbar = (props) => {
 
           if (res.errorcode == 0) {
             setDialog();
-        
+
           } else {
             props.getdata();
 
@@ -387,67 +387,6 @@ export const HistoryListToolbar = (props) => {
         </Box>
 
 
-        <Box sx={{ mt: 3 }}>
-          <Card>
-            <CardContent>
-              <Box>
-                <Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  // onClick={() => props.setTable("history")}
-                >
-                  HISTORY
-                </Button>
-<Link href={"/history-items"}>
-                <Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                
-                >
-                  ITEMS
-                </Button>
-</Link>
-
-                {itemButton && itemButton.map(({ iName, itemId }, index) => {
-                  return (
-                    <Button
-                      key={index}
-                      sx={{ ml: 2, mt: 2 }}
-                      color="primary"
-                      variant="contained"
-                      // onClick={() => props.setTable(itemId, 2)}
-                    >
-                      {iName}
-                    </Button>
-                  );
-                })}
-
-                <Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  // onClick={() => props.setTable("total")}
-                >
-                  TOTAL
-                </Button>
-                {localStorage.getItem('usertype') === 'owner' ? (
-                  null
-                ) : (<Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  // onClick={() => props.setTable("ratecard")}
-                >
-                  RATE CARD
-                </Button>)}
-
-
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
       </Box>
     </>
   );
