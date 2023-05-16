@@ -16,30 +16,38 @@ import { Users as UsersIcon } from '../icons/users';
 import { XCircle as XCircleIcon } from '../icons/x-circle';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
+import {NavItemDrop} from './nav-item-drop'
 import requestPost from '../../serviceWorker'
+import HistoryIcon from '@mui/icons-material/History';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import CalculateIcon from '@mui/icons-material/Calculate';
+import ConstructionIcon from '@mui/icons-material/Construction';
+import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'; // Import the arrow icons
 
-let items = [
-  
+
+let item = [
   
   {
     href: '/history',
-    icon: (<ChartBarIcon fontSize="small" />),
+    icon: (<HistoryIcon fontSize="small" />),
     title: 'History'
   },
+
   {
-    href: '/History',
-    icon: (<UsersIcon fontSize="small" />),
+    href: '/historyItems',
+    icon: (<ShoppingBasketIcon fontSize="small" />),
     title: 'Items'
   },
   {
-    href: '/items',
-    icon: (<InventoryIcon fontSize="small" />),
-    title: 'Total'
+    href: '/rateCard',
+    icon: (<AccountBalanceWalletIcon fontSize="small" />),
+    title: 'Rate Card'
   },
   {
-    href: '/users',
-    icon: (<UsersIcon fontSize="small" />),
-    title: 'Rate Card'
+    href: '/historyTotal',
+    icon: (<CalculateIcon fontSize="small" />),
+    title: 'Total'
   }
   // {
   //   href: '/history',
@@ -48,6 +56,7 @@ let items = [
   // }
 ];
 
+let items=[]
 
 
 export const CustomerSidebar = (props) => {
@@ -55,6 +64,7 @@ export const CustomerSidebar = (props) => {
   const [buttons, setButtons] = useState([]);
   const [error, setError] = useState('');
   const [errOpen, setErrOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
@@ -111,6 +121,7 @@ export const CustomerSidebar = (props) => {
         href: '/' + dt.iName,
         icon: <ShoppingBagIcon fontSize="small" />,
         title: dt.iName,
+        id: dt.itemId
       };
     }
 
@@ -193,7 +204,7 @@ export const CustomerSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
+        {item.map((item) => (
             <NavItem
               key={item.title}
               icon={item.icon}
@@ -201,6 +212,30 @@ export const CustomerSidebar = (props) => {
               title={item.title}
             />
           ))}
+
+
+  <NavItemDrop
+        key={"ItemsList"}
+     href=""
+     icon={(<ConstructionIcon fontSize="small" />)}
+title={"Items list"}
+    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+    arrowIcon={isDropdownOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}  />
+ 
+             {isDropdownOpen && (
+    <Box>
+     {items.map((item) => (
+            <NavItem
+              key={item.title}
+              icon={item.icon}
+              href={'/singleItemHistory?id='+item.id}
+              title={item.title}
+            />
+          ))}
+    </Box>
+  )}
+
+          
         </Box>
         <Divider sx={{ borderColor: '#2D3748' }} />
        

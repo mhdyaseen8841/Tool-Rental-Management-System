@@ -96,8 +96,7 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      let notes = values.Notes?values.Notes:"";
-     
+   
       let itemsArr = []
    
     let shouldBreak = false;
@@ -177,7 +176,7 @@ setqtErr(true)
 }else{
   setQtyError('')
   setqtErr(false)
-  details.submit(itemsArr,notes,1)
+  details.submit(itemsArr,1)
 }
 }
 
@@ -221,16 +220,7 @@ setqtErr(true)
             <Typography variant="h4">RENT HISTORY</Typography>
             
           
-             <TextField
-              fullWidth
-              type="text"
-              label="Notes"
-              variant="outlined"
-              {...getFieldProps('Notes')}
-              error={Boolean(touched.Notes && errors.Notes)}
-              helperText={touched.Notes && errors.Notes}
-            /> 
-
+    
               {[...Array(noOfRows)].map((elementInArray, ind) => {
                   return (
                  

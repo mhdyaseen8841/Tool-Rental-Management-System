@@ -274,8 +274,11 @@ let cid= data.cid;
                {customer.altermobile}
              </TableCell>
              <TableCell>
-    <FadeMenu   updateItem={(e)=>handleUPDATE(e,true,'UPDATE',{name:items.iName,itemId:items.itemId})} editUser={(e)=>handleAdd(e,true,'EDIT', {name:items.iName,mRent:items.mRent,dRent:items.dRent,tStock:items.tstock,itemId:items.itemId})}/>
-    </TableCell>
+                  {localStorage.getItem('usertype') === 'owner' ? (
+    null
+  ) : (                  <FadeMenu  callback={()=>{deleteUser(customer.cId)}}  editUser={(e)=>handleAdd(e,true,'EDIT', {name:customer.cName,mobile:customer.mobile,altNum:customer.alterMobile,address:customer.address,proof:customer.proof,cid:customer.cId})}/>
+  )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
