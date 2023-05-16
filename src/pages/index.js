@@ -1,56 +1,50 @@
 import Head from 'next/head';
-import NextLink from 'next/link';
 import Router from 'next/router';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Alert, Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Facebook as FacebookIcon } from '../icons/facebook';
-import { Google as GoogleIcon } from '../icons/google';
+import { Alert, Box, Button, Container, TextField, Typography } from '@mui/material';
 import requestPost from '../../serviceWorker'
-import axios from "axios";
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
 
-const ServiceURL = 'https://aonerentals.in/tools/src/API/'
 
 const Login = () => {
 
-   
+
   const router = useRouter();
 
-  const [error,setError]=useState(false)
-  
+  const [error, setError] = useState(false)
+  const [errMsg, setErroMsg] = useState('')
 
 
 
   useEffect(() => {
 
-    if(localStorage.getItem("uId")){
+    if (localStorage.getItem("uId")) {
       Router.push('/customers')
     }
 
-    if(router.query.redirect){
+    if (router.query.redirect) {
       localStorage.removeItem("uId");
-    localStorage.removeItem("authtoken");
-    localStorage.removeItem("usertype");
-    localStorage.removeItem("username");
+      localStorage.removeItem("authtoken");
+      localStorage.removeItem("usertype");
+      localStorage.removeItem("username");
       setError(true)
-      
-        }
+
+    }
   }, [])
+
   
 
-const [open,setOpen]=useState(false)
+  const [open, setOpen] = useState(false)
 
-const handleClose = ()=>{
-  setOpen(false)
-  setError(false)
-}
+  const handleClose = () => {
+    setOpen(false)
+    setError(false)
+  }
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -66,62 +60,58 @@ const handleClose = ()=>{
         .max(255)
         .required('Password is required')
     }),
-    onSubmit:  (res) => {
-     
-let data={
-  "type" : "Authetication",
-   "request": {
-      "username" :res.username,
-      "password" : res.password
+    onSubmit: (res) => {
+
+      let data = {
+        "type": "Authetication",
+        "request": {
+          "username": res.username,
+          "password": res.password
+        }
       }
-}
 
 
-      axios.post(ServiceURL,data).then((res)=>{
-       if(res.data.errorCode===1){
-        localStorage.setItem('usertype',res.data.data.usertype)
-        localStorage.setItem('uId',res.data.data.uId)
-        localStorage.setItem('username',res.data.data.username)
-        localStorage.setItem('authtoken',res.data.token)
 
-        
-        console.log(res.data.token)
-       Router.push('/customers')
-       }else{
-        //erroorrrr
-        formik.setSubmitting(false)
-        setOpen(true)
-
-       }
-
-      }).catch((err)=>{
+      requestPost(data).then((res) => {
+        console.log(res);
+        if (res.errorCode === 1) {
+          localStorage.setItem('usertype', res.data.usertype)
+          localStorage.setItem('uId', res.data.uId)
+          localStorage.setItem('username', res.data.username)
+          localStorage.setItem('authtoken', res.token)
+          Router.push('/customers')
+        } else {
+          //erroorrrr
+          setErroMsg(res.errorMsg)
+          formik.setSubmitting(false)
+          setOpen(true)
+        }
+      }).catch((err) => {
         formik.setSubmitting(false)
       })
-     
-      
-        
     }
   });
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      formik.handleSubmit()
+    }
+  };
   return (
     <>
       <Head>
         <title>Login | AONE</title>
       </Head>
-
-
-
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-    Login Failed!
-  </Alert>
-</Snackbar>
-
-<Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
-  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-    Session Expired! Please Login Again
-  </Alert>
-</Snackbar>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {errMsg}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Session Expired! Please Login Again
+        </Alert>
+      </Snackbar>
 
 
       <Box
@@ -134,8 +124,6 @@ let data={
         }}
       >
         <Container maxWidth="sm">
-         
-          <form onSubmit={formik.handleSubmit}>
             <Box sx={{ my: 3 }}>
               <Typography
                 color="textPrimary"
@@ -151,8 +139,8 @@ let data={
                 Sign in to A-ONE RENTALS
               </Typography>
             </Box>
-            
-            
+
+
             <TextField
               error={Boolean(formik.touched.username && formik.errors.username)}
               fullWidth
@@ -178,6 +166,7 @@ let data={
               type="password"
               value={formik.values.password}
               variant="outlined"
+              onKeyDown={handleKeyDown}
             />
             <Box sx={{ py: 2 }}>
               <Button
@@ -187,11 +176,11 @@ let data={
                 size="large"
                 type="submit"
                 variant="contained"
+                onClick={formik.handleSubmit}
               >
                 Sign In Now
               </Button>
             </Box>
-          </form>
         </Container>
       </Box>
     </>

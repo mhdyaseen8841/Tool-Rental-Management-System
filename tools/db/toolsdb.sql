@@ -84,7 +84,7 @@ CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
-	DECLARE num varchar(20);
+	  DECLARE num varchar(20);
     DECLARE alterNum varchar(20);
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
@@ -134,6 +134,8 @@ CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
                                )))) as result from customermaster WHERE status = 0;
 
 END$$
+
+
  
 
 CREATE  PROCEDURE `1100006`(IN `request` JSON)
@@ -145,8 +147,14 @@ BEGIN
                                'altermobile',altermobile,
                                'address',address,
                                'proof',proof
-                               )))) as result from customermaster WHERE status = 1;
+                               )))) as result from customermaster WHERE status=1;
 
+END$$
+
+CREATE  PROCEDURE `1100007`(IN `request` JSON)
+BEGIN
+update customermaster set status = 0 where cId = json_value(request,'$.cId');
+select JSON_OBJECT("errorCode",1,"errorMsg","Customer Activated");
 END$$
 
 CREATE  PROCEDURE `1200001` (IN `request` JSON)   
@@ -931,7 +939,7 @@ CREATE TABLE `customermaster` (
   `alterMobile` varchar(20) NOT NULL,
   `address` varchar(150) NOT NULL,
   `proof` longtext NOT NULL,
-  `status` int(10) NOT NULL DEFAULT 0
+  `status` int(10) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
