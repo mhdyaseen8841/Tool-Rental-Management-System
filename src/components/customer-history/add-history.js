@@ -7,8 +7,11 @@ import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import requestPost from '../../../serviceWorker'
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+
+
+// mmmmmmmm
 // material
 import {
   TextField,
@@ -50,9 +53,18 @@ export default function FullScreenDialog(details) {
   const [qtyerror, setQtyError] = useState('');
   const [qterr, setQtErr] = useState(false);
   const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ''));
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedQuantities, setSelectedQuantities] = useState(Array(noOfRows).fill(1));
 
+  const [selectedQuantities, setSelectedQuantities] = useState(Array(noOfRows).fill(1));
+ 
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
+
+  const getData = (date) => {
+    // Your logic to fetch data based on the selected date
+  };
+
+  const disableFutureDates = (date) => {
+    return dayjs(date).isAfter(dayjs(), 'day'); // Disable dates after the current day
+  };
 
   // const [itemsArr,setItemsArr]=useState([{}])
   useEffect(() => {
@@ -191,17 +203,13 @@ export default function FullScreenDialog(details) {
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+
 
   const handleAddItem = () => {
     setNoOfRows(noOfRows + 1);
     setSelectedQuantities((prevQuantities) => [...prevQuantities, 1]);
   };
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
 
   const calculateTotalRent = () => {
@@ -252,7 +260,24 @@ export default function FullScreenDialog(details) {
             <Typography variant="h4">RENT HISTORY</Typography>
 
 
+            <Stack direction={'row'}  justifyContent={"end"} gap={1}>
+  <DatePicker
+    label="Select Date"
+    format="DD-MM-YYYY"
+    value={selectedDate}
+    shouldDisableDate={disableFutureDates}
+    sx={{ width: '40%' }}
+    onChange={(newDate) => {
+      setSelectedDate(newDate);
+      getData(newDate);
 
+    }}
+    renderInput={(params) => <TextField {...params} />}
+  />
+</Stack>
+
+
+      
             {[...Array(noOfRows)].map((elementInArray, ind) => (
               <Stack direction="row" key={ind} spacing={2}>
                 <FormControl fullWidth key={ind}>
@@ -321,20 +346,7 @@ export default function FullScreenDialog(details) {
                 </Typography>
               </div>
               <Stack direction="row" alignItems="center" spacing={2}>
-                <Typography variant="body1" sx={{ fontWeight: 'bold', marginRight: '1rem', fontFamily: 'Arial', whiteSpace: 'nowrap' }}>
-                  Select Date:
-                </Typography>
-                <DatePicker
-                  selected={selectedDate}
-                  onChange={handleDateChange}
-                  dateFormat="dd/MM/yyyy"
-                  maxDate={today}
-                  showDisabledMonthNavigation
-                  wrapperClassName="date-picker
-"
-                  className="date-picker-input"
-                  style={{ fontFamily: 'Arial' }}
-                />
+              
               </Stack>
               <Button
                 variant="contained"

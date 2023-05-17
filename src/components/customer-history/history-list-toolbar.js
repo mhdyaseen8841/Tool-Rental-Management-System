@@ -27,22 +27,27 @@ import AddPaymetDialog from "./add-payment";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
 import Router from 'next/router';
+import CalculateScreenDialog from "./calculateRent";
 
 
 
 
 
 export const HistoryListToolbar = (props) => {
+  console.log("prooooooooooops")
+  console.log(props.cName)
   const [open, setOpen] = useState(true);
   const [Sopen, setSOpen] = useState(false);
 
   const [addDialog, setDialog] = useState();
-  const [cId, setCid] = useState(props.cId);
-  const [cName, setcName] = useState(props.cName);
+  const [cId, setCid] = useState(sessionStorage.getItem("Cid"));
+  const [cName, setcName] = useState(sessionStorage.getItem("Cname"));
   const [ErrOpen, setErrOpen] = useState(false);
   const [error, setError] = useState("");
   const [Copen, setCopen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  
 
   const handleConfirmClose = () => {
     setConfirmOpen(false);
@@ -55,6 +60,21 @@ export const HistoryListToolbar = (props) => {
     setDialog();
     setCopen(false)
   };
+
+
+  const handleCalculate = (e) => {
+    
+    setOpen(true)
+
+    setDialog(() => (
+      <CalculateScreenDialog
+        onClose={handleClose}
+        open={open}
+    
+      />
+    ));
+    
+  }
 
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
@@ -218,17 +238,19 @@ export const HistoryListToolbar = (props) => {
       }
 
       requestPost(req).then((res) => {
-
+        console.log('1111111111111111111111111111111111111111111111111')
+console.log(res)
         if (res.errorCode === 3) {
           Router
             .push('/')
 
         } else {
-
+          console.log('22222222222222222222222')
           if (res.errorcode == 0) {
             setDialog();
 
           } else {
+            console.log('33333333333333333333333')
             props.getdata();
 
             setDialog();
@@ -370,7 +392,7 @@ export const HistoryListToolbar = (props) => {
           {localStorage.getItem('usertype') === 'owner' ? (
             null
           ) : (<Box sx={{ m: 1 }}>
-            <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
+            <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={handleCalculate}>
               Calculate Rent
             </Button>
             <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>

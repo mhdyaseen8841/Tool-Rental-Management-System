@@ -49,7 +49,8 @@ const handleClose = ()=>{
 
  function getCustomer(){
   console.log(cId)   
-  console.log(router.query.id)
+ 
+  console.log('qqqqqqqqqqqqqqqqqqqqqq')
  let  data=   {
   "type" : "SP_CALL",
 "requestId" : 1400006,
