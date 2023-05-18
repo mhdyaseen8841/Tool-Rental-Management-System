@@ -23,6 +23,7 @@ export default function FullScreenDialog(details) {
   const [files, setFiles] = useState([]);
   const [docs, setDocs] = useState([]);
   const [imgPreviews, setImgPreviews] = useState([]);
+  const [customerPhoto, setCustomerPhoto] = useState(null);
   
   
   const getBase64 = (file) => {
@@ -111,6 +112,16 @@ export default function FullScreenDialog(details) {
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
 
+  const handlePhotoChange = (event) => {
+    const file = event.target.files[0];
+    // Update the state variable with the selected photo
+    setCustomerPhoto(file);
+  };
+  // Define handleRemovePhoto function
+  const handleRemovePhoto = () => {
+    // Reset the customer photo state variable
+    setCustomerPhoto(null);
+  };
   
 
   
@@ -216,6 +227,38 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
+
+              <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
+              <label htmlFor="customer-photo-upload" style={{ display: 'block', marginBottom: '1rem' }}>
+                <input
+                  id="customer-photo-upload"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handlePhotoChange}
+                />
+                <Button variant="contained" component="span">
+                  Upload Photo
+                </Button>
+              </label>
+              {/* Render the customer photo preview */}
+              {customerPhoto && (
+                <div style={{ position: 'relative' }}>
+                  <img
+                    style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', cursor: 'pointer' }}
+                    src={URL.createObjectURL(customerPhoto)}
+                    alt="Customer Photo"
+                  />
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{ position: 'absolute', top: '5px', right: '5px' }}
+                    onClick={handleRemovePhoto}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
             
             {imgPreviews.map((preview, index) => {
   return (
