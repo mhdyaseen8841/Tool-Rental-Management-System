@@ -28,7 +28,7 @@ export const CustomerLayout = (props) => {
     }, [])
 
     const setValue= (data)=>{
-props.setTable(data)
+
     }
 
   return (
@@ -48,6 +48,7 @@ props.setTable(data)
       <CustomerNavbar onSidebarOpen={() => setSidebarOpen(true)} />
       <CustomerSidebar
     setTable= {setValue} 
+    cid={props.cId}
         onClose={() => setSidebarOpen(false)}
         open={isSidebarOpen}
       />

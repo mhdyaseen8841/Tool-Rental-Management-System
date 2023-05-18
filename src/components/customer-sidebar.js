@@ -86,10 +86,14 @@ export const CustomerSidebar = (props) => {
     [router.asPath]
   );
   function getItems() {
+    let a = sessionStorage.getItem("Cid")
+    console.log(a)
     let data = {
       type: "SP_CALL",
-      requestId: 1200005,
-      request: {},
+      requestId: 1200006,
+      request: {
+        "cId": a
+      },
     };
 
     //hello hi find if any problem in this
