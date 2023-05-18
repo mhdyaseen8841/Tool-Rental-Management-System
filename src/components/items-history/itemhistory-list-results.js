@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from '../customer/add-customer';
+import FullScreenDialog from '../customer/add-customer copy';
 import requestPost from '../../../serviceWorker'
 
 export const CustomerListResults = ({ customers,getdata, ...rest  }) => {

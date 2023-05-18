@@ -149,6 +149,7 @@ if (index !== -1) {
             <DialogContent>
               {heading.map((label) => (
                 <FormControlLabel
+                key={label}
                   control={
                     <Checkbox
                       value={label}
@@ -183,7 +184,7 @@ if (index !== -1) {
 
                 selectedOptions.map((label) => {
                   return (
-                    <TableCell>
+                    <TableCell key={label}>
                       {label}
                     </TableCell>
                   )
@@ -192,7 +193,7 @@ if (index !== -1) {
 
                 heading.map((label) => {
                   return (
-                    <TableCell>
+                    <TableCell key={label}>
                       {label}
                     </TableCell>
                   )
