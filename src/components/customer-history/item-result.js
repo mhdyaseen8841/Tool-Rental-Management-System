@@ -39,51 +39,12 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
   const [addDialog, setDialog] = useState();
   const [data, setData] = useState([])
   const [item, setItem] = useState([])
+ 
   const handleClose = () => {
     setDialog();
   };
 
-
-
-
-
-  const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-
-    setOpen(true);
-
-
-    const add = (data) => {
-
-
-
-
-
-    }
-
-
-    setDialog(() => (
-
-      <FullScreenDialog
-        onClose={handleClose}
-        open={open}
-        submit={add}
-        updated={upd}
-        button={button}
-        data={data}
-      />
-    ));
-  };
-
-
-
-
-
-
-
-
-
-
-
+  
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
 
@@ -139,52 +100,64 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
       <PerfectScrollbar>
         <Box >
           <TableContainer >
-            <Table>
-              <TableHead>
-                <TableRow>
+          <Table>
+  <TableHead>
+    <TableRow>
+      <TableCell>Date</TableCell>
+      
+      {item.map((itemHead, ind) => (
+        <TableCell key={ind}>{itemHead.name}</TableCell>
+      ))}
+      
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    {data.map((customer) => {
+      let itemTotals = customer.slice(1).map((item) => item.incoming.qty - item.outgoing.qty);
 
-
-                  <TableCell>
-                    Date
-                  </TableCell>
-
-                  {item.map((itemHead, ind) => (
-                    <TableCell key={ind}>
-                      {itemHead.name}
-                    </TableCell>
-                  )
+      return (
+        <React.Fragment key={customer.mId}>
+          <TableRow hover>
+            <TableCell sx={{ whiteSpace: 'nowrap' }}>{customer[0]}</TableCell>
+            
+            {customer.slice(1).map((item, ind) => (
+              <TableCell key={ind}>
+                <Stack>
+                  {item.outgoing.qty !== 0 ? (
+                    <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
+                      {item.outgoing.qty}
+                    </div>
+                  ) : (
+                    <div />
                   )}
+                  {item.incoming.qty !== 0 ? (
+                    <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center' }}>
+                      {item.incoming.qty}
+                    </div>
+                  ) : (
+                    <div />
+                  )}
+                </Stack>
+              </TableCell>
+            ))}
+            
+          </TableRow>
+           <TableRow style={{ backgroundColor: '#F0F0F0' }}>
+            <TableCell style={{ fontWeight: 'bold', color: 'black' }}>Total Items</TableCell>
+            {itemTotals.map((total, ind) => (
+              <TableCell key={ind} style={{ fontWeight: 'bold', color: 'black', justifyContent:'center' }}>
+                {total}
+              </TableCell>
+            ))}
+          </TableRow>
+        </React.Fragment>
+      );
+    })}
+  </TableBody>
+</Table>
 
 
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((customer) => (
-                  <TableRow
-                    hover
-                    key={customer.mId}
-                  //   selected={selectedCustomerIds.indexOf(customer.mId) !== -1}
-                  >
-                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                      {customer[0]}
-                    </TableCell>
-                    {
-                      customer.slice(1, customer.length).map((item, ind) => (
-                        <TableCell key={ind}>
-                          <Stack>
-                            {item.outgoing.qty != 0 ? <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
-                              {item.outgoing.qty}</div> : <div />}
-                            {item.incoming.qty != 0 ? <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center' }}>
-                              {item.incoming.qty}</div> : <div />}
-                          </Stack>
-                        </TableCell>
-                      ))
-                    }
-                  </TableRow>
-                ))}
 
-              </TableBody>
-            </Table>
           </TableContainer >
         </Box>
       </PerfectScrollbar>

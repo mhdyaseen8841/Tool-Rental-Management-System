@@ -49,6 +49,11 @@ let items = [
     href: '/inactive-customers',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Inactive Customers'
+  },
+  {
+    href: '/notes',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'Notes'
   }
   // {
   //   href: '/history',
