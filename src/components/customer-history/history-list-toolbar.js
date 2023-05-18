@@ -15,6 +15,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import Link from 'next/link';
 import { Search as SearchIcon } from "../../icons/search";
 import { Upload as UploadIcon } from "../../icons/upload";
 import { Download as DownloadIcon } from "../../icons/download";
@@ -26,22 +27,27 @@ import AddPaymetDialog from "./add-payment";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
 import Router from 'next/router';
+import CalculateScreenDialog from "./calculateRent";
 
 
 
 
 
 export const HistoryListToolbar = (props) => {
+  console.log("prooooooooooops")
+  console.log(props.cName)
   const [open, setOpen] = useState(true);
   const [Sopen, setSOpen] = useState(false);
 
   const [addDialog, setDialog] = useState();
-  const [cId, setCid] = useState(props.cId);
-  const [cName, setcName] = useState(props.cName);
+  const [cId, setCid] = useState(sessionStorage.getItem("Cid"));
+  const [cName, setcName] = useState(sessionStorage.getItem("Cname"));
   const [ErrOpen, setErrOpen] = useState(false);
   const [error, setError] = useState("");
   const [Copen, setCopen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  
 
   const handleConfirmClose = () => {
     setConfirmOpen(false);
@@ -54,6 +60,21 @@ export const HistoryListToolbar = (props) => {
     setDialog();
     setCopen(false)
   };
+
+
+  const handleCalculate = (e) => {
+    
+    setOpen(true)
+
+    setDialog(() => (
+      <CalculateScreenDialog
+        onClose={handleClose}
+        open={open}
+    
+      />
+    ));
+    
+  }
 
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
@@ -71,7 +92,7 @@ export const HistoryListToolbar = (props) => {
       };
 
       requestPost(req).then((res) => {
-       
+
 
         if (res.errorCode === 3) {
           Router
@@ -86,9 +107,9 @@ export const HistoryListToolbar = (props) => {
 
           if (res.errorcode == 0) {
             setDialog();
-           
+
           } else {
-            props.getdata(props.CtableId, props.ApiData);
+            props.getdata();
             setDialog();
           }
         }
@@ -133,11 +154,11 @@ export const HistoryListToolbar = (props) => {
         } else {
           if (res.errorcode == 0) {
             setDialog();
-           
-          } else {
-           
 
-            props.getdata(props.CtableId, props.ApiData);
+          } else {
+
+
+            props.getdata();
 
             setDialog();
 
@@ -186,9 +207,9 @@ export const HistoryListToolbar = (props) => {
       } else {
 
         if (res.errorcode == 0) {
-         
+
         } else {
-          props.getdata(props.CtableId, props.ApiData);
+          props.getdata();
 
           setCopen(true)
 
@@ -217,18 +238,20 @@ export const HistoryListToolbar = (props) => {
       }
 
       requestPost(req).then((res) => {
-
+        console.log('1111111111111111111111111111111111111111111111111')
+console.log(res)
         if (res.errorCode === 3) {
           Router
             .push('/')
 
         } else {
-
+          console.log('22222222222222222222222')
           if (res.errorcode == 0) {
             setDialog();
-        
+
           } else {
-            props.getdata(props.CtableId, props.ApiData);
+            console.log('33333333333333333333333')
+            props.getdata();
 
             setDialog();
           }
@@ -369,7 +392,7 @@ export const HistoryListToolbar = (props) => {
           {localStorage.getItem('usertype') === 'owner' ? (
             null
           ) : (<Box sx={{ m: 1 }}>
-            <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={confirmCalculate}>
+            <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={handleCalculate}>
               Calculate Rent
             </Button>
             <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
@@ -386,66 +409,6 @@ export const HistoryListToolbar = (props) => {
         </Box>
 
 
-        <Box sx={{ mt: 3 }}>
-          <Card>
-            <CardContent>
-              <Box>
-                <Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => props.setTable("history")}
-                >
-                  HISTORY
-                </Button>
-
-                <Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => props.setTable("items")}
-                >
-                  ITEMS
-                </Button>
-
-                {itemButton && itemButton.map(({ iName, itemId }, index) => {
-                  return (
-                    <Button
-                      key={index}
-                      sx={{ ml: 2, mt: 2 }}
-                      color="primary"
-                      variant="contained"
-                      onClick={() => props.setTable(itemId, 2)}
-                    >
-                      {iName}
-                    </Button>
-                  );
-                })}
-
-                <Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => props.setTable("total")}
-                >
-                  TOTAL
-                </Button>
-                {localStorage.getItem('usertype') === 'owner' ? (
-                  null
-                ) : (<Button
-                  sx={{ ml: 2, mt: 2 }}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => props.setTable("ratecard")}
-                >
-                  RATE CARD
-                </Button>)}
-
-
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
       </Box>
     </>
   );

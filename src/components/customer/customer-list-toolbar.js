@@ -105,7 +105,7 @@ return(
       >
         Customers
       </Typography>
-      <Box sx={{ m: 1 }}>
+      {/* <Box sx={{ m: 1 }}>
         
 
       {localStorage.getItem('usertype') === 'owner' ? (
@@ -118,7 +118,7 @@ return(
     Active/Inactive Customers
   </Button>)}
        
-      </Box>
+      </Box> */}
     </Box>
     
   </Box>

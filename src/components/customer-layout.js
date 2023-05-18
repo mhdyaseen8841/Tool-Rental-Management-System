@@ -27,6 +27,9 @@ export const CustomerLayout = (props) => {
     }
     }, [])
 
+    const setValue= (data)=>{
+
+    }
 
   return (
     <AuthGuard>
@@ -44,6 +47,8 @@ export const CustomerLayout = (props) => {
       </DashboardLayoutRoot>
       <CustomerNavbar onSidebarOpen={() => setSidebarOpen(true)} />
       <CustomerSidebar
+    setTable= {setValue} 
+    cid={props.cId}
         onClose={() => setSidebarOpen(false)}
         open={isSidebarOpen}
       />

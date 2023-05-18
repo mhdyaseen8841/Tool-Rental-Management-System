@@ -11,14 +11,14 @@ import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
-import FullScreenDialog from './add-item';
+// import FullScreenDialog from './active-inactive';
+import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
-import Router from 'next/router';
-import FullScreenDialogUpdated from './updated-list-popup';
-export const ItemListToolbar = (props) => 
+import Router from 'next/router'
+export const ActiveInactiveListToolbar = (props) => 
 {
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const [addDialog, setDialog] = useState();
 
@@ -26,68 +26,59 @@ export const ItemListToolbar = (props) =>
     setDialog();
   };
 
-const handleUpdate = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
-  setOpen(true);
-
-  setDialog(() => (
-    <FullScreenDialogUpdated
-      onClose={handleClose}
-      open={true}
-
-
-    />
-  ));
-};
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
+
   const add = (data,file) => {
+   console.log("llllllllllllllllllllllllllllllllllllllllllllllllllll")
     
-    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
    let req={
-    "type" : "SP_CALL",
-    "requestId" : 1200001,
-    request: {
-     "itemName": data.ItemName,
-     "monthly": data.MonthlyRent,
-     "daily": data.DailyRent,
-     "stock": data.Stock
-   }
+      "type" : "SP_CALL",
+      "requestId" : 1100001,
+      request: {
+       "name":data.CustomerName,
+       "mobile" : data.Mobnum,
+       "address" : data.Address,
+       "altermobile" : data.AltMobnum,
+ "proof" : file
+     }
 }
 
 
 
 requestPost(req).then((res)=>{
+
+
   if(res.errorCode===3){
     Router
-        .push(
-        
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-}else{
-
-
-  if(res.errorcode ==0){
-    setDialog();
+    .push(
     
+    {
+      pathname: '/',
+      query: { redirect: '1' },
+    })
+    
+}else if(res.errorcode ==0){
+  setDialog();
+   
   }else{
     props.getdata()
     setDialog();
+    
   }
-}
+
+ 
  
 })
 
 
-    
   };
 
-  
+
   setDialog(() => (
     <FullScreenDialog
       onClose={handleClose}
-      open={true}
+      open={open}
        submit={add}
        updated={upd}
        button={button}
@@ -95,6 +86,7 @@ requestPost(req).then((res)=>{
     />
   ));
 };
+
 
 return(
   <Box {...props}>
@@ -112,32 +104,22 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-        Items
+        Active/Inactive Customers
       </Typography>
-     
+      <Box sx={{ m: 1 }}>
+        
+
       {localStorage.getItem('usertype') === 'owner' ? (
     null
-  ) : (<Box sx={{ m: 1 }}>
-
-<Button
-  color="primary"
-  variant="contained"
-  onClick={handleUpdate}
-  style={{ marginRight: '10px' }}
->
-  Updated Lists
-</Button>
-
-
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={handleAdd}
-    >
-      Add Items
-    </Button>
-  </Box>)}
-      
+  ) : (<Button
+    color="primary"
+    variant="contained"
+    onClick={handleAdd}
+  >
+    Add Customer
+  </Button>)}
+       
+      </Box>
     </Box>
     
   </Box>

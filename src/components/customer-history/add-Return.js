@@ -7,6 +7,9 @@ import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import requestPost from '../../../serviceWorker'
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+
 // material
 import {
   TextField,
@@ -33,7 +36,8 @@ import Router from 'next/router';
 
 
 export default function ReturnDialog(details) {
-
+console.log('detailsssssssssssssssssssssssssss')
+console.log(details)
 
   const [update, setUpdate] = useState(details.updated);
   const [noOfRows, setNoOfRows] = useState(1);
@@ -42,19 +46,34 @@ export default function ReturnDialog(details) {
   const [qterr, setqtErr] = useState(false);
   const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ""))
   // const [itemsArr,setItemsArr]=useState([{}])
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
+
+  const getData = (date) => {
+    // Your logic to fetch data based on the selected date
+  };
+
+  const disableFutureDates = (date) => {
+    return dayjs(date).isAfter(dayjs(), 'day'); // Disable dates after the current day
+  };
+
   useEffect(() => {
 
 
     const requestdata2 = {
+     
       "type": "SP_CALL",
       "requestId": 1500002,
       request: {
         "cId": details.cId
       }
+      
     }
+    console.log('cccccccccccccccccccccccccccccccccccc')
+    console.log(details.cId)
+   
     requestPost(requestdata2).then((res) => {
-
-
+console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
+      console.log(res.result);
       if (res.errorCode === 3) {
         Router
           .push(
@@ -67,6 +86,7 @@ export default function ReturnDialog(details) {
         if (res.result[0] == null) {
           setItems([])
         } else {
+          console.log(res.result);
           setItems(res.result);
          
         }
@@ -136,6 +156,8 @@ export default function ReturnDialog(details) {
       }else{
       // details.submit(notes,itemsArr);
       if (flag == false) {
+        console.log('details')
+        console.log(details)
         details.submit(notes, itemsArr);
       } 
     }
@@ -200,77 +222,76 @@ export default function ReturnDialog(details) {
             </Button>
           </Toolbar>
         </AppBar>
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
 
-          <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
-            <Typography variant="h4">RENT HISTORY</Typography>
+<Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
+  <Typography variant="h4">RENT HISTORY</Typography>
+</Stack>
+<Stack direction={'row'}  justifyContent={"end"} gap={1}>
+  <DatePicker
+    label="Select Date"
+    format="DD-MM-YYYY"
+    value={selectedDate}
+    shouldDisableDate={disableFutureDates}
+    sx={{ width: '40%' }}
+    onChange={(newDate) => {
+      setSelectedDate(newDate);
+      getData(newDate);
 
-            { }
-
-            <TextField
-              fullWidth
-              type="text"
-              label="Notes"
-              variant="outlined"
-              {...getFieldProps('Notes')}
-              error={Boolean(touched.notes && errors.notes)}
-              helperText={touched.notes && errors.notes}
-            />
-
-
-          </Stack>
-
-          {items.map((item, ind) => {
-
-
-            return (
-              <Stack direction="row" key={ind} pt={2} spacing={2}>
-
-                <TextField
-                  id={`item${ind}`}
-                  label="Item Name"
-                  defaultValue={item.itemName}
-                  disabled={true}
-                  variant="outlined"
-                  InputProps={{ style: styles.disabled }}
-                  InputLabelProps={{ style: styles.disabled }}
-                />
+    }}
+    renderInput={(params) => <TextField {...params} />}
+  />
+</Stack>
 
 
-                <TextField
-                  id={`pending${ind}`}
-                  label="Outgoing Items"
-                  defaultValue={item.pending}
-                  disabled={true}
-                  variant="outlined"
+{items.map((item, ind) => {
+  return (
+    <Stack direction="row" key={ind} pt={2} spacing={2}>
+      <TextField
+        id={`item${ind}`}
+        label="Item Name"
+        defaultValue={item.itemName}
+        disabled={true}
+        variant="outlined"
+        InputProps={{ style: styles.disabled }}
+        InputLabelProps={{ style: styles.disabled }}
+      />
 
-                  InputProps={{ style: styles.disabled }}
-                  InputLabelProps={{ style: styles.disabled }}
-                />
+      <TextField
+        id={`pending${ind}`}
+        label="Outgoing Items"
+        defaultValue={item.pending}
+        disabled={true}
+        variant="outlined"
+        InputProps={{ style: styles.disabled }}
+        InputLabelProps={{ style: styles.disabled }}
+      />
 
-                <TextField
-                  id={`return${ind}`}
-                  label="Return Items"
+      <TextField
+        id={`return${ind}`}
+        label="Return Items"
+        variant="outlined"
+        InputProps={{ style: styles.disabled }}
+        InputLabelProps={{ style: styles.disabled }}
+      />
 
-                  variant="outlined"
+      <TextField
+        fullWidth
+        type="text"
+        label="Notes"
+        variant="outlined"
+        {...getFieldProps(`notes${ind}`)}
+        error={Boolean(touched[`notes${ind}`] && errors[`notes${ind}`])}
+        helperText={touched[`notes${ind}`] && errors[`notes${ind}`]}
+      />
 
-                  InputProps={{ style: styles.disabled }}
-                  InputLabelProps={{ style: styles.disabled }}
-                />
+      <Checkbox id={`tick${ind}`} color="success" />
+    </Stack>
+  );
+})}
 
-                <Checkbox id={`tick${ind}`} color="success" />
+</Container>
 
-              </Stack>
-
-            )
-          }
-          )}
-
-
-
-
-
-        </Container>
       </Dialog>
     </>
   );

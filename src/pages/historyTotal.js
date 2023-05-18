@@ -30,8 +30,6 @@ const Page = () => {
   const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
-  const [cName, setCname] = useState('');
-  const [phNo, setPhNo] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
@@ -51,7 +49,7 @@ const handleClose = ()=>{
   console.log(cId)
   let  data =  {
     "type" : "SP_CALL",
-  "requestId" : 1500005,
+  "requestId" : 1700005,
      request: {
   "cId":cId
     }
@@ -70,26 +68,50 @@ const handleClose = ()=>{
        console.log("sdfasfsfafass")
    }else{
 
-     if(res.result.data[0] ==null){
-      setCustomers([])
-      setItem([])
-     }else{
+    if(res.result){
+         
+        if((res.result[0][0] ==null) && (res.result[1][0] == null)){
+          setCustomers([])
+          setPayments([])
+        }else{
+          if(res.result[0][0] ==null){
+            setCustomers([])
+            setPayments(res.result[1])
+          }else if(res.result[1][0] == null){
+           
+            setCustomers(res.result[0])
+            setPayments([])
+          }else{
+            setCustomers(res.result[0])
+            setPayments(res.result[1])
+          }
+          
+        }
+      }else{
+        setError(""+res)
+            setOpen(true)
+            setCustomers([
+              []
+             ])
+             setPayments([
+              []
+             ])
     
-       console.log(res.result)
-       console.log(res.result.data)
-       console.log(res.result.item)
-       setCustomers(res.result.data)
-       setItem(res.result.item)
-     }
-    
+          }
  
    }
    })
    .catch((err)=>{
     console.log("eeeeeeeeeeeeeeeeeeee")
     console.log(err)
-     setCustomers([])
-     setItem([])
+    setCustomers([
+        []
+       ])
+       setPayments([
+        []
+       ])
+
+    
      })
  
  
@@ -97,13 +119,9 @@ const handleClose = ()=>{
  
  useEffect(() => {
  let id = sessionStorage.getItem("Cid")
- let name = sessionStorage.getItem("Cname")
- let phone = sessionStorage.getItem("Cphone")
   if(!id){
 Router.push('/dashboard')
   }else{
-    setCname(name)
-    setPhNo(phone)
     setCid( id)
     getCustomer()
   }
@@ -127,7 +145,7 @@ Router.push('/dashboard')
       }}
     >
       <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer}   cId={cId} cName={cName} />
+        <HistoryListToolbar  getdata={getCustomer}   cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
   <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
@@ -136,7 +154,7 @@ Router.push('/dashboard')
 </Snackbar>
 
 
-     <ItemResult customers={customers} items={item} getdata={getCustomer} />
+  <HistoryTotalResult customers={customers}  payments={payment} getdata={getCustomer} />
      
 
 

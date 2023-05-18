@@ -24,6 +24,7 @@ import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
 import Router from 'next/router';
+import { useEffect } from 'react';
 
 export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -159,7 +160,9 @@ const handleHModalAdd = (e,mid) => {
     setPage(newPage);
   };
 
-  
+  useEffect(() => {
+    console.log(customers)
+  }, [])
 
   return (
     

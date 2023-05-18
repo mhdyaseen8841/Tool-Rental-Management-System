@@ -2,6 +2,8 @@ import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable'
 import {
   Avatar,
   Box,
@@ -13,11 +15,13 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
+  Link,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
   TablePagination,
   TableRow,
@@ -98,6 +102,7 @@ if (index !== -1) {
 
     console.log(label)
     // console.log(items)
+   
 
   }, [])
 
@@ -128,6 +133,100 @@ if (index !== -1) {
     setPage(newPage);
   };
 
+
+  const labelCounts = { pendingAmount: 0 };
+
+// Loop through the data to count the labels
+data.forEach((row) => {
+  row.forEach((cell, index) => {
+    if (index !== 0 && index !== row.length - 1) { // Ignore the first and last cells
+      const label = heading[index - 1];
+      if (!labelCounts[label]) {
+        labelCounts[label] = cell.pendingStock;
+      } else {
+        labelCounts[label] += cell.pendingStock;
+      }
+    } else if (index === row.length - 1) { // Check if this is the pending amount column
+      labelCounts.pendingAmount += cell.pendingAmount;
+    }
+  });
+});
+
+
+// total count of each label endsss///
+
+
+
+const genereatePdf = () => {
+
+  const unit = "pt";
+  const size = "A4"; // Use A1, A2, A3 or A4
+  const orientation = "portrait"; // portrait or landscape
+  
+  const marginLeft = 40;
+  const doc = new jsPDF(orientation, unit, size);
+  
+  
+  const title = "report";
+  const headers=[label];
+  
+  const datas = data.map((ele)=> {
+    const dt = [];
+    ele.map((e,i)=>{
+      if(i == 0){
+        dt.push(e.name);
+      }
+      else if(i === ele.length - 1) {
+        dt.push(e.pendingAmount);
+      }
+      else{
+        dt.push(e.pendingStock);
+      }
+    })
+    return dt;
+  });
+
+  console.log(datas);
+  var today = new Date();
+  var dd = today.getDate();
+  
+  var mm = today.getMonth()+1; 
+  var yyyy = today.getFullYear();
+  if(dd<10) 
+  {
+      dd='0'+dd;
+  } 
+  
+  if(mm<10) 
+  {
+      mm='0'+mm;
+  } 
+  today = mm+'-'+dd+'-'+yyyy;
+
+  var newdat = "Date of Report Generated  : "+ today;
+
+  let content = {
+    startY: 50,
+    head: headers,
+    body: datas
+  };
+  autoTable(doc, content)
+  doc.text(title, marginLeft, 20);
+  //doc.autoTable(content);
+
+  doc.setFontSize(10);
+  doc.text(40, 35, "Total Amount Pending : " + datas[datas.length-1][datas.length-1] + " Rs.")
+
+  doc.setFontSize(10);
+  doc.text(40, 45, newdat)
+
+  doc.page=1;
+
+  doc.text(500,200, 'Page No:' + doc.page);
+
+  doc.save('Player Details.pdf');
+  }
+
   return (
 
     <Card {...rest}>
@@ -136,7 +235,7 @@ if (index !== -1) {
 
       {localStorage.getItem('usertype') === 'owner' ? null : (
         <Box sx={{ m: 1 }}>
-          <Button color="primary" variant="contained">
+          <Button color="primary" onClick={genereatePdf} variant="contained">
             Print
           </Button>
 
@@ -184,7 +283,7 @@ if (index !== -1) {
 
                 selectedOptions.map((label) => {
                   return (
-                    <TableCell key={label}>
+                    <TableCell>
                       {label}
                     </TableCell>
                   )
@@ -193,7 +292,7 @@ if (index !== -1) {
 
                 heading.map((label) => {
                   return (
-                    <TableCell key={label}>
+                    <TableCell>
                       {label}
                     </TableCell>
                   )
