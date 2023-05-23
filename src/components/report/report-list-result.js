@@ -248,6 +248,7 @@ const genereatePdf = () => {
             <DialogContent>
               {heading.map((label) => (
                 <FormControlLabel
+                key={label}
                   control={
                     <Checkbox
                       value={label}
@@ -269,69 +270,80 @@ const genereatePdf = () => {
         </Box>
       )}
 
-<TableContainer>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell>{label[0]}</TableCell>
-        {filter ? (
-          selectedOptions.map((label) => {
-            return (
-              <TableCell key={label}>{label}</TableCell>
-            )
-          })
-        ) : (
-          heading.map((label) => {
-            return (
-              <TableCell key={label}>{label}</TableCell>
-            )
-          })
-        )}
-        <TableCell>{label[label.length - 1]}</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {data.map((row, index) => {
-        let firstValue = row[0];
-        let lastValue = row[row.length - 1];
-        let middleValues = row.slice(1, -1);
-        return (
-          <TableRow key={index}>
-            <TableCell>
-            <Link href={`/history/?cId=${firstValue.id}&cName=${firstValue.name}&phNo=${firstValue.mobile}`}>
-              {firstValue.name}<br />{firstValue.mobile}
-              </Link>
-              </TableCell>
-            {filter ? (
-              selectedIndex.map((index) => {
-                return (
-                  <TableCell key={index}>{middleValues[index].pendingStock}</TableCell>
-                )
-              })
-            ) : (
-              middleValues.map((cell, index) => (
-                <TableCell key={index}>{cell.pendingStock}</TableCell>
-              ))
-            )}
-            <TableCell>{lastValue.pendingAmount}</TableCell>
-          </TableRow>
-        )
-      })}
-    </TableBody>
-    
-    <TableFooter style={{ backgroundColor: 'rgba(212, 212, 212, 0.4)'}}>
-      <TableRow>
-        <TableCell>Total each label count</TableCell>
-        {heading.map((label) => (
-          <TableCell key={label}>{labelCounts[label]}</TableCell>
-        ))}
-        <TableCell>{labelCounts.pendingAmount}</TableCell>
-      </TableRow>
-    </TableFooter>
-    
-  </Table>
-</TableContainer>
+      <TableContainer >
+        <Table>
+          <TableHead>
+            <TableRow>
 
+              <TableCell>
+                {label[0]}
+              </TableCell>
+
+              {filter ? (
+
+                selectedOptions.map((label) => {
+                  return (
+                    <TableCell>
+                      {label}
+                    </TableCell>
+                  )
+                })
+              ) : (
+
+                heading.map((label) => {
+                  return (
+                    <TableCell>
+                      {label}
+                    </TableCell>
+                  )
+                })
+
+              )}
+
+              <TableCell>
+                {label[label.length - 1]}
+              </TableCell>
+
+            </TableRow>
+          </TableHead>
+          <TableBody>
+
+            {data.map((row, index) => {
+
+              let firstValue = row[0];
+              let lastValue = row[row.length - 1];
+              let middleValues = row.slice(1, -1);
+              return (
+
+                <TableRow key={index}>
+                  <TableCell key={index}>{firstValue.name}<br />{firstValue.mobile}</TableCell>
+
+{filter ? (
+  
+
+  selectedIndex.map((index) => {
+    return (
+      <TableCell key={index}>{middleValues[index].pendingStock}</TableCell>
+    )
+  }
+  )
+  ):(
+    middleValues.map((cell, index) => (
+      <TableCell key={index}>{cell.pendingStock}</TableCell>
+    ))
+  )}
+             
+
+                  <TableCell key={index}>{lastValue.pendingAmount}</TableCell>
+                </TableRow>
+
+              )
+
+            })}
+
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Card>
   );
 };
