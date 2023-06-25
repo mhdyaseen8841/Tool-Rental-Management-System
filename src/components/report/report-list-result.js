@@ -283,7 +283,7 @@ const genereatePdf = () => {
 
                 selectedOptions.map((label) => {
                   return (
-                    <TableCell>
+                    <TableCell key={label}> 
                       {label}
                     </TableCell>
                   )
@@ -292,7 +292,7 @@ const genereatePdf = () => {
 
                 heading.map((label) => {
                   return (
-                    <TableCell>
+                    <TableCell key={label}>
                       {label}
                     </TableCell>
                   )
