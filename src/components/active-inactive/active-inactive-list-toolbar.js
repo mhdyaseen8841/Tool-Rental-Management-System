@@ -29,22 +29,33 @@ export const ActiveInactiveListToolbar = (props) =>
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
 
-  const add = (data,file) => {
-   console.log("llllllllllllllllllllllllllllllllllllllllllllllllllll")
+  
+  const add = (data,file,cPic) => {
+   console.log("hey")
+    let req = {
+      "type": "SP_CALL",
+      "requestId": 1100001,
+      "request": {
+        "name": data.CustomerName,
+        "mobile": data.Mobnum,
+        "address": data.Address,
+        "altermobile": data.AltMobnum,
+        "proof": cPic,
+        "coName": data.Carename,
+        "coMobile": data.CareMobnum,
+        "documents": []
+      }
+    };
     
-   let req={
-      "type" : "SP_CALL",
-      "requestId" : 1100001,
-      request: {
-       "name":data.CustomerName,
-       "mobile" : data.Mobnum,
-       "address" : data.Address,
-       "altermobile" : data.AltMobnum,
- "proof" : file
-     }
-}
+    for (let i = 0; i < file.length; i++) {
+      req.request.documents.push({
+        "doc": file[i]
+      });
+    }
 
+console.log("req-------------------")
 
+console.log(req);
 
 requestPost(req).then((res)=>{
 
