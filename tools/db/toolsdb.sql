@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 18, 2023 at 04:04 PM
+-- Generation Time: Jun 25, 2023 at 06:19 AM
 -- Server version: 10.5.19-MariaDB
 -- PHP Version: 8.2.4
 
@@ -25,7 +25,7 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE  PROCEDURE `1000001` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1000001` (IN `request` JSON)   BEGIN
 	declare sts int;
     set sts = (select count(uId) from users where username = json_value(request,"$.username"));
     if sts = 0 then
@@ -36,17 +36,17 @@ CREATE  PROCEDURE `1000001` (IN `request` JSON)   BEGIN
 	end if;
 END$$
 
-CREATE  PROCEDURE `1000002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1000002` (IN `request` JSON)   BEGIN
 	update users set userType = json_value(request,"$.userType") where uId=json_value(request,"$.uId");
     select JSON_OBJECT("errorCode",1,"result","updated successfully") as result;
 END$$
 
-CREATE  PROCEDURE `1000003` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1000003` (IN `request` JSON)   BEGIN
 	update users set status = 0 where uId=json_value(request,"$.uId");
     select JSON_OBJECT("errorCode",1,"result","updated successfully") as result;
 END$$
 
-CREATE  PROCEDURE `1000005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1000005` (IN `request` JSON)   BEGIN
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'uId',uId,
         'username',userName,
@@ -54,7 +54,7 @@ CREATE  PROCEDURE `1000005` (IN `request` JSON)   BEGIN
     )))) as result from users where status =1;
 END$$
 
-CREATE  PROCEDURE `1100001` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100001` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
@@ -79,7 +79,7 @@ CREATE  PROCEDURE `1100001` (IN `request` JSON)   BEGIN
     ELSEIF num IS NOT NULL THEN
         SELECT JSON_OBJECT('errorCode',0,'errorMsg','Mobile number already registered') as result;
     ELSE
-        INSERT INTO customermaster(cName,mobile,alterMobile,address,proof) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'));
+        INSERT INTO customermaster(cName,mobile,alterMobile,address,proof,coName,coMobile) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'),json_value(request,'$.coName'),json_value(request,'$.coMobile'));
      set cid = LAST_INSERT_ID();
      set cnt = json_length(docs) - 1;
         set i = 0;
@@ -95,11 +95,11 @@ CREATE  PROCEDURE `1100001` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
-	  DECLARE num varchar(20);
+	DECLARE num varchar(20);
     DECLARE alterNum varchar(20);
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
@@ -114,7 +114,9 @@ CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
       mobile = mob,
       alterMobile=alterNum,
       address=plac,
-      proof = json_value(request,'$.proof')
+      proof = json_value(request,'$.proof'),
+      coName = json_value(request,'$.coName'),
+      coMobile = json_value(request,'$.coMobile')
       where cId= json_value(request,'$.cId');
       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Update Successful','result',JSON_OBJECT(
                                'name',nam,
@@ -123,7 +125,7 @@ CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1100003` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100003` (IN `request` JSON)   BEGIN
 	DECLARE num int;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
@@ -138,7 +140,7 @@ CREATE  PROCEDURE `1100003` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1100004` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100004` (IN `request` JSON)   BEGIN
 	DECLARE num int;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
@@ -149,7 +151,7 @@ CREATE  PROCEDURE `1100004` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
                                'cName',cName,
@@ -161,7 +163,7 @@ CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
 
 END$$
 
-CREATE  PROCEDURE `1100006` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100006` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
                                'cName',cName,
@@ -173,12 +175,20 @@ CREATE  PROCEDURE `1100006` (IN `request` JSON)   BEGIN
 
 END$$
 
-CREATE  PROCEDURE `1100007` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100007` (IN `request` JSON)   BEGIN
 update customermaster set status = 0 where cId = json_value(request,'$.cId');
 select JSON_OBJECT("errorCode",1,"errorMsg","Customer Activated");
 END$$
 
-CREATE  PROCEDURE `1200001` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1100008` (IN `request` JSON)   BEGIN
+	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
+                               'docData',docData,
+        					   'dId',dId
+                               )))) as result from customermaster WHERE cId = JSON_VALUE(request,'$.cId');
+
+END$$
+
+CREATE PROCEDURE `1200001` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(50);
     DECLARE mont decimal(10,2);
 	  DECLARE stck int;
@@ -198,7 +208,7 @@ CREATE  PROCEDURE `1200001` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1200002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1200002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mont decimal(10,2);
     DECLARE daily decimal(10,2);
@@ -220,7 +230,7 @@ CREATE  PROCEDURE `1200002` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE  PROCEDURE `1200005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1200005` (IN `request` JSON)   BEGIN
 
 	DECLARE itemData JSON;
 	DECLARE items JSON;
@@ -282,7 +292,7 @@ CREATE  PROCEDURE `1200005` (IN `request` JSON)   BEGIN
 		select JSON_OBJECT('errorCode',1,'result',fdata) as result;
 END$$
 
-CREATE  PROCEDURE `1200006` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1200006` (IN `request` JSON)   BEGIN
 
 	DECLARE itemData JSON;
 	DECLARE cid int;
@@ -300,7 +310,7 @@ CREATE  PROCEDURE `1200006` (IN `request` JSON)   BEGIN
 		select JSON_OBJECT('errorCode',1,'result',itemData) as result;
 END$$
 
-CREATE  PROCEDURE `1300001` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1300001` (IN `request` JSON)   BEGIN
 	declare stats int;
     declare qtty int;
     declare sqty int;
@@ -321,7 +331,7 @@ CREATE  PROCEDURE `1300001` (IN `request` JSON)   BEGIN
 	end if;
 END$$
 
-CREATE  PROCEDURE `1300005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1300005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'sId',sId,
                                'date',sDate,
@@ -331,7 +341,7 @@ CREATE  PROCEDURE `1300005` (IN `request` JSON)   BEGIN
 
 END$$
 
-CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
+CREATE PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 	  declare id int;
     declare stats int;
     declare i int;
@@ -350,7 +360,7 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
     set stats = JSON_VALUE(request,'$.status');
     set i = (select count(mId) from renthistorymaster where cDate = datec and cId=id);
     if stats = 1 then
-		insert into renthistorymaster(cDate, cId,feedback,status) values(datec,id,json_value(request,'$.note'),stats);
+		insert into renthistorymaster(cDate, cId,status) values(json_value(request,'$.date'),id,stats);
 		set cnt = json_length(json_extract(request,'$.items')) - 1;
         set i = 0;
         set mid = (SELECT LAST_INSERT_ID());
@@ -359,7 +369,7 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 				LEAVE  cmpinsert;
 			END IF;
 			set cmpData1 = json_extract(request, concat('$.items[',i,']'));
-			insert into renthistory(mId,itemId,qty,hDate,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,stats,json_value(cmpData1,'$.qty'));
+			insert into renthistory(mId,itemId,qty,hDate,note,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,json_value(cmpData1,'$.note'),stats,json_value(cmpData1,'$.qty'));
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			if ratest = 0 then
 				set mrate = (select mRent from items where itemId = json_value(cmpData1,'$.itemId'));
@@ -369,7 +379,7 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 		END LOOP;
 		select JSON_OBJECT("errorCode",1,"errorMsg","Inserted Successfully") as result;
     else
-		insert into renthistorymaster(cDate, cId,feedback,status) values(datec,id,json_value(request,'$.note'),stats);
+		insert into renthistorymaster(cDate, cId,status) values(json_value(request,'$.date'),id,stats);
 		set cnt = json_length(json_extract(request,'$.items')) - 1;
         set i = 0;
         set mid = (SELECT LAST_INSERT_ID());
@@ -378,7 +388,8 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 				LEAVE  cmpinsert;
 			END IF;
 			set cmpData1 = json_extract(request, concat('$.items[',i,']'));
-			insert into renthistory(mId,itemId,qty,hDate,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,stats,1);
+			insert into renthistory(mId,itemId,qty,hDate,note,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,json_value(cmpData1,'$.note'),stats,1);
+			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
             set hid = (select LAST_INSERT_ID());
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			SET  i = i + 1;
@@ -387,7 +398,7 @@ CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
     end if;
 END$$
 
-CREATE  PROCEDURE `1400002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1400002` (IN `request` JSON)   BEGIN
 	declare ststs int;
     declare qsty int;
     declare id int;
@@ -407,7 +418,7 @@ CREATE  PROCEDURE `1400002` (IN `request` JSON)   BEGIN
 	end if;
 END$$
 
-CREATE  PROCEDURE `1400005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1400005` (IN `request` JSON)   BEGIN
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'hId',rh.hId,
         'item',it.iName,
@@ -417,7 +428,7 @@ CREATE  PROCEDURE `1400005` (IN `request` JSON)   BEGIN
     )))) as result from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId inner join items it on it.itemId = rh.itemId inner join ratecard rc on rc.itemId = it.itemId and rhm.cId = rc.cId where rh.mId = json_value(request,'$.mId');
 END$$
 
-CREATE  PROCEDURE `1400006` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1400006` (IN `request` JSON)   BEGIN
 	DECLARE masterData JSON;
     DECLARE datas JSON;
     DECLARE rnthsry JSON;
@@ -426,9 +437,8 @@ CREATE  PROCEDURE `1400006` (IN `request` JSON)   BEGIN
     DECLARE i int;
     set masterData =
 	(select concat('[',group_concat(json_object(
-		'mId',mId,
+		    'mId',mId,
         'Date',cDate,
-        'feedback',feedback,
         'status',status
     )ORDER BY mId DESC),']') as result from renthistorymaster where cId = json_value(request,'$.cId')); 
     set datas = (select JSON_ARRAY());
@@ -443,7 +453,6 @@ CREATE  PROCEDURE `1400006` (IN `request` JSON)   BEGIN
             set datas = (select JSON_ARRAY_APPEND(datas, '$', JSON_OBJECT(
         "mId",cast(JSON_VALUE(rnthsry,"$.mId") as unsigned),
         "Date",JSON_VALUE(rnthsry,"$.Date"),
-        "feedback",JSON_VALUE(rnthsry,"$.feedback"),
          "status",cast(JSON_VALUE(rnthsry,"$.status") as unsigned),
          "pending",IFNULL(cast(pendingsum as unsigned),0)
          )));
@@ -452,7 +461,7 @@ CREATE  PROCEDURE `1400006` (IN `request` JSON)   BEGIN
     select JSON_OBJECT('errorCode',1,'result',datas) as result;
 END$$
 
-CREATE  PROCEDURE `1500002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1500002` (IN `request` JSON)   BEGIN
     declare datas JSON;
     declare items JSON;
     declare cmpData JSON;
@@ -483,7 +492,7 @@ CREATE  PROCEDURE `1500002` (IN `request` JSON)   BEGIN
                 select JSON_OBJECT('errorCode',1,'result',datas) as result;
 END$$
 
-CREATE  PROCEDURE `1500005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1500005` (IN `request` JSON)   BEGIN
 	  declare items JSON;
     declare dates JSON;
     declare cid int;
@@ -543,7 +552,7 @@ set cnt = JSON_LENGTH(dates) - 1;
 		select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('item',items,'data',datas)) as result;
 END$$
 
-CREATE  PROCEDURE `1600002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1600002` (IN `request` JSON)   BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     DECLARE dat date;
@@ -570,7 +579,7 @@ CREATE  PROCEDURE `1600002` (IN `request` JSON)   BEGIN
     SELECT JSON_OBJECT("errorCode",1,"errorMsg","Succesfully Updated") as result;
 END$$
 
-CREATE  PROCEDURE `1600005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1600005` (IN `request` JSON)   BEGIN
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'rId',rc.rId,
         'itemId',rc.itemid,
@@ -582,22 +591,22 @@ CREATE  PROCEDURE `1600005` (IN `request` JSON)   BEGIN
     )))) as result from rentcalculations rc where rc.cId = json_value(request,'$.cId') AND rc.itemid= json_value(request,'$.itemId');
 END$$
 
-CREATE  PROCEDURE `1700001` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1700001` (IN `request` JSON)   BEGIN
 	insert into paymentcollection(cId,pdate,amount) values(json_value(request,"$.cId"),curdate(),json_value(request,"$.amount"));
     select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
 END$$
 
-CREATE  PROCEDURE `1700002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1700002` (IN `request` JSON)   BEGIN
 	update paymentcollection set amount = json_value(request,"$.amount") where pId = json_value(request,"$.pId") ;
     select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
 END$$
 
-CREATE  PROCEDURE `1700003` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1700003` (IN `request` JSON)   BEGIN
 	delete from paymentcollection where pId = json_value(request,"$.pId");
     select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
 END$$
 
-CREATE  PROCEDURE `1700005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1700005` (IN `request` JSON)   BEGIN
 	DEClARE datas JSON;
     DECLARE items JSON;
     DECLARE payments JSON;
@@ -609,12 +618,12 @@ CREATE  PROCEDURE `1700005` (IN `request` JSON)   BEGIN
     select JSON_OBJECT("errorCode",1,"result",datas) as result;
 END$$
 
-CREATE  PROCEDURE `1800002` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1800002` (IN `request` JSON)   BEGIN
 	UPDATE ratecard set rate = JSON_VALUE(request,'$.rate') where rId = JSON_VALUE(request,'$.rId');
     select JSON_OBJECT("errorCode",1,"errorMsg","Updated Successfully") as result;
 END$$
 
-CREATE  PROCEDURE `1800005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `1800005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT("errorCode",1,"result",JSON_ARRAY(
     GROUP_CONCAT(
     	JSON_OBJECT(
@@ -625,7 +634,7 @@ CREATE  PROCEDURE `1800005` (IN `request` JSON)   BEGIN
     ))) as result FROM ratecard rc INNER JOIN items i on i.itemId = rc.itemId where rc.cId = JSON_VALUE(request,'$.cId');
 END$$
 
-CREATE  PROCEDURE `2300005` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `2300005` (IN `request` JSON)   BEGIN
 	declare tcustomer int;
     declare titems int;
     declare tamount decimal(20,2);
@@ -683,7 +692,7 @@ CREATE  PROCEDURE `2300005` (IN `request` JSON)   BEGIN
     select JSON_OBJECT("errorCode",1,"result",JSON_OBJECT("total",total,"graph",graph,"pie",pie)) as result;
 END$$
 
-CREATE  PROCEDURE `2300006` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `2300006` (IN `request` JSON)   BEGIN
 	DECLARE itemData JSON;
     DECLARE customerData JSON;
     DECLARE id JSON;
@@ -783,7 +792,7 @@ CREATE  PROCEDURE `2300006` (IN `request` JSON)   BEGIN
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',label,'data',datas)) as result;
 END$$
 
-CREATE  PROCEDURE `2300007` (IN `request` JSON)   BEGIN	DECLARE date1 date;
+CREATE PROCEDURE `2300007` (IN `request` JSON)   BEGIN	DECLARE date1 date;
         DECLARE date2 date;
         DECLARE datas JSON;
         DECLARE dt JSON;
@@ -888,7 +897,7 @@ CREATE  PROCEDURE `2300007` (IN `request` JSON)   BEGIN	DECLARE date1 date;
     
     END$$
 
-CREATE  PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `cid` INT(10), IN `qtyy` INT(10))   BEGIN
+CREATE PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `cid` INT(10), IN `qtyy` INT(10))   BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     declare days int;
@@ -902,7 +911,7 @@ CREATE  PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `
     insert into rentcalculations(itemId,rentDate,returnDate,cId,price,qty) values(itemid,dat,CURDATE(),cid,pric,qtyy);
 END$$
 
-CREATE  PROCEDURE `returnCalculate` (IN `request` JSON)   BEGIN
+CREATE PROCEDURE `returnCalculate` (IN `request` JSON)   BEGIN
 	DECLARE pqty int;
     DECLARE qty1 int;
     DECLARE iId int;
@@ -965,8 +974,17 @@ CREATE TABLE `customermaster` (
   `alterMobile` varchar(20) NOT NULL,
   `address` varchar(150) NOT NULL,
   `proof` longtext NOT NULL,
+  `coName` varchar(50) NOT NULL,
+  `coMobile` varchar(20) NOT NULL,
   `status` int(10) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customermaster`
+--
+
+INSERT INTO `customermaster` (`cId`, `cName`, `mobile`, `alterMobile`, `address`, `proof`, `coName`, `coMobile`, `status`) VALUES
+(1010, 'MUHAMMED RIYAS', '8714914848', '', 'kattuparambil', '', '', '', 1);
 
 -- --------------------------------------------------------
 
@@ -993,6 +1011,13 @@ CREATE TABLE `items` (
   `tStock` int(10) NOT NULL,
   `status` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `items`
+--
+
+INSERT INTO `items` (`itemId`, `iName`, `mRent`, `tStock`, `status`) VALUES
+(1, 'Shutter', 30.00, 100, 0);
 
 -- --------------------------------------------------------
 
@@ -1078,7 +1103,6 @@ CREATE TABLE `renthistorymaster` (
   `mId` int(11) NOT NULL,
   `cDate` date NOT NULL,
   `cId` int(11) NOT NULL,
-  `feedback` text NOT NULL,
   `status` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1109,6 +1133,13 @@ CREATE TABLE `users` (
   `userType` varchar(30) DEFAULT NULL,
   `status` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`uId`, `userName`, `password`, `userType`, `status`) VALUES
+(1, 'admin@123.com', '21232f297a57a5a743894a0e4a801fc3', 'admin', 1);
 
 --
 -- Indexes for dumped tables
@@ -1189,19 +1220,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customermaster`
 --
 ALTER TABLE `customermaster`
-  MODIFY `cId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1010;
+  MODIFY `cId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1011;
 
 --
 -- AUTO_INCREMENT for table `document`
 --
 ALTER TABLE `document`
-  MODIFY `dId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `dId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemId` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `itemId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `login_session`
@@ -1249,7 +1280,7 @@ ALTER TABLE `stockupdate`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `uId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
