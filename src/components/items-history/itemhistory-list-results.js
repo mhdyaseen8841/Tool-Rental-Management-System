@@ -82,7 +82,7 @@ let cid= data.cid;
        "mobile" : data.Mobnum,
        "address" : data.Address,
        "altermobile" : data.AltMobnum,
- "proof" : file
+        "proof" : file
      }
     }
     

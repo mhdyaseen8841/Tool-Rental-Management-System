@@ -176,7 +176,7 @@ Page.getLayout = (page) =>{
 
 
  return(
-  <CustomerLayout  cId={cId}>
+  <CustomerLayout  >
     {page}
   </CustomerLayout>
 );
