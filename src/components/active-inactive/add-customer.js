@@ -24,7 +24,7 @@ export default function FullScreenDialog(details) {
   const [docs, setDocs] = useState([]);
   const [imgPreviews, setImgPreviews] = useState([]);
   const [customerPhoto, setCustomerPhoto] = useState(null);
-  
+ 
   
   const getBase64 = (file) => {
     return new Promise((resolve) => {
@@ -51,6 +51,7 @@ export default function FullScreenDialog(details) {
           quality: 0.6,
           success: (compressedResult) => {
             getBase64(compressedResult).then((result) => {
+            
               resolve(result);
             }).catch((err) => {
               reject(err);
@@ -93,14 +94,16 @@ export default function FullScreenDialog(details) {
     Carename: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
     CareMobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
   });
-
+console.log(details.data)
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
       CustomerName: update ? details.data.name :'',
       Mobnum: update ? details.data.mobile : '',
-      AltMobnum : update ? details.data.mobile : '',
+      AltMobnum : update ? details.data.altNum : '',
       Address: update ? details.data.address : '',
+      Carename: update ? details.data.Carename : '',
+      CareMobnum: update ? details.data.CareMobnum : ''
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
@@ -114,8 +117,15 @@ export default function FullScreenDialog(details) {
 
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
+    // setCustomerPhoto(file)
     // Update the state variable with the selected photo
-    setCustomerPhoto(file);
+    getBase64(file).then((result) => {
+      setCustomerPhoto(result);
+      console.log(result)
+    }).catch((err) => {
+      reject(err);
+    });
+   
   };
   // Define handleRemovePhoto function
   const handleRemovePhoto = () => {
@@ -198,7 +208,7 @@ export default function FullScreenDialog(details) {
       type="text"
       label="Care of name"
       variant="outlined"
-      value={details.update ? details.data.name : ''}
+      value={details.update ? details.data.Carename : ''}
       {...getFieldProps('Carename')}
       error={Boolean(touched.Carename && errors.Carename || alertMsg)}
       helperText={touched.Carename && errors.Carename || alertMsg}
@@ -210,7 +220,7 @@ export default function FullScreenDialog(details) {
       type="text"
       label="Mobile Number"
       variant="outlined"
-      value={details.update ? details.data.name : ''}
+      value={details.update ? details.data.CareMobnum : ''}
       {...getFieldProps('CareMobnum')}
       error={Boolean(touched.CareMobnum && errors.CareMobnum || alertMsg)}
       helperText={touched.CareMobnum && errors.CareMobnum || alertMsg}
@@ -227,8 +237,7 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
-
-              <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
+{update?'':<> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
               <label htmlFor="customer-photo-upload" style={{ display: 'block', marginBottom: '1rem' }}>
                 <input
                   id="customer-photo-upload"
@@ -240,13 +249,14 @@ export default function FullScreenDialog(details) {
                 <Button variant="contained" component="span">
                   Upload Photo
                 </Button>
-              </label>
+              </label></>}
+             
               {/* Render the customer photo preview */}
               {customerPhoto && (
                 <div style={{ position: 'relative' }}>
                   <img
                     style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', cursor: 'pointer' }}
-                    src={URL.createObjectURL(customerPhoto)}
+                    src={customerPhoto}
                     alt="Customer Photo"
                   />
                   <Button
@@ -273,7 +283,8 @@ export default function FullScreenDialog(details) {
     </div>
   );
 })}
-    <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
+{update?'':    <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
+}
           
           </Stack>
         </Container>

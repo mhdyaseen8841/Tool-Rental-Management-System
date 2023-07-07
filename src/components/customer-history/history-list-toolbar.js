@@ -35,7 +35,8 @@ import CalculateScreenDialog from "./calculateRent";
 
 export const HistoryListToolbar = (props) => {
   console.log("prooooooooooops")
-  console.log(props.cName)
+  console.log(props)
+  console.log(sessionStorage.getItem("Cid"))
   const [open, setOpen] = useState(true);
   const [Sopen, setSOpen] = useState(false);
 
@@ -79,18 +80,18 @@ export const HistoryListToolbar = (props) => {
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
 
-    const add = (items, note, status) => {
+    const add = (items, date) => {
       let req = {
         type: "SP_CALL",
         requestId: 1400001,
         request: {
-          cId: cId,
+          cId: sessionStorage.getItem("Cid"),
           status: 1,
-          note: note,
+          date: date,
           items: items,
         },
       };
-
+console.log(req)
       requestPost(req).then((res) => {
 
 
@@ -225,14 +226,14 @@ export const HistoryListToolbar = (props) => {
   const handleReturn = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
 
-    const add = (note, items) => {
+    const add = ( items,date) => {
       const req = {
         "type": "SP_CALL",
         "requestId": 1400001,
         "request": {
           "cId": cId,
           "status": 0,
-          "note": note,
+          "date": date,
           "items": items
         }
       }

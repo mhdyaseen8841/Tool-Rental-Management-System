@@ -115,7 +115,7 @@ return(
         sx={{ m: 1 }}
         variant="h4"
       >
-        Active/Inactive Customers
+        Inactive Customers
       </Typography>
       <Box sx={{ m: 1 }}>
         

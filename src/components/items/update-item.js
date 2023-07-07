@@ -90,6 +90,7 @@ export default function FullScreenDialogUpdate(details) {
               label="Stock Name"
               variant="outlined"
               {...getFieldProps('ItemName')}
+              disabled
               error={Boolean(touched.ItemName && errors.ItemName)}
               helperText={touched.ItemName && errors.ItemName}
             />

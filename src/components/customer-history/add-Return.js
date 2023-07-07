@@ -143,10 +143,22 @@ console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
             flag = true;
             break
           } else {
+
+            let Inote = document.getElementById(`notes${ind}`).value;
+            console.log("--------------------------------------")
+            console.log(Inote)
+            if (!Inote) {
+              Inote = ""
+            }
+
             itemsArr.push({
-              "itemId": items[ind].itemId,
-              "qty": element.value
+              "itemId": selectedItems[ind],
+              "qty": element.value,
+              "note": Inote
             })
+
+
+         
           }
         }
       }
@@ -157,8 +169,8 @@ console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
       // details.submit(notes,itemsArr);
       if (flag == false) {
         console.log('details')
-        console.log(details)
-        details.submit(notes, itemsArr);
+        console.log(itemsArr)
+        details.submit(itemsArr,selectedDate);
       } 
     }
     }
@@ -280,7 +292,8 @@ console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
         type="text"
         label="Notes"
         variant="outlined"
-        {...getFieldProps(`notes${ind}`)}
+        id={`notes${ind}`}
+       
         error={Boolean(touched[`notes${ind}`] && errors[`notes${ind}`])}
         helperText={touched[`notes${ind}`] && errors[`notes${ind}`]}
       />
