@@ -138,21 +138,21 @@ export default function FullScreenDialog(details) {
 
 
                 setQtyError(aqty.label + ' Out of stock!, available stock is only ' + aqty.astock)
-                setqtErr(true)
+                setQtErr(true)
                 shouldBreak = true;
                 return;
 
               } else if (parseInt(element.value) <= 0) {
 
                 setQtyError('enter ' + aqty.label + ' quantity greater than zero')
-                setqtErr(true)
+                setQtErr(true)
                 shouldBreak = true;
                 return;
               }
 
               else {
                 setQtyError('')
-                setqtErr(false)
+                setQtErr(false)
 
                 let Inote = document.getElementById(`notes${ind}`).value;
                 if (!Inote) {
@@ -162,14 +162,14 @@ export default function FullScreenDialog(details) {
                 itemsArr.push({
                   "itemId": selectedItems[ind],
                   "qty": element.value,
-                  "notes": Inote
+                  "note": Inote
                 })
 
 
               }
             } else {
               setQtyError('enter ' + aqty.label + ' quantity')
-              setqtErr(true)
+              setQtErr(true)
               shouldBreak = true;
               return;
             }
@@ -180,7 +180,7 @@ export default function FullScreenDialog(details) {
 
         } else {
           setQtyError('select item')
-          setqtErr(true)
+          setQtErr(true)
           shouldBreak = true;
           return;
         }
@@ -191,11 +191,12 @@ export default function FullScreenDialog(details) {
       if (qterr === false) {
         if (itemsArr.length === 0) {
           setQtyError('Add atleast one item')
-          setqtErr(true)
+          setQtErr(true)
         } else {
+          console.log("----------------------sdsdfsfd")
           setQtyError('')
-          setqtErr(false)
-          details.submit(itemsArr, 1)
+          setQtErr(false)
+          details.submit(itemsArr,selectedDate)
         }
       }
 

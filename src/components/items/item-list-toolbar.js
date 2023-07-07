@@ -49,7 +49,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     request: {
      "itemName": data.ItemName,
      "monthly": data.MonthlyRent,
-     "daily": data.DailyRent,
      "stock": data.Stock
    }
 }

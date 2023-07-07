@@ -131,7 +131,7 @@ const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
       "itemId": itemId,
     "qty": data.StockNumber,
     "status": data.Status,
-    "notes": data.Notes,
+    "note": data.Notes,
      }
 }
 

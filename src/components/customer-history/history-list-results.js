@@ -181,10 +181,7 @@ const handleHModalAdd = (e,mid) => {
                 <TableCell>
                  Date
                 </TableCell>
-                
-                <TableCell>
-                  Feedback
-                </TableCell>
+             
                 
                 {/* {localStorage.getItem('usertype') === 'owner' ? (
     null
@@ -217,11 +214,7 @@ const handleHModalAdd = (e,mid) => {
                   >
                     {customer.Date}
                   </TableCell>
-                  <TableCell
-                   onClick={(e)=>handleHModalAdd(e,customer.mId)}>
-                    {customer.feedback}
-                  </TableCell>
-                 
+               
                   {/* {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : ( <TableCell>

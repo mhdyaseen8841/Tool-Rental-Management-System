@@ -30,6 +30,12 @@ import FadeMenu from '../more-items-btn';
 // import FullScreenDialog from './active-inactive';
 import FullScreenDialog from './add-customer';
 import requestPost from '../../../serviceWorker'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -60,15 +66,51 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+
+export default function AlertDialog(props) {
+ 
+  const confirm = () => {
+    props.deleteCustomer();
+  };
+
+  const handleClose = () => {
+    props.setOpen(false);
+  };
+
+  return (
+    <div>
+     
+      <Dialog
+        open={props.open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+         Confirm Delete?
+        </DialogTitle>
+        
+        <DialogActions>
+          <Button color="error" onClick={handleClose}>Decline</Button>
+          <Button color="success" onClick={confirm} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
+
+
 export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
-
+  const [alertOpen, setAlertOpen] = useState(false);
   const [order, setOrder] = useState('asc');
-
+  const [cId, setCid] = useState('');
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
@@ -127,7 +169,9 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
           "mobile": data.Mobnum,
           "address": data.Address,
           "altermobile": data.AltMobnum,
-          "proof": file
+          "proof": file,
+          "coName": data.Carename,
+          "coMobile": data.CareMobnum,
         }
       }
 
@@ -182,6 +226,41 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
     }
   };
 
+  const deleteCustomer = () => {
+    let req = {
+      "type": "SP_CALL",
+      "requestId": 1100013,
+      request: {
+        "cId": cId
+      }
+    }
+    requestPost(req).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else if (res.errorcode == 0) {
+
+
+      } else {
+        setAlertOpen(false)
+        getdata()
+
+      }
+
+    })
+
+
+  }
+  const deleteConfirm = (cid) => {
+    setAlertOpen(true)
+    setCid(cid)
+  }
+
 
   const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
   return (
@@ -213,7 +292,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
         </Card>
       </Box>
       <Card {...rest}>
-
+<AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer}/>
         {addDialog}
         <PerfectScrollbar>
           <Box >
@@ -277,11 +356,14 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                        :
                         
                        <><Button
-                       onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.alterMobile, address: customer.address, proof: customer.proof, cid: customer.cId })}
-                     >Edit</Button><Button onClick={()=>handleActive(customer.cId)}>Active</Button></>
+                       onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId,Carename:customer.coName,CareMobnum:customer.coMobile })}
+                     >Edit</Button><Button color="success" onClick={()=>handleActive(customer.cId)}>Active</Button>
+                     <Button  color="error" onClick={()=>deleteConfirm(customer.cId)}>Delete</Button></>
                         
                       }
                       </TableCell>
+
+                      
                     </TableRow>
                   ))}
                 </TableBody>
