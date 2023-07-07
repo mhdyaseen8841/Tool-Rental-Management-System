@@ -977,7 +977,7 @@ CREATE TABLE `customermaster` (
   `coName` varchar(50) NOT NULL,
   `coMobile` varchar(20) NOT NULL,
   `status` int(10) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `customermaster`
@@ -996,7 +996,7 @@ CREATE TABLE `document` (
   `dId` int(10) NOT NULL,
   `cId` int(10) NOT NULL,
   `docData` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1010,7 +1010,7 @@ CREATE TABLE `items` (
   `mRent` decimal(10,2) NOT NULL,
   `tStock` int(10) NOT NULL,
   `status` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `items`
@@ -1031,7 +1031,7 @@ CREATE TABLE `login_session` (
   `token` text NOT NULL,
   `time` timestamp NOT NULL DEFAULT current_timestamp(),
   `platform` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1044,7 +1044,7 @@ CREATE TABLE `paymentcollection` (
   `cId` int(10) NOT NULL,
   `pDate` date NOT NULL,
   `amount` decimal(10,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1058,7 +1058,7 @@ CREATE TABLE `ratecard` (
   `cId` int(10) NOT NULL,
   `rate` decimal(10,2) NOT NULL,
   `status` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1074,7 +1074,7 @@ CREATE TABLE `rentcalculations` (
   `cId` int(10) NOT NULL,
   `price` decimal(20,2) NOT NULL,
   `qty` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1091,7 +1091,7 @@ CREATE TABLE `renthistory` (
   `note` text NOT NULL,
   `status` int(3) NOT NULL,
   `pending` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1104,7 +1104,7 @@ CREATE TABLE `renthistorymaster` (
   `cDate` date NOT NULL,
   `cId` int(11) NOT NULL,
   `status` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1118,7 +1118,7 @@ CREATE TABLE `stockupdate` (
   `qty` int(10) NOT NULL,
   `itemId` int(10) NOT NULL,
   `updateStatus` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1132,7 +1132,7 @@ CREATE TABLE `users` (
   `password` varchar(100) DEFAULT NULL,
   `userType` varchar(30) DEFAULT NULL,
   `status` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
