@@ -150,9 +150,10 @@ console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
             if (!Inote) {
               Inote = ""
             }
-
+            console.log("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
+console.log(items[ind])
             itemsArr.push({
-              "itemId": selectedItems[ind],
+              "itemId": items[ind].itemId,
               "qty": element.value,
               "note": Inote
             })

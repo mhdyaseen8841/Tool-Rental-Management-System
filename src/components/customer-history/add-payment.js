@@ -18,6 +18,9 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+
 
 
 
@@ -26,7 +29,15 @@ export default function AddPaymetDialog(details) {
  
  
 
-    
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
+
+  const getData = (date) => {
+    // Your logic to fetch data based on the selected date
+  };
+
+  const disableFutureDates = (date) => {
+    return dayjs(date).isAfter(dayjs(), 'day'); // Disable dates after the current day
+  };
 
 
   const validSchema = Yup.object().shape({
@@ -44,7 +55,7 @@ export default function AddPaymetDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      details.submit(values.Amount)
+      details.submit(values.Amount,selectedDate);
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
@@ -84,7 +95,22 @@ export default function AddPaymetDialog(details) {
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Typography variant="h4">ADD PAYMENT</Typography>
             
-          
+            <Stack direction={'row'}  justifyContent={"end"} gap={1}>
+  <DatePicker
+    label="Select Date"
+    format="DD-MM-YYYY"
+    value={selectedDate}
+    shouldDisableDate={disableFutureDates}
+    sx={{ width: '40%' }}
+    onChange={(newDate) => {
+      setSelectedDate(newDate);
+      getData(newDate);
+
+    }}
+    renderInput={(params) => <TextField {...params} />}
+  />
+</Stack>
+
             <TextField
   fullWidth
   type="Text"

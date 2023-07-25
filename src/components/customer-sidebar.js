@@ -21,6 +21,8 @@ import requestPost from '../../serviceWorker'
 import HistoryIcon from '@mui/icons-material/History';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'; // Import the arrow icons
@@ -43,6 +45,16 @@ let item = [
     href: '/rateCard',
     icon: (<AccountBalanceWalletIcon fontSize="small" />),
     title: 'Rate Card'
+  },
+  {
+    href: '/notes',
+    icon: (<TextSnippetIcon fontSize="small" />),
+    title: 'Notes'
+  },
+  {
+    href: '/extrapayment',
+    icon: (<CurrencyRupeeIcon fontSize="small" />),
+    title: 'Extra Payment'
   },
   {
     href: '/historyTotal',
