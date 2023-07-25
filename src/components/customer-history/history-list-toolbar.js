@@ -65,13 +65,54 @@ export const HistoryListToolbar = (props) => {
 
   const handleCalculate = (e) => {
     
+    const add = (date, data) => {
+      console.log(data)
+      console.log(date)
+      let req =  {
+        "type" : "SP_CALL",
+        "requestId" : 1700006,
+        "request": {
+  	"cId" :  sessionStorage.getItem("Cid"),
+      	"amount" : data.Amount,
+"date" : date,
+"note" : data.Notes,
+"status" : data.Status
+       }
+  }
+console.log(req)
+      requestPost(req).then((res) => {
+
+
+        if (res.errorCode === 3) {
+          Router
+            .push(
+
+              {
+                pathname: '/',
+                query: { redirect: '1' },
+              })
+
+        } else {
+
+          if (res.errorcode == 0) {
+            setDialog();
+
+          } else {
+            props.getdata();
+            setDialog();
+          }
+        }
+      });
+    };
+
+
     setOpen(true)
 
     setDialog(() => (
       <CalculateScreenDialog
         onClose={handleClose}
         open={open}
-    
+        submit={add}
       />
     ));
     
@@ -133,13 +174,14 @@ console.log(req)
 
     setOpen(true);
 
-    const add = (amount) => {
+    const add = (amount,date) => {
       let req = {
         "type": "SP_CALL",
         "requestId": 1700001,
         request: {
           "cId": cId,
           "amount": amount,
+          "date":date
         }
       };
       requestPost(req).then((res) => {
@@ -394,7 +436,7 @@ console.log(res)
             null
           ) : (<Box sx={{ m: 1 }}>
             <Button sx={{ ml: 2, mt: 2 }} color="info" variant="contained" onClick={handleCalculate}>
-              Calculate Rent
+              Add Extra Amount
             </Button>
             <Button sx={{ ml: 2, mt: 2 }} color="success" variant="contained" onClick={handleAdd}>
               Add Rent

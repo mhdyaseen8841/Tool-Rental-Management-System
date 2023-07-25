@@ -3,7 +3,7 @@ import { Box, Container, Grid, Pagination,Snackbar,Alert } from '@mui/material';
 import { useEffect,useState } from 'react';
 
 
-import { CustomerNotes } from '../components/customer-history/customer-notes';
+import { ExtraPayment } from '../components/customer-history/extra-payment';
 
 
 import { HistoryListToolbar } from '../components/customer-history/history-list-toolbar';
@@ -46,7 +46,7 @@ const handleClose = ()=>{
 
   let  data =  {
     "type" : "SP_CALL",
-  "requestId" : 2300008,
+  "requestId" : 1700010,
      request: {
   "cId":cId
     }
@@ -65,16 +65,16 @@ const handleClose = ()=>{
        console.log("sdfasfsfafass")
    }else{
 
-     if(res.result.data[0] ==null){
+     if(res.result[0] ==null){
       setCustomers([])
       setItem([])
      }else{
     
        console.log(res.result)
        console.log(res.result.data)
-       console.log(res.result.item)
-       setCustomers(res.result.data)
-       setItem(res.result.label)
+    
+       setCustomers(res.result)
+    
      }
     
  
@@ -111,7 +111,7 @@ Router.push('/dashboard')
   <>
     <Head>
       <title>
-      Notes | TRMS
+      Payment | TRMS
       </title>
     </Head>
     <Box
@@ -131,7 +131,7 @@ Router.push('/dashboard')
 </Snackbar>
 
 
-     <CustomerNotes customers={customers} items={item} getdata={getCustomer} />
+     <ExtraPayment customers={customers}  getdata={getCustomer} />
      
 
 
