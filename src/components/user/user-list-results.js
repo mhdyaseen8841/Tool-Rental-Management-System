@@ -235,9 +235,11 @@ export const UserListResults = ({ users,getdata, ...rest  }) => {
           
                   {localStorage.getItem('usertype') === 'owner' ? (
     null
-  ) : (<TableCell>
+  ) : (localStorage.getItem('uId')==users.uId ? (null):
+    <TableCell>
     <DeleteOutlined onClick={()=>{deleteUser(users.uId)}} sx={{cursor:"pointer", color: red[500]}} />
-     </TableCell>)}
+     </TableCell> 
+  )}
                   
                   
 

@@ -117,9 +117,9 @@ export default function FullScreenDialog(details) {
   >
      {Boolean(touched.Status && errors.Status || alertMsg)}
     {touched.Status && errors.Status || alertMsg} 
-    <FormControlLabel {...getFieldProps('Status')} value="Admin" label="Admin" control={<Radio />} />
+    <FormControlLabel {...getFieldProps('Status')} value="admin" label="Admin" control={<Radio />} />
 
-    <FormControlLabel {...getFieldProps('Status')} value="Owner" label="Owner" control={<Radio />} />
+    <FormControlLabel {...getFieldProps('Status')} value="owner" label="Owner" control={<Radio />} />
   </RadioGroup>
 </FormControl>
 

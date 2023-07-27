@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Chip from '@mui/material/Chip';
 import {
 
     Table,
@@ -11,10 +12,56 @@ import {
     TableContainer ,
    
   } from '@mui/material';
-
+  import requestPost from '../../../serviceWorker'
 
 export default function ItemTable(details) {
     
+
+const [data, setData] = useState([])
+
+
+
+function getData(){
+  let datas=  {
+    "type" : "SP_CALL",
+    "requestId" : 1300005,
+    request: {
+      "itemId":details.data
+   }
+}
+
+
+console.log(datas)
+  requestPost(datas).then((res)=>{
+    console.log(res.result)
+
+    if(res.errorCode===3){
+      Router
+      .push(
+      
+      {
+        pathname: '/',
+        query: { redirect: '1' },
+      })
+  }else{
+
+    if(res.result[0] ==null){
+      setData([])
+    }else{
+      setData(res.result)
+    }
+   
+
+  }
+})
+
+
+}
+
+useEffect(() => {
+
+ getData()
+}, [])
 
 
   return (
@@ -27,16 +74,16 @@ export default function ItemTable(details) {
               <TableRow>
               
                 <TableCell>
-                  Name
+                  Date
                 </TableCell>
                 <TableCell>
-                  Monthly Rent
+                  Quantity
                 </TableCell>
                 <TableCell>
-                  Available Stocks
+                  Status
                 </TableCell>
                 <TableCell>
-                  Total Stocks
+                 Note
                 </TableCell>
           
               </TableRow>
@@ -45,12 +92,32 @@ export default function ItemTable(details) {
             
             <TableBody>
             
-                <TableRow
-    
-                >
-                  
-                </TableRow>
-         
+            {data.map((row,index)=>{
+return(
+<TableRow
+
+>
+  <TableCell>
+ {row.date}
+</TableCell>
+<TableCell>
+ {row.qty}
+</TableCell>
+<TableCell>
+{row.status==1?<Chip label="Purchased" color="success"  />
+:<Chip label="Lossed"  color="danger"/>}
+</TableCell>
+<TableCell>
+ {row.note}
+</TableCell>
+</TableRow>
+
+
+)
+
+
+
+            })}
             </TableBody>
           </Table>
           </TableContainer>

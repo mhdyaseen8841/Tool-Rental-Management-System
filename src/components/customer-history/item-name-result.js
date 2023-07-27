@@ -220,11 +220,15 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
                   <TableCell>
                    Total(₹)
                   </TableCell>
-
+                  {
+              localStorage.getItem('usertype') === 'owner' ? (
+                null
+                ):(
+                
                   <TableCell>
                     Action
                   </TableCell>
-
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -241,9 +245,27 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
         <TableCell sx={{color:"white"}}>{customer.days}</TableCell>
         <TableCell sx={{color:"white"}}>{customer.qty}</TableCell>
         <TableCell sx={{color:"white"}}>{customer.price}</TableCell>
-        <TableCell sx={{cursor:'pointer',color:"white"}}>
-          <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
-        </TableCell>
+        {
+
+localStorage.getItem('usertype') === 'owner' ? (
+null
+):(
+
+  customer.status == 0 ? (
+   <TableCell sx={{cursor:'pointer',color:"white"}}>
+  Not Returned
+ </TableCell>
+
+  ) : (
+
+   <TableCell sx={{cursor:'pointer',color:"white"}}>
+   <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
+ </TableCell>
+  )
+
+)
+
+        }
         {/* <TableCell>
         <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
         </TableCell> */}
@@ -260,9 +282,27 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
         <TableCell sx={{color:"white"}}>{customer.days}</TableCell>
         <TableCell sx={{color:"white"}}>{customer.qty}</TableCell>
         <TableCell sx={{color:"white"}}>{customer.price}</TableCell>
-        <TableCell sx={{cursor:'pointer',color:"white"}}>
-          <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
-        </TableCell>
+        {
+              localStorage.getItem('usertype') === 'owner' ? (
+                null
+                ):(
+                
+                  customer.status == 0 ? (
+                   <TableCell sx={{cursor:'pointer',color:"white"}}>
+                  Not Returned
+                 </TableCell>
+                
+                  ) : (
+                
+                   <TableCell sx={{cursor:'pointer',color:"white"}}>
+                   <EditIcon onClick={()=>updateDate(customer.rId,customer.returnDate,customer.rentDate)} />
+                 </TableCell>
+                  )
+                
+                )
+
+        }
+    
         {/* <TableCell>
         <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
         </TableCell> */}

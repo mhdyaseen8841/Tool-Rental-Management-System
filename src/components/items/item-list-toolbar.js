@@ -1,15 +1,8 @@
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  TextField,
-  InputAdornment,
-  SvgIcon, Typography
+ Typography
 } from '@mui/material';
-import { Search as SearchIcon } from '../../icons/search';
-import { Upload as UploadIcon } from '../../icons/upload';
-import { Download as DownloadIcon } from '../../icons/download';
 import { useState, useEffect } from 'react';
 import FullScreenDialog from './add-item';
 import requestPost from '../../../serviceWorker'
@@ -118,14 +111,6 @@ return(
     null
   ) : (<Box sx={{ m: 1 }}>
 
-<Button
-  color="primary"
-  variant="contained"
-  onClick={handleUpdate}
-  style={{ marginRight: '10px' }}
->
-  Updated Lists
-</Button>
 
 
     <Button
@@ -133,7 +118,7 @@ return(
       variant="contained"
       onClick={handleAdd}
     >
-      Add Items
+      Add Items 
     </Button>
   </Box>)}
       

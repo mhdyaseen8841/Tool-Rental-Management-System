@@ -36,17 +36,18 @@ export const ItemListResults = ({ items,getdata, ...rest }) => {
     setDialog();
   };
   
-  const handlePopup = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+  const handlePopup = (e, itemId) => {
     setOpen(true);
+    console.log("--------------------------------------------------------------")
+    console.log(itemId)
     setDialog(() => (
   
       <FullScreenDialogPopup
         onClose={handleClose}
         open={open}
-       
-         updated={upd}
-         button={button}
-         data={data}
+
+         button="close"
+         data={itemId}
       />
     ));
   };
@@ -123,7 +124,8 @@ const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
   
   const add = (data) => {
     
-
+console.log("noteeee check")
+console.log(data)
     let req={
       "type" : "SP_CALL",
       "requestId" : 1300001,
@@ -265,7 +267,7 @@ setDialog();
                       <Typography
                         color="textPrimary"
                         variant="body1"
-                        onClick={handlePopup}
+                        onClick={(e)=>handlePopup(e,items.itemId)}
                       >
                         {items.iName}
                       </Typography>
@@ -273,7 +275,7 @@ setDialog();
                   </TableCell>
                   
                   <TableCell>
-                    {items.mRent}
+                    ₹{items.mRent}
                   </TableCell>
                   <TableCell>
                     {items.aStock}
