@@ -19,61 +19,30 @@ import ItemTable from './item-table';
 
 export default function FullScreenDialogPopup(details) {
     
-  const [update, setUpdate] = useState(details.updated);
 
-
-  const validSchema = Yup.object().shape({
-    ItemName: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Name is required'),
-    StockNumber: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Stock is required'),
-    Status: Yup.string().required('Status is required'),
-    
-
-
-  });
+ 
 
   const [alertMsg, setAlert] = useState();
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
  
-  const formik = useFormik({
-    initialValues: {
-      ItemName: update ? details.data.name :'',
-    
-    },
-    validationSchema: validSchema,
-    onSubmit: (values) => {
-    
-      details.submit(values)
-    }
-  });
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
-
-  
-
-  const onAdd = () => {
- 
-  };
-  
-  const alertTimeOut = () => {
-    setTimeout(() => {
-      setAlert();
-    }, 2000);
-  };
   const onclose = () => {
-    formik.resetForm();
+  
     details.onClose();
   };
 
   useEffect(() => {
     setDialog(() => (
-      <ItemTable />
+      <ItemTable
+      data={details.data}
+      />
     ));
   }, []);
   
   return (
     <div>
 
-      <ItemTable/>
+  
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>

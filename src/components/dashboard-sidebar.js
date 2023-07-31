@@ -23,44 +23,44 @@ let items = [
   {
     href: '/dashboard',
     icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard'
+    title: 'Dashboard',
+    isOwner: true
   },
   {
     href: '/customers',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Active Customers'
+    title: 'Active Customers',
+    isOwner: true
   },
   {
     href: '/items',
     icon: (<InventoryIcon fontSize="small" />),
-    title: 'Items'
+    title: 'Items',
+    isOwner: false
   },
   {
     href: '/users',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Users'
+    title: 'Users',
+    isOwner: false
+
   },
   {
     href: '/report',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Report'
+    title: 'Report',
+    isOwner: false
+
   },
   {
     href: '/inactive-customers',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Inactive Customers'
+    title: 'Inactive Customers',
+    isOwner: false
+
   },
-  {
-    href: '/notes',
-    icon: (<UsersIcon fontSize="small" />),
-    title: 'Notes'
-  }
-  // {
-  //   href: '/history',
-  //   icon: (<ShoppingBagIcon fontSize="small" />),
-  //   title: 'history'
-  // }
 ];
+
 
 
 
@@ -143,14 +143,33 @@ export const DashboardSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
-            <NavItem
-              key={item.title}
-              icon={item.icon}
-              href={item.href}
-              title={item.title}
-            />
-          ))}
+          {items.map((item) => {
+if(localStorage.getItem('usertype') === 'owner' && item.isOwner ){
+  console.log(item.isOwner)
+return(
+    <NavItem
+      key={item.title}
+      icon={item.icon}
+      href={item.href}
+      title={item.title}
+    />
+)
+}else if(localStorage.getItem('usertype') === 'admin' ){
+
+
+  return(
+  
+    <NavItem
+      key={item.title}
+      icon={item.icon}
+      href={item.href}
+      title={item.title}
+    />
+  
+)
+
+}
+          })}
         </Box>
         <Divider sx={{ borderColor: '#2D3748' }} />
        

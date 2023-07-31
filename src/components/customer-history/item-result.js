@@ -16,6 +16,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
   TablePagination,
   TableRow,
@@ -93,6 +94,8 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
     setItem(items)
   
     }, [customers]);
+    const [total,setTotal]=useState([])
+    let itemTotalArr=[]
   return (
 
     <Card {...rest}>
@@ -113,14 +116,22 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
   </TableHead>
   <TableBody>
     {data.map((customer) => {
-      let itemTotals = customer.slice(1).map((item) => item.incoming.qty - item.outgoing.qty);
+      // let itemTotals = customer.slice(1).map((item) => item.incoming.qty - item.outgoing.qty);
 
       return (
         <React.Fragment key={customer.mId}>
           <TableRow hover>
             <TableCell sx={{ whiteSpace: 'nowrap' }}>{customer[0]}</TableCell>
             
-            {customer.slice(1).map((item, ind) => (
+            {customer.slice(1).map((item, ind) => {
+               if(itemTotalArr[ind]==undefined){
+                itemTotalArr[ind]=item.incoming.qty + item.outgoing.qty
+                  }
+                else{
+                itemTotalArr[ind]+=item.incoming.qty + item.outgoing.qty
+                }
+              return (
+              
               <TableCell key={ind}>
                 <Stack>
                   {item.outgoing.qty !== 0 ? (
@@ -139,21 +150,25 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
                   )}
                 </Stack>
               </TableCell>
-            ))}
+            )})}
             
           </TableRow>
-           <TableRow style={{ backgroundColor: '#F0F0F0' }}>
+
+          
+        </React.Fragment>
+      );
+    })}
+  </TableBody>
+  <TableFooter>
+  <TableRow style={{ backgroundColor: '#F0F0F0' }}>
             <TableCell style={{ fontWeight: 'bold', color: 'black' }}>Total Items</TableCell>
-            {itemTotals.map((total, ind) => (
+            {itemTotalArr.map((total, ind) => (
               <TableCell key={ind} style={{ fontWeight: 'bold', color: 'black', justifyContent:'center' }}>
                 {total}
               </TableCell>
             ))}
           </TableRow>
-        </React.Fragment>
-      );
-    })}
-  </TableBody>
+  </TableFooter>
 </Table>
 
 
