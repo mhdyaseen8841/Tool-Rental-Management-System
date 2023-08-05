@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 25, 2023 at 06:19 AM
--- Server version: 10.5.19-MariaDB
--- PHP Version: 8.2.4
+-- Host: localhost
+-- Generation Time: Jul 27, 2023 at 09:33 AM
+-- Server version: 8.0.33-cll-lve
+-- PHP Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,14 +18,14 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `toolsdb`
+-- Database: `aonerent_db`
 --
 
 DELIMITER $$
 --
 -- Procedures
 --
-CREATE PROCEDURE `1000001` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1000001` (IN `request` JSON)   BEGIN
 	declare sts int;
     set sts = (select count(uId) from users where username = json_value(request,"$.username"));
     if sts = 0 then
@@ -36,17 +36,17 @@ CREATE PROCEDURE `1000001` (IN `request` JSON)   BEGIN
 	end if;
 END$$
 
-CREATE PROCEDURE `1000002` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1000002` (IN `request` JSON)   BEGIN
 	update users set userType = json_value(request,"$.userType") where uId=json_value(request,"$.uId");
     select JSON_OBJECT("errorCode",1,"result","updated successfully") as result;
 END$$
 
-CREATE PROCEDURE `1000003` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1000003` (IN `request` JSON)   BEGIN
 	update users set status = 0 where uId=json_value(request,"$.uId");
     select JSON_OBJECT("errorCode",1,"result","updated successfully") as result;
 END$$
 
-CREATE PROCEDURE `1000005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1000005` (IN `request` JSON)   BEGIN
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'uId',uId,
         'username',userName,
@@ -54,7 +54,7 @@ CREATE PROCEDURE `1000005` (IN `request` JSON)   BEGIN
     )))) as result from users where status =1;
 END$$
 
-CREATE PROCEDURE `1100001` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100001` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
@@ -66,7 +66,6 @@ CREATE PROCEDURE `1100001` (IN `request` JSON)   BEGIN
     DECLARE cnt int;
     DECLARE i int;
     DECLARE cid int;
-    
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
     SET plac = json_value(request, '$.address');
@@ -81,21 +80,11 @@ CREATE PROCEDURE `1100001` (IN `request` JSON)   BEGIN
     ELSE
         INSERT INTO customermaster(cName,mobile,alterMobile,address,proof,coName,coMobile) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'),json_value(request,'$.coName'),json_value(request,'$.coMobile'));
      set cid = LAST_INSERT_ID();
-     set cnt = json_length(docs) - 1;
-        set i = 0;
-        cmpinsert:  LOOP
-			IF  i > cnt THEN
-				LEAVE  cmpinsert;
-			END IF;
-            set dat = json_extract(docs,concat('$[',i,']'));
-            insert into document(cId,docData) values(cid,json_value(dat,'$.doc'));
-            set i = i+1;
-        end loop;
-        SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT('name',nam,'mobile',mob,'address',plac)) as result;
+        SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT('cId',cid,'name',nam,'mobile',mob,'address',plac)) as result;
     END IF;
 END$$
 
-CREATE PROCEDURE `1100002` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mob varchar(20);
     DECLARE plac text;
@@ -125,7 +114,7 @@ CREATE PROCEDURE `1100002` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE PROCEDURE `1100003` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100003` (IN `request` JSON)   BEGIN
 	DECLARE num int;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
@@ -140,7 +129,7 @@ CREATE PROCEDURE `1100003` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE PROCEDURE `1100004` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100004` (IN `request` JSON)   BEGIN
 	DECLARE num int;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
@@ -151,36 +140,40 @@ CREATE PROCEDURE `1100004` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE PROCEDURE `1100005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
                                'cName',cName,
                                'mobile',mobile,
                                'altermobile',altermobile,
                                'address',address,
-                               'proof',proof
+                               'proof',proof,
+                               'coName',coName,
+                               'coMobile',coMobile
                                )))) as result from customermaster WHERE status = 0;
 
 END$$
 
-CREATE PROCEDURE `1100006` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100006` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
                                'cName',cName,
                                'mobile',mobile,
                                'altermobile',altermobile,
                                'address',address,
-                               'proof',proof
+                               'proof',proof,
+                               'coName',coName,
+                               'coMobile',coMobile
                                )))) as result from customermaster WHERE status=1;
 
 END$$
 
-CREATE PROCEDURE `1100007` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100007` (IN `request` JSON)   BEGIN
 update customermaster set status = 0 where cId = json_value(request,'$.cId');
 select JSON_OBJECT("errorCode",1,"errorMsg","Customer Activated");
 END$$
 
-CREATE PROCEDURE `1100008` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100008` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'docData',docData,
         					   'dId',dId
@@ -188,7 +181,19 @@ CREATE PROCEDURE `1100008` (IN `request` JSON)   BEGIN
 
 END$$
 
-CREATE PROCEDURE `1200001` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1100013` (IN `request` JSON)   BEGIN
+	DECLARE num int;
+    set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
+    IF num IS NULL THEN
+     SELECT JSON_OBJECT('errorCode',0,'errorMsg','User Not Found') as result;
+    ELSE
+      DELETE FROM customermaster WHERE cId = json_value(request,'$.cId');
+      DELETE FROM document WHERE cId = json_value(request,'$.cId');
+      SELECT JSON_OBJECT('errorCode',1,'errorMsg','Delete Successful') as result;
+    END IF;
+END$$
+
+CREATE  PROCEDURE `1200001` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(50);
     DECLARE mont decimal(10,2);
 	  DECLARE stck int;
@@ -198,17 +203,17 @@ CREATE PROCEDURE `1200001` (IN `request` JSON)   BEGIN
     SET stck = json_value(request, '$.stock');
     set num = (select iName from items where iName = nam);
     IF num IS NOT NULL THEN
-	  SELECT JSON_OBJECT('errorCode',0,'errorMsg','item already exist') as result;
+	    SELECT JSON_OBJECT('errorCode',0,'errorMsg','item already exist') as result;
     ELSE
       INSERT INTO items(iName,mRent,tStock,status) VALUES(nam,mont,stck,0);
       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT(
+                              'itemId', LAST_INSERT_ID(),
                                'ItemName',nam,
-                               'month',mont,
-                                'daily',daily)) as result;
+                               'month',mont)) as result;
     END IF;
 END$$
 
-CREATE PROCEDURE `1200002` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1200002` (IN `request` JSON)   BEGIN
     DECLARE nam varchar(30);
     DECLARE mont decimal(10,2);
     DECLARE daily decimal(10,2);
@@ -230,7 +235,7 @@ CREATE PROCEDURE `1200002` (IN `request` JSON)   BEGIN
     END IF;
 END$$
 
-CREATE PROCEDURE `1200005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1200005` (IN `request` JSON)   BEGIN
 
 	DECLARE itemData JSON;
 	DECLARE items JSON;
@@ -292,7 +297,7 @@ CREATE PROCEDURE `1200005` (IN `request` JSON)   BEGIN
 		select JSON_OBJECT('errorCode',1,'result',fdata) as result;
 END$$
 
-CREATE PROCEDURE `1200006` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1200006` (IN `request` JSON)   BEGIN
 
 	DECLARE itemData JSON;
 	DECLARE cid int;
@@ -310,14 +315,14 @@ CREATE PROCEDURE `1200006` (IN `request` JSON)   BEGIN
 		select JSON_OBJECT('errorCode',1,'result',itemData) as result;
 END$$
 
-CREATE PROCEDURE `1300001` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1300001` (IN `request` JSON)   BEGIN
 	declare stats int;
     declare qtty int;
     declare sqty int;
     set stats = JSON_VALUE(request,'$.status');
     set qtty = JSON_VALUE(request,'$.qty');
     set sqty = (select tStock from items where itemId = JSON_VALUE(request,'$.itemId'));
-    insert into stockupdate(sDate,qty,itemId,updateStatus) values(curdate(),qtty,JSON_VALUE(request,'$.itemId'),stats);
+    insert into stockupdate(sDate,qty,note,itemId,updateStatus) values(curdate(),qtty,JSON_VALUE(request,'$.note'),JSON_VALUE(request,'$.itemId'),stats);
     if stats = 1 then
 		update items set tstock = tstock + qtty where itemId = JSON_VALUE(request,'$.itemId');
         select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
@@ -331,17 +336,18 @@ CREATE PROCEDURE `1300001` (IN `request` JSON)   BEGIN
 	end if;
 END$$
 
-CREATE PROCEDURE `1300005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1300005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'sId',sId,
                                'date',sDate,
                                'qty',qty,
+                               'note',note,
                                'status',updateStatus
                                )))) as result from stockupdate WHERE itemId=JSON_VALUE(request,'$.itemId');
 
 END$$
 
-CREATE PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
+CREATE  PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 	  declare id int;
     declare stats int;
     declare i int;
@@ -351,14 +357,11 @@ CREATE PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
     declare ratest int;
     declare mid int;
     DECLARE hid int;
-    declare datec varchar(15);
     declare stas int;
     declare mrate decimal;
     set stas = 0;
-    set datec = (select curdate());
     set id = JSON_VALUE(request,'$.cId');
     set stats = JSON_VALUE(request,'$.status');
-    set i = (select count(mId) from renthistorymaster where cDate = datec and cId=id);
     if stats = 1 then
 		insert into renthistorymaster(cDate, cId,status) values(json_value(request,'$.date'),id,stats);
 		set cnt = json_length(json_extract(request,'$.items')) - 1;
@@ -369,7 +372,7 @@ CREATE PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 				LEAVE  cmpinsert;
 			END IF;
 			set cmpData1 = json_extract(request, concat('$.items[',i,']'));
-			insert into renthistory(mId,itemId,qty,hDate,note,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,json_value(cmpData1,'$.note'),stats,json_value(cmpData1,'$.qty'));
+			insert into renthistory(mId,itemId,qty,hDate,note,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),json_value(request,'$.date'),json_value(cmpData1,'$.note'),stats,json_value(cmpData1,'$.qty'));
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			if ratest = 0 then
 				set mrate = (select mRent from items where itemId = json_value(cmpData1,'$.itemId'));
@@ -388,17 +391,18 @@ CREATE PROCEDURE `1400001` (IN `request` JSON)   PRO: BEGIN
 				LEAVE  cmpinsert;
 			END IF;
 			set cmpData1 = json_extract(request, concat('$.items[',i,']'));
-			insert into renthistory(mId,itemId,qty,hDate,note,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),datec,json_value(cmpData1,'$.note'),stats,1);
+			insert into renthistory(mId,itemId,qty,hDate,note,status,pending) VALUES(mid,json_value(cmpData1,'$.itemId'), json_value(cmpData1,'$.qty'),json_value(request,'$.date'),json_value(cmpData1,'$.note'),stats,1);
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
             set hid = (select LAST_INSERT_ID());
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			SET  i = i + 1;
 		END LOOP;
+      call returnCalculate(id);
 		select JSON_OBJECT("errorCode",1,"errorMsg","Inserted Successfully") as result;
     end if;
 END$$
 
-CREATE PROCEDURE `1400002` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1400002` (IN `request` JSON)   BEGIN
 	declare ststs int;
     declare qsty int;
     declare id int;
@@ -418,7 +422,7 @@ CREATE PROCEDURE `1400002` (IN `request` JSON)   BEGIN
 	end if;
 END$$
 
-CREATE PROCEDURE `1400005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1400005` (IN `request` JSON)   BEGIN
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'hId',rh.hId,
         'item',it.iName,
@@ -428,7 +432,7 @@ CREATE PROCEDURE `1400005` (IN `request` JSON)   BEGIN
     )))) as result from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId inner join items it on it.itemId = rh.itemId inner join ratecard rc on rc.itemId = it.itemId and rhm.cId = rc.cId where rh.mId = json_value(request,'$.mId');
 END$$
 
-CREATE PROCEDURE `1400006` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1400006` (IN `request` JSON)   BEGIN
 	DECLARE masterData JSON;
     DECLARE datas JSON;
     DECLARE rnthsry JSON;
@@ -461,7 +465,7 @@ CREATE PROCEDURE `1400006` (IN `request` JSON)   BEGIN
     select JSON_OBJECT('errorCode',1,'result',datas) as result;
 END$$
 
-CREATE PROCEDURE `1500002` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1500002` (IN `request` JSON)   BEGIN
     declare datas JSON;
     declare items JSON;
     declare cmpData JSON;
@@ -492,7 +496,7 @@ CREATE PROCEDURE `1500002` (IN `request` JSON)   BEGIN
                 select JSON_OBJECT('errorCode',1,'result',datas) as result;
 END$$
 
-CREATE PROCEDURE `1500005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1500005` (IN `request` JSON)   BEGIN
 	  declare items JSON;
     declare dates JSON;
     declare cid int;
@@ -552,7 +556,7 @@ set cnt = JSON_LENGTH(dates) - 1;
 		select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('item',items,'data',datas)) as result;
 END$$
 
-CREATE PROCEDURE `1600002` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1600002` (IN `request` JSON)   BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     DECLARE dat date;
@@ -579,34 +583,60 @@ CREATE PROCEDURE `1600002` (IN `request` JSON)   BEGIN
     SELECT JSON_OBJECT("errorCode",1,"errorMsg","Succesfully Updated") as result;
 END$$
 
-CREATE PROCEDURE `1600005` (IN `request` JSON)   BEGIN
-	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
-		'rId',rc.rId,
+CREATE  PROCEDURE `1600005` (IN `request` JSON)   BEGIN
+  DECLARE sData JSON;
+  DECLARE mData JSON;
+  DECLARE err varchar(20);
+  set sData = (SELECT JSON_ARRAY());
+  set sData  = (select json_array(group_concat(json_object(
+        'rId',0,
+        'itemId',rh.itemId,
+        'rentDate',rh.hDate,
+        'returnDate',curdate(),
+        'days',DATEDIFF(curdate(),rh.hDate),
+        'qty',rh.pending,
+        'price',getRentPrice (rh.itemId, rh.hDate, rhm.Cid, rh.pending),
+        'status',0
+    ))) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId 
+    where rhm.cId = json_value(request,'$.cId') and rh.ItemId = json_value(request,'$.itemId') and rh.status=1 and rh.pending != 0);
+    set err = (select JSON_EXTRACT(sData,'$[0]'));
+    if err = 'null' THEN
+    	set sData = (SELECT JSON_ARRAY());
+    end if;
+  set mData = (SELECT JSON_ARRAY());
+	set mData = (select json_array(group_concat(json_object(
+		    'rId',rc.rId,
         'itemId',rc.itemid,
         'rentDate',rc.rentDate,
         'returnDate',rc.returnDate,
         'days',DATEDIFF(rc.returnDate,rc.rentDate),
         'qty',rc.qty,
-        'price',rc.price
-    )))) as result from rentcalculations rc where rc.cId = json_value(request,'$.cId') AND rc.itemid= json_value(request,'$.itemId');
+        'price',rc.price,
+        'status',1
+    ))) from rentcalculations rc where rc.cId = json_value(request,'$.cId') AND rc.itemid= json_value(request,'$.itemId'));
+    set err = (select JSON_EXTRACT(mData,'$[0]'));
+    if err = 'null' THEN
+    	set mData = (SELECT JSON_ARRAY());
+    end if;
+    select json_object("errorCode",1,"result",JSON_MERGE(sData,mData)) as result;
 END$$
 
-CREATE PROCEDURE `1700001` (IN `request` JSON)   BEGIN
-	insert into paymentcollection(cId,pdate,amount) values(json_value(request,"$.cId"),curdate(),json_value(request,"$.amount"));
+CREATE  PROCEDURE `1700001` (IN `request` JSON)   BEGIN
+	insert into paymentcollection(cId,pdate,amount) values(json_value(request,"$.cId"),json_value(request,"$.date"),json_value(request,"$.amount"));
     select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
 END$$
 
-CREATE PROCEDURE `1700002` (IN `request` JSON)   BEGIN
-	update paymentcollection set amount = json_value(request,"$.amount") where pId = json_value(request,"$.pId") ;
-    select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
+CREATE  PROCEDURE `1700002` (IN `request` JSON)   BEGIN
+	update paymentcollection set amount = json_value(request,"$.amount") where pId = json_value(request,"$.pId");
+    select JSON_OBJECT("errorCode",1,"result","Edit successfully") as result;
 END$$
 
-CREATE PROCEDURE `1700003` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1700003` (IN `request` JSON)   BEGIN
 	delete from paymentcollection where pId = json_value(request,"$.pId");
-    select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
+    select JSON_OBJECT("errorCode",1,"result","Delete successfully") as result;
 END$$
 
-CREATE PROCEDURE `1700005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1700005` (IN `request` JSON)   BEGIN
 	DEClARE datas JSON;
     DECLARE items JSON;
     DECLARE payments JSON;
@@ -618,12 +648,33 @@ CREATE PROCEDURE `1700005` (IN `request` JSON)   BEGIN
     select JSON_OBJECT("errorCode",1,"result",datas) as result;
 END$$
 
-CREATE PROCEDURE `1800002` (IN `request` JSON)   BEGIN
-	UPDATE ratecard set rate = JSON_VALUE(request,'$.rate') where rId = JSON_VALUE(request,'$.rId');
-    select JSON_OBJECT("errorCode",1,"errorMsg","Updated Successfully") as result;
+CREATE  PROCEDURE `1700006` (IN `request` JSON)   BEGIN
+	insert into extrapayment(cId,amount,date,note,status) values(json_value(request,"$.cId"),json_value(request,"$.amount"),json_value(request,"$.date"),json_value(request,"$.note"),json_value(request,"$.status"));
+  select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
 END$$
 
-CREATE PROCEDURE `1800005` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `1700007` (IN `request` JSON)   BEGIN
+	update extrapayment set amount = json_value(request,"$.amount"),date=json_value(request,"$.date"),note=json_value(request,"$.note"),status=json_value(request,"$.status") where expId = json_value(request,"$.expId");
+  select JSON_OBJECT("errorCode",1,"result","Edit successfully") as result;
+END$$
+
+CREATE  PROCEDURE `1700008` (IN `request` JSON)   BEGIN
+	delete from extrapayment where expId = json_value(request,"$.expId");
+  select JSON_OBJECT("errorCode",1,"result","Delete successfully") as result;
+END$$
+
+CREATE  PROCEDURE `1700010` (IN `request` JSON)   BEGIN
+	DECLARE datas JSON;
+    set datas = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("expId",expId,"date",date,"amount",amount,"note",note,"status",status))) from extrapayment where cId = JSON_VALUE(request,"$.cId"));
+    select JSON_OBJECT("errorCode",1,"result",datas) as result;
+END$$
+
+CREATE  PROCEDURE `1800002` (IN `request` JSON)   BEGIN
+	UPDATE ratecard set rate = JSON_VALUE(request,'$.rate') where rId = JSON_VALUE(request,'$.rId');
+  select JSON_OBJECT("errorCode",1,"errorMsg","Updated Successfully") as result;
+END$$
+
+CREATE  PROCEDURE `1800005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT("errorCode",1,"result",JSON_ARRAY(
     GROUP_CONCAT(
     	JSON_OBJECT(
@@ -634,8 +685,8 @@ CREATE PROCEDURE `1800005` (IN `request` JSON)   BEGIN
     ))) as result FROM ratecard rc INNER JOIN items i on i.itemId = rc.itemId where rc.cId = JSON_VALUE(request,'$.cId');
 END$$
 
-CREATE PROCEDURE `2300005` (IN `request` JSON)   BEGIN
-	declare tcustomer int;
+CREATE  PROCEDURE `2300005` (IN `request` JSON)   BEGIN
+	  declare tcustomer int;
     declare titems int;
     declare tamount decimal(20,2);
     declare tusers int;
@@ -692,7 +743,7 @@ CREATE PROCEDURE `2300005` (IN `request` JSON)   BEGIN
     select JSON_OBJECT("errorCode",1,"result",JSON_OBJECT("total",total,"graph",graph,"pie",pie)) as result;
 END$$
 
-CREATE PROCEDURE `2300006` (IN `request` JSON)   BEGIN
+CREATE  PROCEDURE `2300006` (IN `request` JSON)   BEGIN
 	DECLARE itemData JSON;
     DECLARE customerData JSON;
     DECLARE id JSON;
@@ -710,7 +761,6 @@ CREATE PROCEDURE `2300006` (IN `request` JSON)   BEGIN
     DECLARE pendingStock int;
     DECLARE cntitem int;
     declare activeCust int;
-    
     set itemData = JSON_VALUE(request,'$.items') ;
         if JSON_LENGTH(itemData) = 0  or itemData is null then 
               set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
@@ -778,7 +828,7 @@ CREATE PROCEDURE `2300006` (IN `request` JSON)   BEGIN
                           set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingStock',pendingStock)));
                           set j=j+1;
                     END LOOP;
-                    set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingAmount',0)));
+                    set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingAmount',getPendingAmount(JSON_VALUE(id,'$.cId')))));
                     set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
                     if activeCust = 0 then
                       set datas = (select JSON_REMOVE(datas,concat('$[',JSON_LENGTH(datas)-1,']')));
@@ -792,7 +842,7 @@ CREATE PROCEDURE `2300006` (IN `request` JSON)   BEGIN
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',label,'data',datas)) as result;
 END$$
 
-CREATE PROCEDURE `2300007` (IN `request` JSON)   BEGIN	DECLARE date1 date;
+CREATE  PROCEDURE `2300007` (IN `request` JSON)   BEGIN	DECLARE date1 date;
         DECLARE date2 date;
         DECLARE datas JSON;
         DECLARE dt JSON;
@@ -897,7 +947,164 @@ CREATE PROCEDURE `2300007` (IN `request` JSON)   BEGIN	DECLARE date1 date;
     
     END$$
 
-CREATE PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `cid` INT(10), IN `qtyy` INT(10))   BEGIN
+CREATE  PROCEDURE `2300008` (IN `request` JSON)   BEGIN
+	  DECLARE dates JSON;
+    DECLARE date1 JSON;
+    DECLARE items JSON; 
+    DECLARE item1 JSON;
+    DEClARE data1 JSON;
+    DEClARE datas JSON;
+    DEClARE fdatas JSON;
+    DEClARE j int;
+    DEClARE i int;
+    DECLARE jcnt int;
+    DECLARE icnt int;
+    set fdatas = (select JSON_ARRAY());
+    set dates = (select concat('[',GROUP_CONCAT(json_object('hDate',hDate)),']') from (select distinct hDate from renthistory rh inner join renthistorymaster rhm where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
+    set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from (select distinct rh.itemId,i.iName from renthistory rh inner join renthistorymaster rhm inner join items i on i.itemId = rh.itemId where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
+    if dates is null then
+      set dates = (select JSON_ARRAY());
+    end if;
+    if items is null then
+      set items = (select JSON_ARRAY());
+    end if;
+    set jcnt = JSON_LENGTH(dates)-1;
+    set icnt = JSON_LENGTH(items)-1;
+    set j = 0;
+    outerloop : LOOP
+        IF j > jcnt THEN
+           LEAVE outerloop;
+        END IF;
+        set date1 = (select json_extract(dates, concat('$[',j,']')));
+        set i=0;
+        set datas = (select JSON_ARRAY());
+        set datas = (select JSON_ARRAY_APPEND(datas,'$',JSON_VALUE(date1, '$.hDate')));
+        innerloop : LOOP
+          IF i > icnt THEN
+            LEAVE innerloop;
+          END IF;
+          set item1 = (select json_extract(items, concat('$[',i,']')));
+          set data1 = (select concat('[',GROUP_CONCAT(JSON_OBJECT('note',rh.note,'status',rh.status)),']') from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = JSON_VALUE(request, '$.cId') and rh.hDate = JSON_VALUE(date1, '$.hDate') and rh.itemId = JSON_VALUE(item1, '$.itemId') and rh.note != "" and rh.note is not null);
+          if data1 is not null then
+            set datas = (select JSON_ARRAY_APPEND(datas,'$',data1));
+          else
+            set datas = (select JSON_ARRAY_APPEND(datas,'$',JSON_ARRAY(JSON_OBJECT('note',"",'status',0))));
+          end if;
+          set i= i+1;
+        END LOOP;
+        set fdatas = (select JSON_ARRAY_APPEND(fdatas,'$',datas));
+        set j = j+1;
+    END LOOP;
+    select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',items,'data',fdatas)) as result;
+END$$
+
+CREATE  PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `redat` DATE, IN `cid` INT(10), IN `qtyy` INT(10))   BEGIN
+	DECLARE pric decimal(20,2);
+    DECLARE unitp decimal(20,2);
+    declare days int;
+    set unitp = (select rate from ratecard where itemId = itemid and cId =cid  limit 1);
+    set days = DATEDIFF(redat, dat);
+    if days > 30 then
+    	set pric = (unitp + (days - 30) * (unitp /30)) * qtyy;
+    else
+    	set pric = unitp * qtyy;
+    end if;
+    insert into rentcalculations(itemId,rentDate,returnDate,cId,price,qty) values(itemid,dat,redat,cid,pric,qtyy);
+END$$
+
+CREATE  PROCEDURE `returnCalculate` (IN `cid` INT)   BEGIN
+	 DECLARE pqty int;
+    DECLARE qty1 int;
+    DECLARE iId int;
+    declare rnthsry JSON;
+    declare rnthsry1 JSON;
+    DECLARE datas JSON;
+    DECLARE cnt int;
+    DECLARE i int;
+    set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId,"hDate",rh.hDate)),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = cid and rh.status=0 and rh.pending!=0);
+    if rnthsry is null then
+		  set rnthsry = (select JSON_ARRAY());
+	  end if;
+    set i=0;
+    set cnt = (select JSON_LENGTH(rnthsry)-1);
+    cmpinsert1:  LOOP
+			IF  i > cnt THEN
+				LEAVE  cmpinsert1;
+			END IF;
+			set rnthsry1 = json_extract(rnthsry, concat('$[',i,']'));
+            set pqty = (select renthistory.qty from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
+			set iId = (select renthistory.itemId from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
+			cmpip : LOOP
+				IF  pqty = 0 THEN
+					LEAVE  cmpip;
+				END IF;
+                set qty1 = (select rh.pending from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = cid order by rh.hId LIMIT 1);
+                set datas = (select JSON_OBJECT("hId", rh.hId,"date",rh.hDate) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = cid order by rh.hId LIMIT 1);
+				if pqty < qty1 THEN
+					update renthistory set pending = pending - pqty where hId = JSON_VALUE(datas,'$.hId');
+					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),cid,pqty);
+					set pqty = 0;
+				else
+					update renthistory set pending = 0 where hId = JSON_VALUE(datas,'$.hId');
+					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),JSON_VALUE(rnthsry1,'$.hDate'),cid,qty1);
+					set pqty = pqty - qty1;
+				end if;
+            END LOOP;
+            update renthistory set pending = 0 where hId = JSON_VALUE(rnthsry1,'$.hId');
+            set i= i+1;
+     END LOOP;
+END$$
+
+--
+-- Functions
+--
+CREATE  FUNCTION `getPendingAmount` (`cid` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
+	DECLARE sData JSON;
+  DECLARE mData JSON;
+  DECLARE fData JSON;
+  DECLARE total decimal(20,2);
+  DECLARE iprice decimal(20,2);
+  DECLARE oprice decimal(20,2);
+  DECLARE err varchar(20);
+  DECLARE i int;
+  DECLARE cnt int;
+  set sData  = (select concat('[',group_concat(json_object('price',getRentPrice(rh.itemId, rh.hDate, rhm.cId, rh.pending))),']') 
+    from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId 
+    where rhm.cId = cid and rh.status=1 and rh.pending != 0);
+    set err = (select JSON_EXTRACT(sData,'$[0]'));
+    if err = 'null' OR err is null THEN
+    	set sData = (SELECT JSON_ARRAY());
+    end if;
+  set mData = (SELECT JSON_ARRAY());
+	set mData = (select concat('[',group_concat(json_object('price',rc.price)),']') 
+  from rentcalculations rc where rc.cId = cid);
+    set err = (select JSON_EXTRACT(mData,'$[0]'));
+    if err = 'null' OR err is null THEN
+    	set mData = (SELECT JSON_ARRAY());
+    end if;
+    set fData = (select JSON_MERGE(sData,mData));
+    set i=0;
+    set cnt = (select JSON_LENGTH(fData)-1);
+    set total = 0;
+    cmpinsert1:  LOOP
+			IF  i > cnt THEN
+				LEAVE  cmpinsert1;
+			END IF;
+      set sData = json_extract(fData, concat('$[',i,']'));
+      set iprice = JSON_VALUE(sData,'$.price');
+      set total = total + iprice;
+      set i = i+1;
+    END LOOP;
+    set iprice = (select sum(amount) from extrapayment where cId = cid and status = 1);
+    set total = total + IFNULL(iprice,0);
+    set oprice = (select sum(amount) from extrapayment where cId = cid and status = 0);
+    set total = total - IFNULL(oprice,0);
+    set oprice = (select sum(amount) from paymentcollection where cId = cid );
+    set total = total - IFNULL(oprice,0);
+    Return total;
+END$$
+
+CREATE  FUNCTION `getRentPrice` (`itemid` INT(10), `dat` DATE, `cid` INT(10), `qtyy` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     declare days int;
@@ -908,55 +1115,7 @@ CREATE PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `c
     else
     	set pric = unitp * qtyy;
     end if;
-    insert into rentcalculations(itemId,rentDate,returnDate,cId,price,qty) values(itemid,dat,CURDATE(),cid,pric,qtyy);
-END$$
-
-CREATE PROCEDURE `returnCalculate` (IN `request` JSON)   BEGIN
-	DECLARE pqty int;
-    DECLARE qty1 int;
-    DECLARE iId int;
-    declare rnthsry JSON;
-    declare rnthsry1 JSON;
-    DECLARE datas JSON;
-    DECLARE cnt int;
-    DECLARE i int;
-    DECLARE cid int;
-    set cid = (select json_value(request,'$.cId'));
-    set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId)),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = cid and rh.status=0 and rh.pending!=0);
-    if rnthsry is null then
-		set rnthsry = (select JSON_ARRAY());
-	end if;
-    set i=0;
-    set cnt = (select JSON_LENGTH(rnthsry)-1);
-    cmpinsert1:  LOOP
-			IF  i > cnt THEN
-				LEAVE  cmpinsert1;
-			END IF;
-            SELECT i;
-			set rnthsry1 = json_extract(rnthsry, concat('$[',i,']'));
-            set pqty = (select renthistory.qty from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
-			set iId = (select renthistory.itemId from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
-			cmpip : LOOP
-				IF  pqty = 0 THEN
-					LEAVE  cmpip;
-				END IF;
-                SELECT pqty;
-                set qty1 = (select rh.pending from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = cid order by rh.hId LIMIT 1);
-                set datas = (select JSON_OBJECT("hId", rh.hId,"date",rh.hDate) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = cid order by rh.hId LIMIT 1);
-				if pqty < qty1 THEN
-					update renthistory set pending = pending - pqty where hId = JSON_VALUE(datas,'$.hId');
-					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),cid,pqty);
-					set pqty = 0;
-				else
-					update renthistory set pending = 0 where hId = JSON_VALUE(datas,'$.hId');
-					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),cid,qty1);
-					set pqty = pqty - qty1;
-				end if;
-            END LOOP;
-            update renthistory set pending = 0 where hId = JSON_VALUE(rnthsry1,'$.hId');
-            set i= i+1;
-     END LOOP;
-     SELECT json_object("errorCode",1,"errorMsg","Calculated successfull") as result;
+    Return pric; 
 END$$
 
 DELIMITER ;
@@ -968,23 +1127,23 @@ DELIMITER ;
 --
 
 CREATE TABLE `customermaster` (
-  `cId` int(10) NOT NULL,
-  `cName` varchar(70) NOT NULL,
-  `mobile` varchar(20) NOT NULL,
-  `alterMobile` varchar(20) NOT NULL,
-  `address` varchar(150) NOT NULL,
-  `proof` longtext NOT NULL,
-  `coName` varchar(50) NOT NULL,
-  `coMobile` varchar(20) NOT NULL,
-  `status` int(10) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `cId` int NOT NULL,
+  `cName` varchar(70) DEFAULT NULL,
+  `mobile` varchar(20) DEFAULT NULL,
+  `alterMobile` varchar(20) DEFAULT NULL,
+  `address` varchar(150) DEFAULT NULL,
+  `proof` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `coName` varchar(50) DEFAULT NULL,
+  `coMobile` varchar(20) DEFAULT NULL,
+  `status` int NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `customermaster`
 --
 
 INSERT INTO `customermaster` (`cId`, `cName`, `mobile`, `alterMobile`, `address`, `proof`, `coName`, `coMobile`, `status`) VALUES
-(1010, 'MUHAMMED RIYAS', '8714914848', '', 'kattuparambil', '', '', '', 1);
+(1034, 'Muhammmed Yaseen', '8714914848', NULL, NULL, NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -993,10 +1152,37 @@ INSERT INTO `customermaster` (`cId`, `cName`, `mobile`, `alterMobile`, `address`
 --
 
 CREATE TABLE `document` (
-  `dId` int(10) NOT NULL,
-  `cId` int(10) NOT NULL,
-  `docData` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `dId` int NOT NULL,
+  `cId` int NOT NULL,
+  `file` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `extrapayment`
+--
+
+CREATE TABLE `extrapayment` (
+  `expId` int NOT NULL,
+  `cId` int NOT NULL,
+  `amount` decimal(15,2) NOT NULL,
+  `date` date NOT NULL,
+  `note` varchar(500) NOT NULL,
+  `status` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `extrapayment`
+--
+
+INSERT INTO `extrapayment` (`expId`, `cId`, `amount`, `date`, `note`, `status`) VALUES
+(1, 1034, 4005.00, '2023-07-24', 'notes', 0),
+(2, 1034, 500.00, '2023-07-23', 'home rent', 1),
+(4, 1034, 999.00, '2023-07-25', 'home rent', 1),
+(5, 1034, 500.00, '2023-07-24', 'home rent', 1),
+(6, 1034, 999.00, '2023-07-10', 'fdfas', 1),
+(7, 1034, 100.00, '2023-07-25', 'minuse', 0);
 
 -- --------------------------------------------------------
 
@@ -1005,19 +1191,20 @@ CREATE TABLE `document` (
 --
 
 CREATE TABLE `items` (
-  `itemId` int(10) NOT NULL,
-  `iName` varchar(60) NOT NULL,
-  `mRent` decimal(10,2) NOT NULL,
-  `tStock` int(10) NOT NULL,
-  `status` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `itemId` int NOT NULL,
+  `iName` varchar(60) DEFAULT NULL,
+  `mRent` decimal(10,2) DEFAULT NULL,
+  `tStock` int DEFAULT NULL,
+  `status` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `items`
 --
 
 INSERT INTO `items` (`itemId`, `iName`, `mRent`, `tStock`, `status`) VALUES
-(1, 'Shutter', 30.00, 100, 0);
+(1, 'Sheet', 240.00, 322, 1),
+(2, 'ladder', 15000.00, 30, 0);
 
 -- --------------------------------------------------------
 
@@ -1026,12 +1213,27 @@ INSERT INTO `items` (`itemId`, `iName`, `mRent`, `tStock`, `status`) VALUES
 --
 
 CREATE TABLE `login_session` (
-  `sId` int(10) NOT NULL,
-  `uId` int(10) NOT NULL,
-  `token` text NOT NULL,
-  `time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `platform` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `sId` int NOT NULL,
+  `uId` int DEFAULT NULL,
+  `token` text,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `platform` varchar(30) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `login_session`
+--
+
+INSERT INTO `login_session` (`sId`, `uId`, `token`, `time`, `platform`) VALUES
+(1, 1, '123', '2023-07-21 05:44:41', 'windows'),
+(2, 1, 'fff65e27bd335d1d3fbd1419d7e8af5b', '2023-07-24 12:07:23', 'desktop/Windows'),
+(3, 1, '063f83894b5cc0500f5b9ec301a076ea', '2023-07-25 15:22:08', 'desktop/Windows'),
+(4, 2, 'fe7eedfc7c9e61715d8087ed4e3338a2', '2023-07-27 08:32:34', 'desktop/Windows'),
+(5, 1, 'd4d2b3009dcd00e078d99891df0c90d7', '2023-07-27 08:35:42', 'desktop/Windows'),
+(6, 2, '3d09ef80e5cd2e7af30c4cb014c0c144', '2023-07-27 08:36:12', 'desktop/Windows'),
+(7, 1, '18c59b998e373d5319c3745b893760cf', '2023-07-27 08:42:34', 'desktop/Windows'),
+(8, 2, '88080f846e625b2f94b7ff36539b66ae', '2023-07-27 08:53:03', 'desktop/Windows'),
+(9, 1, '8aacf99d24c6d9746510322d0f38306f', '2023-07-27 09:13:20', 'desktop/Windows');
 
 -- --------------------------------------------------------
 
@@ -1040,11 +1242,18 @@ CREATE TABLE `login_session` (
 --
 
 CREATE TABLE `paymentcollection` (
-  `pId` int(10) NOT NULL,
-  `cId` int(10) NOT NULL,
-  `pDate` date NOT NULL,
-  `amount` decimal(10,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `pId` int NOT NULL,
+  `cId` int DEFAULT NULL,
+  `pDate` date DEFAULT NULL,
+  `amount` decimal(10,0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `paymentcollection`
+--
+
+INSERT INTO `paymentcollection` (`pId`, `cId`, `pDate`, `amount`) VALUES
+(1, 1034, NULL, 500);
 
 -- --------------------------------------------------------
 
@@ -1053,12 +1262,20 @@ CREATE TABLE `paymentcollection` (
 --
 
 CREATE TABLE `ratecard` (
-  `rId` int(10) NOT NULL,
-  `itemId` int(10) NOT NULL,
-  `cId` int(10) NOT NULL,
-  `rate` decimal(10,2) NOT NULL,
-  `status` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `rId` int NOT NULL,
+  `itemId` int DEFAULT NULL,
+  `cId` int DEFAULT NULL,
+  `rate` decimal(10,2) DEFAULT NULL,
+  `status` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `ratecard`
+--
+
+INSERT INTO `ratecard` (`rId`, `itemId`, `cId`, `rate`, `status`) VALUES
+(2, 1, 1034, 240.00, 1),
+(3, 2, 1034, 15000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -1067,14 +1284,14 @@ CREATE TABLE `ratecard` (
 --
 
 CREATE TABLE `rentcalculations` (
-  `rId` int(10) NOT NULL,
-  `itemid` int(10) NOT NULL,
-  `rentDate` date NOT NULL,
-  `returnDate` date NOT NULL,
-  `cId` int(10) NOT NULL,
-  `price` decimal(20,2) NOT NULL,
-  `qty` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `rId` int NOT NULL,
+  `itemid` int DEFAULT NULL,
+  `rentDate` date DEFAULT NULL,
+  `returnDate` date DEFAULT NULL,
+  `cId` int DEFAULT NULL,
+  `price` decimal(20,2) DEFAULT NULL,
+  `qty` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1083,15 +1300,27 @@ CREATE TABLE `rentcalculations` (
 --
 
 CREATE TABLE `renthistory` (
-  `hId` int(10) NOT NULL,
-  `mId` int(10) NOT NULL,
-  `itemId` int(10) NOT NULL,
-  `qty` int(10) NOT NULL,
-  `hDate` date NOT NULL,
-  `note` text NOT NULL,
-  `status` int(3) NOT NULL,
-  `pending` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `hId` int NOT NULL,
+  `mId` int DEFAULT NULL,
+  `itemId` int DEFAULT NULL,
+  `qty` int DEFAULT NULL,
+  `hDate` date DEFAULT NULL,
+  `note` varchar(500) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `pending` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `renthistory`
+--
+
+INSERT INTO `renthistory` (`hId`, `mId`, `itemId`, `qty`, `hDate`, `note`, `status`, `pending`) VALUES
+(2, 2, 1, 1, '2023-07-17', '', 1, 1),
+(3, 3, 1, 1, '2023-07-17', 'uytytr', 1, 1),
+(4, 4, 1, 1, '2023-07-23', 'ddf', 1, 1),
+(5, 5, 2, 1, '2023-07-23', 'ladder', 1, 1),
+(6, 6, 1, 1, '2023-07-25', 'aasdfas', 1, 1),
+(7, 7, 1, 1, '2023-07-25', 'asdfasdf', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1100,11 +1329,30 @@ CREATE TABLE `renthistory` (
 --
 
 CREATE TABLE `renthistorymaster` (
-  `mId` int(11) NOT NULL,
-  `cDate` date NOT NULL,
-  `cId` int(11) NOT NULL,
-  `status` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `mId` int NOT NULL,
+  `cDate` date DEFAULT NULL,
+  `cId` int DEFAULT NULL,
+  `status` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `renthistorymaster`
+--
+
+INSERT INTO `renthistorymaster` (`mId`, `cDate`, `cId`, `status`) VALUES
+(2, '2023-07-17', 1034, 1),
+(3, '2023-07-17', 1034, 1),
+(4, '2023-07-23', 1034, 1),
+(5, '2023-07-23', 1034, 1),
+(6, '2023-07-25', 1034, 1),
+(7, '2023-07-25', 1034, 1),
+(12, '2023-07-27', 1034, 0),
+(13, '2023-07-27', 1034, 0),
+(14, '2023-07-27', 1034, 0),
+(15, '2023-07-27', 1034, 0),
+(16, '2023-07-08', 1034, 0),
+(17, '2023-07-08', 1034, 0),
+(18, '2023-07-08', 1034, 0);
 
 -- --------------------------------------------------------
 
@@ -1113,12 +1361,23 @@ CREATE TABLE `renthistorymaster` (
 --
 
 CREATE TABLE `stockupdate` (
-  `sId` int(10) NOT NULL,
-  `sDate` date NOT NULL,
-  `qty` int(10) NOT NULL,
-  `itemId` int(10) NOT NULL,
-  `updateStatus` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `sId` int NOT NULL,
+  `sDate` date DEFAULT NULL,
+  `qty` int DEFAULT NULL,
+  `note` varchar(500) NOT NULL,
+  `itemId` int DEFAULT NULL,
+  `updateStatus` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `stockupdate`
+--
+
+INSERT INTO `stockupdate` (`sId`, `sDate`, `qty`, `note`, `itemId`, `updateStatus`) VALUES
+(1, '2023-07-27', 25, '25', 1, 1),
+(2, '2023-07-27', 45, '45', 1, 1),
+(3, '2023-07-27', 32, '32', 1, 1),
+(4, '2023-07-27', 20, 'asfd', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1127,19 +1386,21 @@ CREATE TABLE `stockupdate` (
 --
 
 CREATE TABLE `users` (
-  `uId` int(10) NOT NULL,
+  `uId` int NOT NULL,
   `userName` varchar(50) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `userType` varchar(30) DEFAULT NULL,
-  `status` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `status` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`uId`, `userName`, `password`, `userType`, `status`) VALUES
-(1, 'admin@123.com', '21232f297a57a5a743894a0e4a801fc3', 'admin', 1);
+(1, 'admin@123.com', '21232f297a57a5a743894a0e4a801fc3', 'admin', 1),
+(2, 'owner@123.com', 'f2744d74ae037d1766ab076c4b66d315', 'owner', 1),
+(3, 'yaseen', '25d55ad283aa400af464c76d713c07ad', 'admin', 0);
 
 --
 -- Indexes for dumped tables
@@ -1156,6 +1417,12 @@ ALTER TABLE `customermaster`
 --
 ALTER TABLE `document`
   ADD PRIMARY KEY (`dId`);
+
+--
+-- Indexes for table `extrapayment`
+--
+ALTER TABLE `extrapayment`
+  ADD PRIMARY KEY (`expId`);
 
 --
 -- Indexes for table `items`
@@ -1220,67 +1487,73 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customermaster`
 --
 ALTER TABLE `customermaster`
-  MODIFY `cId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1011;
+  MODIFY `cId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1035;
 
 --
 -- AUTO_INCREMENT for table `document`
 --
 ALTER TABLE `document`
-  MODIFY `dId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `dId` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `extrapayment`
+--
+ALTER TABLE `extrapayment`
+  MODIFY `expId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `itemId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `login_session`
 --
 ALTER TABLE `login_session`
-  MODIFY `sId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `sId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `paymentcollection`
 --
 ALTER TABLE `paymentcollection`
-  MODIFY `pId` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `pId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `ratecard`
 --
 ALTER TABLE `ratecard`
-  MODIFY `rId` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `rId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `rentcalculations`
 --
 ALTER TABLE `rentcalculations`
-  MODIFY `rId` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `rId` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `renthistory`
 --
 ALTER TABLE `renthistory`
-  MODIFY `hId` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `hId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `renthistorymaster`
 --
 ALTER TABLE `renthistorymaster`
-  MODIFY `mId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `mId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `stockupdate`
 --
 ALTER TABLE `stockupdate`
-  MODIFY `sId` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `sId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `uId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
