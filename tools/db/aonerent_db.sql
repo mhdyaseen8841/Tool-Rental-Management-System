@@ -123,6 +123,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100003` (IN `request` JS
       DELETE FROM renthistorymaster WHERE cId = json_value(request,'$.cId');
       DELETE FROM paymentcollection WHERE cId = json_value(request,'$.cId');
       DELETE FROM ratecard WHERE cId = json_value(request,'$.cId');
+      DELETE FROM rentcalculations WHERE cId = json_value(request,'$.cId');
+      DELETE FROM extrapayment WHERE cId = json_value(request,'$.cId');
       UPDATE customermaster set status = 1
       where cId= json_value(request,'$.cId');
       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Delete Successful') as result;
@@ -141,7 +143,9 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100004` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100005` (IN `request` JSON)   BEGIN
-	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
+DECLARE datas JSON;
+  SET SESSION group_concat_max_len = 1000000;
+	set datas = (SELECT JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
                                'cName',cName,
                                'mobile',mobile,
@@ -150,11 +154,13 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100005` (IN `request` JS
                                'proof',proof,
                                'coName',coName,
                                'coMobile',coMobile
-                               )))) as result from customermaster WHERE status = 0;
+                               ))) as result from customermaster WHERE status = 0);
+  select JSON_OBJECT('errorCode',1,'result',datas) as result;
 
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100006` (IN `request` JSON)   BEGIN
+  SET SESSION group_concat_max_len = 1000000;
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'cId',cId,
                                'cName',cName,
@@ -168,6 +174,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100006` (IN `request` JS
 
 END$$
 
+
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100007` (IN `request` JSON)   BEGIN
 update customermaster set status = 0 where cId = json_value(request,'$.cId');
 select JSON_OBJECT("errorCode",1,"errorMsg","Customer Activated");
@@ -178,6 +186,26 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100008` (IN `request` JS
                                'docData',docData,
         					   'dId',dId
                                )))) as result from customermaster WHERE cId = JSON_VALUE(request,'$.cId');
+
+END$$
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100009` (IN `request` JSON)   BEGIN
+  DECLARE documents JSON;
+  set documents = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT('dId',dId,'file',file))) from document WHERE cId = JSON_VALUE(request,'$.cId'));
+  if documents is null or JSON_VALUE(documents,'$[0]') is null then
+      set documents = (select json_array());
+  end if;
+	SELECT JSON_OBJECT('errorCode',1,'result',JSON_OBJECT(
+                               'cId',cId,
+                               'cName',cName,
+                               'mobile',mobile,
+                               'altermobile',altermobile,
+                               'address',address,
+                               'proof',proof,
+                               'coName',coName,
+                               'coMobile',coMobile,
+                               'documents',documents
+                               )) as result from customermaster WHERE cId = JSON_VALUE(request,'$.cId');
 
 END$$
 
@@ -397,12 +425,12 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400001` (IN `request` JS
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			SET  i = i + 1;
 		END LOOP;
-      call returnCalculate(id);
 		select JSON_OBJECT("errorCode",1,"errorMsg","Inserted Successfully") as result;
+    call returnCalculate(id);
     end if;
 END$$
 
-CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400002` (IN `request` JSON)   BEGIN
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400003` (IN `request` JSON)   BEGIN
 	declare ststs int;
     declare qsty int;
     declare id int;
@@ -499,7 +527,7 @@ END$$
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1500005` (IN `request` JSON)   BEGIN
 	  declare items JSON;
     declare dates JSON;
-    declare cid int;
+    declare id int;
     declare bdata1 JSON;
     declare bdata2 JSON;
     declare bdatas JSON;
@@ -511,10 +539,10 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1500005` (IN `request` JS
     declare cmpData1 JSON;
     declare cmpData2 JSON;
     declare output JSON;
-    set cid = JSON_VALUE(request,'$.cId');
-	set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT('id',itemId,'name',iName)),']') from (select i.itemId as itemId, i.iName as iName from renthistory rh INNER JOIN renthistorymaster rhm on rh.mId = rhm.mId inner join items i on i.itemId = rh.itemId where rhm.cId = cid GROUP BY i.itemId) as datatbl);
+    set id = JSON_VALUE(request,'$.cId');
+	set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT('id',itemId,'name',iName)),']') from (select i.itemId as itemId, i.iName as iName from renthistory rh INNER JOIN renthistorymaster rhm on rh.mId = rhm.mId inner join items i on i.itemId = rh.itemId where rhm.cId = id GROUP BY i.itemId) as datatbl);
     
-    set dates = (select concat('[',GROUP_CONCAT(JSON_OBJECT('date', hDate)),']') from (select hDate from renthistory where cId=cid group by hDate) as rh);
+    set dates = (select concat('[',GROUP_CONCAT(JSON_OBJECT('date', hDate)),']') from (select distinct rh.hDate from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId=id order by rh.hDate) as rh);
     if JSON_EXTRACT(dates,'$[0]') is null THEN
     	set dates = (SELECT JSON_ARRAY());
     end if;
@@ -532,18 +560,18 @@ set cnt = JSON_LENGTH(dates) - 1;
 				LEAVE  cmpinsert;
 			END IF;
             set cmpData1 = (select json_extract(dates, concat('$[',i,']')));
-            set bdatas = (select JSON_ARRAY(JSON_VALUE(cmpData1,'$.date')));
+            set bdatas = (select JSON_ARRAY(DATE_FORMAT(JSON_VALUE(cmpData1,'$.date'), "%d-%m-%Y") ));
             set j=0;
             cmpip : LOOP
 				IF  j > cct THEN
 					LEAVE  cmpip;
 				END IF;
                 set cmpData2 = (select json_extract(items, concat('$[',j,']')));
-				set bdata1 = (select JSON_OBJECT('hId',rh.hId,'itemId',rh.itemId,'qty',SUM(rh.qty),'status',rh.status) from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId  where rhm.cId = cid and rh.hDate = JSON_VALUE(cmpData1,'$.date') and rh.itemId = JSON_VALUE(cmpData2,'$.id') and rh.status = 1 group by rh.hdate);
+				set bdata1 = (select JSON_OBJECT('hId',rh.hId,'itemId',rh.itemId,'qty',SUM(rh.qty),'status',rh.status) from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId  where rhm.cId = id and rh.hDate = JSON_VALUE(cmpData1,'$.date') and rh.itemId = JSON_VALUE(cmpData2,'$.id') and rh.status = 1 group by rh.hdate);
                 if bdata1 is null then
 					set bdata1 = JSON_OBJECT('hId',0,'itemId',JSON_VALUE(cmpData2,'$.id'),'qty',0,'status',1);
 				end if;
-                set bdata2 = (select JSON_OBJECT('hId',rh.hId,'itemId',rh.itemId,'qty',SUM(rh.qty),'status',rh.status) from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId  where rhm.cId = cid and rh.hDate = JSON_VALUE(cmpData1,'$.date') and rh.itemId = JSON_VALUE(cmpData2,'$.id') and rh.status = 0 group by rh.hdate);
+                set bdata2 = (select JSON_OBJECT('hId',rh.hId,'itemId',rh.itemId,'qty',SUM(rh.qty),'status',rh.status) from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId  where rhm.cId = id and rh.hDate = JSON_VALUE(cmpData1,'$.date') and rh.itemId = JSON_VALUE(cmpData2,'$.id') and rh.status = 0 group by rh.hdate);
                 if bdata2 is null then
 					set bdata2 = JSON_OBJECT('hId',0,'itemId',JSON_VALUE(cmpData2,'$.id'),'qty',0,'status',0);
 				end if;
@@ -637,15 +665,136 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700003` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JSON)   BEGIN
-	DEClARE datas JSON;
+	  DECLARE datas JSON;
     DECLARE items JSON;
     DECLARE payments JSON;
+    DECLARE rents JSON;
+    DECLARE rentamounts JSON;
+    DECLARE i int;
+    DECLARE j int;
+    DECLARE cnt int;
+    DECLARE cct int;
+    DECLARE amt decimal(10,2);
+    DECLARE cmpData JSON;
+    DECLARE cmpData1 JSON;
+    DECLARE itemData JSON;
+    DECLARE rentItems JSON;
+    DECLARE total decimal(20,2);
+    DECLARE paid decimal(20,2);
+    set rentamounts = (select JSON_ARRAY());
+    set rentItems = (select JSON_ARRAY());
+    set rents = (select concat('[',GROUP_CONCAT(JSON_OBJECT("itemId",rh.itemId,"hDate",rh.hDate,"pending",rh.pending)),']') from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = JSON_VALUE(request,'$.cId') and rh.pending != 0 and rh.status = 1);
+    set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
+    if rents is null or JSON_EXTRACT(rents,'$[0]') is null then
+      set rents = (select JSON_ARRAY());
+    end if;
+    if itemData is null or JSON_EXTRACT(itemData,'$[0]') is null then
+      set itemData = (select JSON_ARRAY());
+    end if;
+    set cnt = JSON_LENGTH(rents) - 1;
+    set i = 0;
+		cmpinsert:  LOOP
+			IF  i > cnt THEN
+				LEAVE  cmpinsert;
+			END IF;
+      set cmpData = (select json_extract(rents, concat('$[',i,']')));
+      set rentamounts = (select JSON_ARRAY_APPEND(rentamounts, '$', JSON_OBJECT("itemId",JSON_VALUE(cmpData,'$.itemId'),"amount",getRentPrice(JSON_VALUE(cmpData,'$.itemId'),JSON_VALUE(cmpData,'$.hDate'),JSON_VALUE(request,'$.cId'),JSON_VALUE(cmpData,'$.pending')))));
+      set i = i+1;
+    END LOOP;
+    set cnt = JSON_LENGTH(itemData) - 1;
+    set cct = JSON_LENGTH(rentamounts) - 1;
+    set i = 0;
+		cmpinsert:  LOOP
+			IF  i > cnt THEN
+				LEAVE  cmpinsert;
+			END IF;
+      set cmpData = (select json_extract(itemData, concat('$[',i,']')));
+       set j = 0;
+       set amt = 0;
+		    innerloop:  LOOP
+			    IF  j > cct THEN
+				    LEAVE  innerloop;
+			    END IF;
+          set cmpData1 = (select json_extract(rentamounts, concat('$[',j,']')));
+          if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
+            set amt = amt + JSON_VALUE(cmpData1,"$.amount");
+          end if;
+          set j= j+1;
+        END LOOP;
+        if amt > 0 then
+          set rentItems = (select JSON_ARRAY_APPEND(rentItems,'$',JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
+        end if;
+      set i = i+1;
+    END LOOP;
     set datas = (SELECT JSON_ARRAY());
-    set items = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("itemName",itemName,"amount",amount))) from (select i.iName as itemName ,SUM(rc.price) as amount from rentcalculations rc inner join items i on rc.itemid = i.itemId where cId=JSON_VALUE(request,"$.cId") group by rc.itemid) as calc);
+    set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT("itemId",itemId,"itemName",itemName,"amount",amount)),']') from (select i.itemId,i.iName as itemName ,SUM(rc.price) as amount from rentcalculations rc inner join items i on rc.itemid = i.itemId where cId=JSON_VALUE(request,"$.cId") group by rc.itemid) as calc);
+    if items is null or JSON_EXTRACT(items,'$[0]') is null then
+      set items = (select JSON_ARRAY());
+    end if;
+    set cnt = JSON_LENGTH(rentItems) - 1;
+    set cct = JSON_LENGTH(items) - 1;
+    set i = 0;
+		cmpinsert:  LOOP
+			IF  i > cnt THEN
+				LEAVE  cmpinsert;
+			END IF;
+      set cmpData = (select json_extract(rentItems, concat('$[',i,']')));
+      set j = 0;
+      set amt = 0;
+		    innerloop:  LOOP
+			    IF  j > cct THEN
+				    LEAVE  innerloop;
+			    END IF;
+          set cmpData1 = (select json_extract(items, concat('$[',j,']')));
+          if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
+            set amt = JSON_VALUE(cmpData,"$.amount") + JSON_VALUE(cmpData1,"$.amount");
+            set items = (select JSON_REPLACE(items,concat('$[',i,']'),JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
+          end if;
+          set j = j+1;
+          END LOOP;
+          if amt = 0 then
+             set items = (select JSON_ARRAY_APPEND(items,'$',cmpData));
+          end if;
+      set i = i+1;
+    END LOOP;
+
+    set cct = JSON_LENGTH(items) - 1;
+    set i = 0;
+    set total = 0;
+		cmpinsert:  LOOP
+			IF  i > cct THEN
+				LEAVE  cmpinsert;
+			END IF;
+      set cmpData1 = (select json_extract(items, concat('$[',i,']')));
+      set total = total + JSON_VALUE(cmpData1,"$.amount");
+      set i = i+1;
+    END LOOP;
+
+    set cmpData = (select concat('[',GROUP_CONCAT(JSON_OBJECT("amount",amount,"status",status)),']')  from extrapayment where cId = JSON_VALUE(request,"$.cId"));
+    if cmpData is null then
+      set cmpData = (select JSON_ARRAY());
+    end if;
+
+    set cct = JSON_LENGTH(cmpData) - 1;
+    set i = 0;
+		cmpinsert:  LOOP
+			IF  i > cct THEN
+				LEAVE  cmpinsert;
+			END IF;
+      set cmpData1 = (select json_extract(cmpData, concat('$[',i,']')));
+      if JSON_VALUE(cmpData1,"$.status") = 1 then
+        set total = total + JSON_VALUE(cmpData1,"$.amount");
+      else 
+        set total = total - JSON_VALUE(cmpData1,"$.amount");
+      end if;
+      set i = i+1;
+    END LOOP;
+    set paid = (select sum(amount) from paymentcollection where cId = json_value(request,"$.cId"));
+
     set datas = (select JSON_ARRAY_APPEND(datas, '$', items));
-    set payments = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("pId",pId,"date",pDate,"amount",amount))) from paymentcollection where cId = JSON_VALUE(request,"$.cId"));
+    set payments = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("pId",pId,"date",DATE_FORMAT(pDate, "%d-%m-%Y"),"amount",amount))) from paymentcollection where cId = JSON_VALUE(request,"$.cId"));
     set datas = (select JSON_ARRAY_APPEND(datas, '$', payments));
-    select JSON_OBJECT("errorCode",1,"result",datas) as result;
+    select JSON_OBJECT("errorCode",1,"result",datas,"items",JSON_OBJECT("items",total,"paid",paid)) as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700006` (IN `request` JSON)   BEGIN
@@ -825,12 +974,12 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
                                 if pendingStock > 0 then
                                   set activeCust = 1;
                                 end if;
-                          set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingStock',pendingStock)));
+                          set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingStock', IF(pendingStock = 0, '', pendingStock))));
                           set j=j+1;
                     END LOOP;
                     set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingAmount',getPendingAmount(JSON_VALUE(id,'$.cId')))));
                     set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
-                    if activeCust = 0 then
+                    if activeCust = 0 and getPendingAmount(JSON_VALUE(id,'$.cId')) = 0 then
                       set datas = (select JSON_REMOVE(datas,concat('$[',JSON_LENGTH(datas)-1,']')));
                     end if;
         set i = i+1;
@@ -959,6 +1108,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
     DEClARE i int;
     DECLARE jcnt int;
     DECLARE icnt int;
+    DEClARE sts int;
     set fdatas = (select JSON_ARRAY());
     set dates = (select concat('[',GROUP_CONCAT(json_object('hDate',hDate)),']') from (select distinct hDate from renthistory rh inner join renthistorymaster rhm where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
     set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from (select distinct rh.itemId,i.iName from renthistory rh inner join renthistorymaster rhm inner join items i on i.itemId = rh.itemId where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
@@ -979,6 +1129,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
         set i=0;
         set datas = (select JSON_ARRAY());
         set datas = (select JSON_ARRAY_APPEND(datas,'$',JSON_VALUE(date1, '$.hDate')));
+        set sts = 0;
         innerloop : LOOP
           IF i > icnt THEN
             LEAVE innerloop;
@@ -986,33 +1137,36 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
           set item1 = (select json_extract(items, concat('$[',i,']')));
           set data1 = (select concat('[',GROUP_CONCAT(JSON_OBJECT('note',rh.note,'status',rh.status)),']') from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = JSON_VALUE(request, '$.cId') and rh.hDate = JSON_VALUE(date1, '$.hDate') and rh.itemId = JSON_VALUE(item1, '$.itemId') and rh.note != "" and rh.note is not null);
           if data1 is not null then
+            set sts = 1;
             set datas = (select JSON_ARRAY_APPEND(datas,'$',data1));
           else
             set datas = (select JSON_ARRAY_APPEND(datas,'$',JSON_ARRAY(JSON_OBJECT('note',"",'status',0))));
           end if;
           set i= i+1;
         END LOOP;
-        set fdatas = (select JSON_ARRAY_APPEND(fdatas,'$',datas));
+        if sts = 1 then 
+          set fdatas = (select JSON_ARRAY_APPEND(fdatas,'$',datas));
+        end if;
         set j = j+1;
     END LOOP;
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',items,'data',fdatas)) as result;
 END$$
 
-CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `newrentcalculation` (IN `itemid` INT(10), IN `dat` DATE, IN `redat` DATE, IN `cid` INT(10), IN `qtyy` INT(10))   BEGIN
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `newrentcalculation` (IN `item` INT(10), IN `dat` DATE, IN `redat` DATE, IN `id` INT(10), IN `qtyy` INT(10))   BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     declare days int;
-    set unitp = (select rate from ratecard where itemId = itemid and cId =cid  limit 1);
+    set unitp = (select rate from ratecard where itemId = item and cId =id  limit 1);
     set days = DATEDIFF(redat, dat);
     if days > 30 then
     	set pric = (unitp + (days - 30) * (unitp /30)) * qtyy;
     else
     	set pric = unitp * qtyy;
     end if;
-    insert into rentcalculations(itemId,rentDate,returnDate,cId,price,qty) values(itemid,dat,redat,cid,pric,qtyy);
+    insert into rentcalculations(itemId,rentDate,returnDate,cId,price,qty) values(item,dat,redat,id,pric,qtyy);
 END$$
 
-CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `cid` INT)   BEGIN
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `id` INT)   BEGIN
 	 DECLARE pqty int;
     DECLARE qty1 int;
     DECLARE iId int;
@@ -1021,7 +1175,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `cid
     DECLARE datas JSON;
     DECLARE cnt int;
     DECLARE i int;
-    set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId,"hDate",rh.hDate)),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = cid and rh.status=0 and rh.pending!=0);
+    set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId,"hDate",rh.hDate)),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = id and rh.status=0 and rh.pending!=0);
     if rnthsry is null then
 		  set rnthsry = (select JSON_ARRAY());
 	  end if;
@@ -1033,23 +1187,23 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `cid
 			END IF;
 			set rnthsry1 = json_extract(rnthsry, concat('$[',i,']'));
             set pqty = (select renthistory.qty from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
-			set iId = (select renthistory.itemId from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
+			  set iId = (select renthistory.itemId from renthistory where hId = JSON_VALUE(rnthsry1,'$.hId'));
 			cmpip : LOOP
 				IF  pqty = 0 THEN
 					LEAVE  cmpip;
 				END IF;
-                set qty1 = (select rh.pending from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = cid order by rh.hId LIMIT 1);
-                set datas = (select JSON_OBJECT("hId", rh.hId,"date",rh.hDate) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = cid order by rh.hId LIMIT 1);
+                set qty1 = (select rh.pending from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = id order by rh.hId LIMIT 1);
+                set datas = (select JSON_OBJECT("hId", rh.hId,"date",rh.hDate) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = id order by rh.hId LIMIT 1);
 				if pqty < qty1 THEN
 					update renthistory set pending = pending - pqty where hId = JSON_VALUE(datas,'$.hId');
-					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),cid,pqty);
+					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),JSON_VALUE(rnthsry1,'$.hDate'),id,pqty);
 					set pqty = 0;
 				else
 					update renthistory set pending = 0 where hId = JSON_VALUE(datas,'$.hId');
-					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),JSON_VALUE(rnthsry1,'$.hDate'),cid,qty1);
+					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),JSON_VALUE(rnthsry1,'$.hDate'),id,qty1);
 					set pqty = pqty - qty1;
 				end if;
-            END LOOP;
+        END LOOP;
             update renthistory set pending = 0 where hId = JSON_VALUE(rnthsry1,'$.hId');
             set i= i+1;
      END LOOP;
@@ -1101,14 +1255,14 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`cid` I
     set total = total - IFNULL(oprice,0);
     set oprice = (select sum(amount) from paymentcollection where cId = cid );
     set total = total - IFNULL(oprice,0);
-    Return total;
+    Return ABS(total);
 END$$
 
-CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getRentPrice` (`itemid` INT(10), `dat` DATE, `cid` INT(10), `qtyy` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
+CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getRentPrice` (`item` INT(10), `dat` DATE, `id` INT(10), `qtyy` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     declare days int;
-    set unitp = (select rate from ratecard where itemId = itemid and cId =cid  limit 1);
+    set unitp = (select rate from ratecard where itemId = item and cId =id  limit 1);
     set days = DATEDIFF(CURDATE(), dat);
     if days > 30 then
     	set pric = (unitp + (days - 30) * (unitp /30)) * qtyy;
