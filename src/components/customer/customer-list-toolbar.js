@@ -39,7 +39,7 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
        "mobile" : data.Mobnum,
        "address" : data.Address,
        "altermobile" : data.AltMobnum,
- "proof" : file
+      "proof" : file
      }
 }
 

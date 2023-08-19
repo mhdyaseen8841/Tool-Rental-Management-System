@@ -95,6 +95,7 @@ useEffect(() => {
             {data.map((row,index)=>{
 return(
 <TableRow
+key={index}
 
 >
   <TableCell>

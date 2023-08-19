@@ -123,8 +123,9 @@ export const CustomerNotes = ({ customers,items, getdata, ...rest }) => {
             {notes.slice(1).map((item, ind) => (
   <TableCell key={ind}>
     <Stack>
-      {item.map((noteItem, noteInd) => (
-        <div
+      {item.map((noteItem, noteInd) => {
+        if (noteItem.note != ""){
+        return(<div
           key={noteInd}
           style={{
             color:  'white',
@@ -137,8 +138,9 @@ export const CustomerNotes = ({ customers,items, getdata, ...rest }) => {
           }}
         >
           {noteItem.note}
-        </div>
-      ))}
+        </div>)
+        }
+    })}
     </Stack>
   </TableCell>
 ))}

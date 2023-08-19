@@ -167,7 +167,7 @@ const genereatePdf = () => {
   const doc = new jsPDF(orientation, unit, size);
   
   
-  const title = "report";
+  const title = "Report";
   const headers=[label];
   
   const datas = data.map((ele)=> {
@@ -213,18 +213,17 @@ const genereatePdf = () => {
   autoTable(doc, content)
   doc.text(title, marginLeft, 20);
   //doc.autoTable(content);
-
   doc.setFontSize(10);
-  doc.text(40, 35, "Total Amount Pending : " + datas[datas.length-1][datas.length-1] + " Rs.")
+  doc.text(40, 35, "Total Amount Pending : " + Math.ceil(labelCounts.pendingAmount*100)/100 + " Rs.")
 
   doc.setFontSize(10);
   doc.text(40, 45, newdat)
 
   doc.page=1;
 
-  doc.text(500,200, 'Page No:' + doc.page);
+  // doc.text(500,200, 'Page No:' + doc.page);
 
-  doc.save('Player Details.pdf');
+  doc.save('Report.pdf');
   }
 
   return (
@@ -271,11 +270,11 @@ const genereatePdf = () => {
       )}
 
       <TableContainer >
-        <Table>
+        <Table >
           <TableHead>
             <TableRow>
 
-              <TableCell>
+              <TableCell >
                 {label[0]}
               </TableCell>
 
@@ -316,25 +315,25 @@ const genereatePdf = () => {
               return (
 
                 <TableRow key={index}>
-                  <TableCell key={index}>{firstValue.name}<br />{firstValue.mobile}</TableCell>
+                  <TableCell sx={{border:1}} key={index}>{firstValue.name}<br />{firstValue.mobile}</TableCell>
 
 {filter ? (
   
 
   selectedIndex.map((index) => {
     return (
-      <TableCell key={index}>{middleValues[index].pendingStock}</TableCell>
+      <TableCell  sx={{border:1,backgroundColor:'#ff0000'}}  key={index}> {middleValues[index].pendingStock}</TableCell>
     )
   }
   )
   ):(
     middleValues.map((cell, index) => (
-      <TableCell key={index}>{cell.pendingStock}</TableCell>
+      <TableCell sx={{border:1}}  key={index}>{cell.pendingStock}</TableCell>
     ))
   )}
              
 
-                  <TableCell key={index}>{lastValue.pendingAmount}</TableCell>
+                  <TableCell sx={{border:1}} key={index}>{lastValue.pendingAmount}</TableCell>
                 </TableRow>
 
               )

@@ -15,8 +15,6 @@ const requestPost = async (data)=>{
             },
           };
         const response = await axios.post(ServiceURL,data,config)
-        
-       
         return response.data
 }
 
