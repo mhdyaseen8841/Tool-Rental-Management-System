@@ -213,7 +213,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
       <PerfectScrollbar>
         <Box >
         <TableContainer style={{ maxHeight: '400px' }}>
-          <Table>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 
