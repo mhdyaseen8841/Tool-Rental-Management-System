@@ -367,7 +367,7 @@ END$$
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300005` (IN `request` JSON)   BEGIN
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'sId',sId,
-                               'date',sDate,
+                               'date',DATE_FORMAT(sDate, "%d-%m-%Y"),
                                'qty',qty,
                                'note',note,
                                'status',updateStatus
@@ -454,7 +454,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400005` (IN `request` JS
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'hId',rh.hId,
         'item',it.iName,
-        'date',rh.hDate,
+        'date',DATE_FORMAT(rh.hDate, "%d-%m-%Y"),
         'rate',rc.rate,
         'qty' ,rh.qty
     )))) as result from renthistory rh inner join renthistorymaster rhm on rhm.mId = rh.mId inner join items it on it.itemId = rh.itemId inner join ratecard rc on rc.itemId = it.itemId and rhm.cId = rc.cId where rh.mId = json_value(request,'$.mId');
@@ -484,7 +484,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
             set pendingsum = (select sum(pending) from renthistory where mId = JSON_VALUE(rnthsry,"$.mId"));
             set datas = (select JSON_ARRAY_APPEND(datas, '$', JSON_OBJECT(
         "mId",cast(JSON_VALUE(rnthsry,"$.mId") as unsigned),
-        "Date",JSON_VALUE(rnthsry,"$.Date"),
+        "Date",DATE_FORMAT(JSON_VALUE(rnthsry,"$.Date"), "%d-%m-%Y"),
          "status",cast(JSON_VALUE(rnthsry,"$.status") as unsigned),
          "pending",IFNULL(cast(pendingsum as unsigned),0)
          )));
@@ -619,8 +619,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
   set sData  = (select json_array(group_concat(json_object(
         'rId',0,
         'itemId',rh.itemId,
-        'rentDate',rh.hDate,
-        'returnDate',curdate(),
+        'rentDate',DATE_FORMAT(rh.hDate, "%d-%m-%Y"),
+        'returnDate',DATE_FORMAT(curdate(), "%d-%m-%Y"),
         'days',DATEDIFF(curdate(),rh.hDate),
         'qty',rh.pending,
         'price',getRentPrice (rh.itemId, rh.hDate, rhm.Cid, rh.pending),
@@ -635,8 +635,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
 	set mData = (select json_array(group_concat(json_object(
 		    'rId',rc.rId,
         'itemId',rc.itemid,
-        'rentDate',rc.rentDate,
-        'returnDate',rc.returnDate,
+        'rentDate',DATE_FORMAT(rc.rentDate, "%d-%m-%Y"),
+        'returnDate',DATE_FORMAT(rc.returnDate, "%d-%m-%Y"),
         'days',DATEDIFF(rc.returnDate,rc.rentDate),
         'qty',rc.qty,
         'price',rc.price,
@@ -803,7 +803,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
       set payments = (select JSON_ARRAY());
     end if;
     set datas = (select JSON_ARRAY_APPEND(datas, '$', payments));
-    set extra = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("expId",expId,"date",date,"amount",amount,"note",note,"status",status))) from extrapayment where cId = JSON_VALUE(request,"$.cId"));
+    set extra = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("expId",expId,"date",DATE_FORMAT(date, "%d-%m-%Y"),"amount",amount,"note",note,"status",status))) from extrapayment where cId = JSON_VALUE(request,"$.cId"));
     if extra is null or JSON_VALUE(extra,'$[0]') is null then
       set extra = (select JSON_ARRAY());
     end if;

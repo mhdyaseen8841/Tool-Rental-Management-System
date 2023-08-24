@@ -306,7 +306,7 @@ export const HistoryTotalResult = ({
           <Grid item xs={12} sm={4} md={4}>
             <Paper elevation={3} sx={{ bgcolor: "#FF8E2B" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
-                Item Total
+                Item Total + Extra Charges
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
                 {items.items}
@@ -338,7 +338,7 @@ export const HistoryTotalResult = ({
           </Grid>
 
         </Grid>
-        <Grid container spacing={3} pt={2}>
+        <Grid container spacing={2} pl={2}>
 
           <Grid item xs={12} md={4}>
             <Typography variant="h5" p={2} >
@@ -433,7 +433,7 @@ export const HistoryTotalResult = ({
 
 
                     return (
-                        <TableRow >
+                        <TableRow key={ind}>
                           <TableCell>
                               {data.date}
                           </TableCell>
