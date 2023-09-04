@@ -26,10 +26,11 @@ const Page = () => {
 
 
   const [customers, setCustomers] = useState([])
-  const [item,setItem] = useState([])
+  const [items,setItem] = useState({})
   const [payment, setPayments]  = useState([])
+  const [extraPayment, setExtraPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
-  const [cId, setCid] = useState('');
+  const [cId, setCid] = useState('')
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
@@ -67,26 +68,33 @@ const handleClose = ()=>{
        })
        console.log("sdfasfsfafass")
    }else{
+    if(res.items){
+        setItem(res.items)
+    }
 
     if(res.result){
          
-        if((res.result[0][0] ==null) && (res.result[1][0] == null)){
-          setCustomers([])
-          setPayments([])
-        }else{
-          if(res.result[0][0] ==null){
-            setCustomers([])
-            setPayments(res.result[1])
-          }else if(res.result[1][0] == null){
+        // if((res.result[0][0] ==null) && (res.result[1][0] == null)){
+        //   setCustomers([])
+        //   setPayments([])
+        // }else{
+        //   if(res.result[0][0] ==null){
+        //     setCustomers([])
+        //     setPayments(res.result[1])
+        //   }else if(res.result[1][0] == null){
            
-            setCustomers(res.result[0])
-            setPayments([])
-          }else{
-            setCustomers(res.result[0])
-            setPayments(res.result[1])
-          }
+        //     setCustomers(res.result[0])
+        //     setPayments([])
+        //   }else{
+        //     setCustomers(res.result[0])
+        //     setPayments(res.result[1])
+        //   }
           
-        }
+        // }
+
+        setCustomers(res.result[0])
+        setPayments(res.result[1])
+        setExtraPayments(res.result[2])
       }else{
         setError(""+res)
             setOpen(true)
@@ -122,7 +130,7 @@ const handleClose = ()=>{
   if(!id){
 Router.push('/dashboard')
   }else{
-    setCid( id)
+    setCid(id)
     getCustomer()
   }
   
@@ -154,7 +162,7 @@ Router.push('/dashboard')
 </Snackbar>
 
 
-  <HistoryTotalResult customers={customers}  payments={payment} getdata={getCustomer} />
+  <HistoryTotalResult customers={customers}  payments={payment} extraPayment = {extraPayment} items={items} getdata={getCustomer} />
      
 
 

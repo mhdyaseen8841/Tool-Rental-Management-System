@@ -14,8 +14,9 @@ import dayjs from 'dayjs';
 
 
 export default function CalculateScreenDialog(details) {
+  console.log(details);
   const [update, setUpdate] = useState(details.updated);
-  const [toggleStatus, setToggleStatus] = useState('1');
+  const [toggleStatus, setToggleStatus] = useState(details.updated ? details.data.status == 0 ? "0" : "1":"0");
 
   const validSchema = Yup.object().shape({
     Amount: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Amount is required'),
@@ -39,7 +40,7 @@ export default function CalculateScreenDialog(details) {
   const formik = useFormik({
     initialValues: {
       Amount: update ? details.data.Amount :'',
-      toggleStatus: update ? details.data.Status :'1',
+      Status: update ? details.data.Status :'1',
       Notes: update ? details.data.note :'',
     },
     validationSchema: validSchema,
