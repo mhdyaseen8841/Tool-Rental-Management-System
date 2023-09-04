@@ -7,9 +7,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
-    Card, Divider
+  Card, Divider
 }
-from "@mui/material";
+  from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useState, useEffect } from "react";
@@ -19,42 +19,9 @@ import { Stack } from "@mui/system";
 import Router from 'next/router';
 
 export default function GetHistoryDialog(details) {
-  const [open, setOpen] = React.useState(false);
-  const [update, setUpdate] = useState(details.updated);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const validSchema = Yup.object().shape({
-    Amount: Yup.number()
-      .required("Amount is required")
-      .typeError("Amount must be a number")
-      .positive("Amount must be a positive number"),
-  });
-
-  const [alertMsg, setAlert] = useState();
-  const formik = useFormik({
-    initialValues: {
-      Amount: update ? details.data.Amount : "",
-    },
-    validationSchema: validSchema,
-    onSubmit: (values, actions) => {
-      let data = {
-        rId: details.data.rId,
-        rate: values.Amount,
-      };
-  
-      details.submit(data);
-    },
-  });
-
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const [total, setTotal] = useState(0);
+  let tt = 0;
   const onclose = () => {
-    formik.resetForm();
     details.onClose();
   };
 
@@ -68,17 +35,17 @@ export default function GetHistoryDialog(details) {
       },
     };
     requestPost(req).then((res) => {
-      if(res.errorcode===3){
+      if (res.errorcode === 3) {
         Router
-        .push(
-        
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-      }else{
-        if  (res.errorcode == 0) {
-         
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else {
+        if (res.errorcode == 0) {
+
         } else {
           if (res.result[0] == null) {
             setData([{}]);
@@ -88,53 +55,62 @@ export default function GetHistoryDialog(details) {
         }
 
       }
-      
+
     });
-  }, []);
+    data.map((item) => {
+      tt = tt + (item.rate * item.qty)
+    })
+    setTotal(tt)
+  }, [data]);
 
   return (
     <div>
       <Dialog open={details.open} onClose={onclose}
-      
-      fullWidth={true}
-      maxWidth={"sm"}
+
+        fullWidth={true}
+        maxWidth={"sm"}
       >
-        <DialogTitle>Update Rate</DialogTitle>
+        <Stack direction={"row"} justifyContent={"space-between"}>
+          <DialogTitle>Update Rate</DialogTitle>
+          <DialogTitle>Total: ₹{total}</DialogTitle>
+        </Stack>
         <DialogTitle>RENT HISTORY</DialogTitle>
         <DialogContent>
-       
 
-            {data.map((item) => (
+
+          {data.map((item) => {
+            return (
               <>
-              <Divider orientation="horizontal" flexItem />
+                <Divider orientation="horizontal" flexItem />
                 <Grid
- container
- rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-    
- pl={3}
-    pt={1}
-    
-   
-    >   
-     <Grid item xs={3}>
-     <Typography >{item.date}</Typography>
-  </Grid>
-   
-  <Grid item xs={3}>
-     <Typography >{item.item}</Typography>
-  </Grid>
+                  container
+                  rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}
 
-  <Grid item xs={3}>
-     <Typography >₹{item.rate}</Typography>
-  </Grid>
+                  pl={3}
+                  pt={1}
 
-  <Grid item xs={3}>
-     <Typography >qty:{item.qty}</Typography>
-  </Grid>
-  
-    </Grid>
-    </>
-            ))}
+
+                >
+                  <Grid item xs={3}>
+                    <Typography >{item.date}</Typography>
+                  </Grid>
+
+                  <Grid item xs={3}>
+                    <Typography >{item.item}</Typography>
+                  </Grid>
+
+                  <Grid item xs={3}>
+                    <Typography >₹{item.rate}</Typography>
+                  </Grid>
+
+                  <Grid item xs={3}>
+                    <Typography >qty:{item.qty}</Typography>
+                  </Grid>
+
+                </Grid>
+              </>)
+
+          })}
         </DialogContent>
       </Dialog>
     </div>

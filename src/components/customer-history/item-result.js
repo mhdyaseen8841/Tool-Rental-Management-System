@@ -121,8 +121,8 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
 
       return (
         <React.Fragment key={customer.mId}>
-          <TableRow sx={{borderBottom:3,borderColor:'#ddd'}}>
-            <TableCell sx={{ whiteSpace: 'nowrap' }}>{customer[0]}</TableCell>
+          <TableRow sx={{borderBottom:3,borderColor:'#aaa'}}>
+            <TableCell sx={{ whiteSpace: 'nowrap' ,borderBottom:1,borderColor:'#aaa'}}>{customer[0]}</TableCell>
             
             {customer.slice(1).map((item, ind) => {
                if(itemTotalArr[ind]==undefined){
@@ -133,7 +133,7 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
                 }
               return (
               
-              <TableCell key={ind}>
+              <TableCell key={ind} sx={{borderBottom:1,borderColor:'#aaa'}}>
                 <Stack>
                   {item.outgoing.qty !== 0 ? (
                     <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
