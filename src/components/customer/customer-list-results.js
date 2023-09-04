@@ -213,7 +213,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
       <PerfectScrollbar>
         <Box >
         <TableContainer style={{ maxHeight: '400px' }}>
-          <Table>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 
@@ -257,7 +257,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
                       >
                       {customer.cName?(getInitials(customer.cName)):""}  
                       </Avatar>
-                      <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
+                      <Link href={`/historyItems/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
                       <Typography
                         color="textPrimary"
                         variant="body1"

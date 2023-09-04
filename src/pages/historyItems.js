@@ -96,17 +96,33 @@ const handleClose = ()=>{
  }
  
  useEffect(() => {
- let id = sessionStorage.getItem("Cid")
- let name = sessionStorage.getItem("Cname")
- let phone = sessionStorage.getItem("Cphone")
-  if(!id){
-Router.push('/dashboard')
-  }else{
-    setCname(name)
-    setPhNo(phone)
-    setCid( id)
+  if(router.query.cId){
+    sessionStorage.setItem("Cid", router.query.cId)
+    sessionStorage.setItem("Cname", router.query.cName)
+    sessionStorage.setItem("Cphone", router.query.phNo)
+        setCid(router.query.cId)
+        cName= router.query.cName
+        phNo = router.query.phNo
+        getCustomer()
+      }
+      else {
+
+   let id = sessionStorage.getItem("Cid")
+   cName= sessionStorage.getItem("Cname")
+    phNo = sessionStorage.getItem("Cphone")
+    
+   console.log(id)
+   if(id){
+    console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
+    setCid(id)
+    console.log(id)
     getCustomer()
-  }
+   }else{
+  console.log(id)
+    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+  Router.push('/dashboard')
+   }
+      }
   
  }, [cId])
  

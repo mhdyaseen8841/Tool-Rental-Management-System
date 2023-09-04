@@ -27,6 +27,7 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
+import { borderBottom } from '@mui/system';
 
 
 
@@ -102,8 +103,8 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
 
       <PerfectScrollbar>
         <Box >
-          <TableContainer >
-          <Table>
+          <TableContainer component={Paper} style={{ maxHeight: 600}}>
+          <Table stickyHeader>
   <TableHead>
     <TableRow>
       <TableCell>Date</TableCell>
@@ -120,19 +121,19 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
 
       return (
         <React.Fragment key={customer.mId}>
-          <TableRow hover>
-            <TableCell sx={{ whiteSpace: 'nowrap' }}>{customer[0]}</TableCell>
+          <TableRow sx={{borderBottom:3,borderColor:'#aaa'}}>
+            <TableCell sx={{ whiteSpace: 'nowrap' ,borderBottom:1,borderColor:'#aaa'}}>{customer[0]}</TableCell>
             
             {customer.slice(1).map((item, ind) => {
                if(itemTotalArr[ind]==undefined){
-                itemTotalArr[ind]=item.incoming.qty + item.outgoing.qty
+                itemTotalArr[ind]=item.incoming.qty - item.outgoing.qty
                   }
                 else{
-                itemTotalArr[ind]+=item.incoming.qty + item.outgoing.qty
+                itemTotalArr[ind]+=item.incoming.qty - item.outgoing.qty
                 }
               return (
               
-              <TableCell key={ind}>
+              <TableCell key={ind} sx={{borderBottom:1,borderColor:'#aaa'}}>
                 <Stack>
                   {item.outgoing.qty !== 0 ? (
                     <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
@@ -159,32 +160,20 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
       );
     })}
   </TableBody>
-  <TableFooter>
-  <TableRow style={{ backgroundColor: '#F0F0F0' }}>
-            <TableCell style={{ fontWeight: 'bold', color: 'black' }}>Total Items</TableCell>
+  <TableFooter sx={{position:'-webkit-sticky'}}>
+  <TableRow style={{ backgroundColor: '#aaa' }}>
+            <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }}>Total Items</Typography></TableCell>
             {itemTotalArr.map((total, ind) => (
-              <TableCell key={ind} style={{ fontWeight: 'bold', color: 'black', justifyContent:'center' }}>
-                {total}
+              <TableCell key={ind} >
+                <Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }} >{total}</Typography> 
               </TableCell>
             ))}
           </TableRow>
   </TableFooter>
 </Table>
-
-
-
           </TableContainer >
         </Box>
       </PerfectScrollbar>
-      <TablePagination
-        component="div"
-        count={data.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleLimitChange}
-        page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
     </Card>
   );
 };

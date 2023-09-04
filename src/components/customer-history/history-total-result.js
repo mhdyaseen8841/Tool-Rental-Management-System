@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import PropTypes from "prop-types";
 import {
+  Divider,
   Grid,
   Paper,
   Table,
@@ -18,6 +19,9 @@ import requestPost from "../../../serviceWorker";
 import React from "react";
 import FadeMenu from "../more-items-btn";
 import FullScreenDialog from "./update-payment";
+import { Stack, color } from "@mui/system";
+import CalculateScreenDialog from "./calculateRent";
+import AlertDialog from "./extra-payment";
 
 // export const HistoryListResults = ({ customers, getdata, ...rest }) => {
 export const HistoryTotalResult = ({
@@ -26,19 +30,25 @@ export const HistoryTotalResult = ({
   getdata,
   CtableId,
   ApiData,
+  extraPayment,
+  items,
   ...rest
 }) => {
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
+  const [addExtraDialog, setExtraDialog] = useState();
   const [total, setTotal] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
   const [advance, setAdvance] = useState(0);
+  const [alertOpen,setAlertOpen] = useState(false);
+  const [cId, setCid] = useState('');
   const [pendingItems, setPendingItems] = useState('');
   const router = useRouter();
 
   const handleClose = () => {
     setDialog();
+    setExtraDialog();
   };
 
   const deleteUser = (pId) => {
@@ -63,7 +73,7 @@ export const HistoryTotalResult = ({
 
 
         if (res.errorcode == 0) {
-         
+
         } else {
           // getdata()
 
@@ -92,8 +102,8 @@ export const HistoryTotalResult = ({
       } else {
         if (res.result[0] != null) {
           var msg = "*ITEMS PENDING*%0a";
-          res.result.map((item)=>{
-           msg =  `${msg}%0a${item.itemName} : ${item.pending}`
+          res.result.map((item) => {
+            msg = `${msg}%0a${item.itemName} : ${item.pending}`
           })
           setPendingItems(msg);
         } else {
@@ -105,10 +115,10 @@ export const HistoryTotalResult = ({
   }
 
   const handleAdd = (pId, amount) => {
-   
+
     setOpen(true);
     const add = (amount) => {
-    
+
       let req = {
         type: "SP_CALL",
         requestId: 1700002,
@@ -132,9 +142,9 @@ export const HistoryTotalResult = ({
 
           if (res.errorcode == 0) {
             let error = "error happend";
-          
+
           } else {
-           
+
             setDialog();
             getdata(CtableId, ApiData);
           }
@@ -153,8 +163,79 @@ export const HistoryTotalResult = ({
     ));
   };
 
+  const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
+
+    console.log('heyyyyyyyyyy')
+       setOpen(true);
+       
+       
+     
+       
+       const add = (date,datas) => {
+         console.log(datas)
+         
+         
+     
+         let req={
+           "type" : "SP_CALL",
+           "requestId" : 1700007,
+           request: {
+             "expId" : data.expId,
+             "amount" : datas.Amount,
+     "date" : date,
+     "note" : datas.Notes,
+     "status" : datas.Status,
+          }
+     }
+     console.log(req)
+     
+     
+     requestPost(req).then((res)=>{
+       if(res.errorCode===3){
+         Router
+         .push(
+         
+         {
+           pathname: '/',
+           query: { redirect: '1' },
+         })
+     }else{
+     
+     
+       if(res.errorcode ==0){
+        
+       }else{
+         getdata()
+         
+       }
+     }
+     
+     setExtraDialog(); 
+     });
+     
+     
+       };
+     
+       setExtraDialog(() => (
+         
+         <CalculateScreenDialog
+           onClose={handleClose}
+           open={true}
+            submit={add}
+            updated={upd}
+            button={button}
+            data={data}
+         />
+       ));
+     };
+
+     const deleteConfirm = (cid) => {
+      setAlertOpen(true)
+      setCid(cid)
+    }
+
   useEffect(() => {
-   
+
     let totalAmount = 0;
     let totalPaidAmount = 0;
 
@@ -181,67 +262,92 @@ export const HistoryTotalResult = ({
     getPendingItems();
   }, [customers, payments]);
 
-  const whatsAppMsg = `*AONE RENTAL* %0a %0aItem Total : ${total} %0aTotal Paid : ${totalPaid} %0aPending Amount : ${totalDue} %0aAdvance : ${advance} %0a %0a${pendingItems}`;
+
+  const deleteUsers = ()=>{
+    let del = {
+      "type" : "SP_CALL",
+      "requestId" : 1700008,
+      request: {
+       "expId": cId
+     }
+    }
+    requestPost(del).then((res)=>{
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/',
+          query: { redirect: '1' },
+        })
+    }else if(res.errorcode ==0){
+        
+     
+      }else{
+        setAlertOpen(false)
+        getdata()
+        
+      }
+     
+    })
+
+
+  }
+
+  const whatsAppMsg = `*AONE RENTAL* %0a https://aonerentals.in/tools/src/user/?cId=${sessionStorage.getItem('Cid')}`;
 
   return (
     <>
       {addDialog}
+      {addExtraDialog}
+      <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUsers}/>
       <Grid container spacing={3}>
         <Grid container spacing={2} pl={2} pt={2}>
-          <Grid item xs={12} sm={3} md={3}>
+          <Grid item xs={12} sm={4} md={4}>
             <Paper elevation={3} sx={{ bgcolor: "#FF8E2B" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
-                Item Total
+                Item Total + Extra Charges
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {total}
+                {items.items}
               </Typography>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={3} md={3}>
+          <Grid item xs={12} sm={4} md={4}>
             <Paper elevation={3} sx={{ bgcolor: "#4079FC" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
                 Total Paid
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {totalPaid}
+                {items.paid}
               </Typography>
             </Paper>
           </Grid>
 
 
-          <Grid item xs={12} sm={3} md={3}>
+          <Grid item xs={12} sm={4} md={4}>
             <Paper elevation={3} sx={{ bgcolor: "#D14343" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
                 Pending Amount
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {totalDue}
-              </Typography>
-            </Paper>
-          </Grid>
-
-
-          <Grid item xs={12} sm={3} md={3}>
-            <Paper elevation={3} sx={{ bgcolor: "#4BB543" }}>
-              <Typography noWrap variant="subtitle1" color={"white"} align="center">
-                Advance
-              </Typography>
-              <Typography variant="h5" color={"white"} align="center">
-                {advance}
+                {(items.items - items.paid).toFixed(2)}
               </Typography>
             </Paper>
           </Grid>
 
         </Grid>
-        <Grid container spacing={3} pt={2}>
+        <Grid container spacing={2} pl={2}>
 
           <Grid item xs={12} md={4}>
-            <TableContainer component={Paper}>
-              <Table>
+            <Typography variant="h5" p={2} >
+              Item Amounts
+            </Typography>
+            <TableContainer component={Paper} style={{ height: 250  }}>
+              <Table stickyHeader>
                 {/* First table */}
-                <TableHead>
+                <TableHead >
                   <TableRow>
                     <TableCell>Item Name</TableCell>
                     <TableCell>Amount</TableCell>
@@ -263,13 +369,12 @@ export const HistoryTotalResult = ({
           </Grid>
 
           <Grid item xs={12} md={8}>
+          <Typography variant="h5" p={2} >
+              Payments
+            </Typography>
 
-
-            {/* Total box */}
-
-
-            <TableContainer component={Paper} >
-              <Table>
+            <TableContainer component={Paper} style={{height: 250 }}>
+              <Table stickyHeader>
                 {/* Second table */}
                 <TableHead>
                   <TableRow>
@@ -306,7 +411,62 @@ export const HistoryTotalResult = ({
               </Table>
             </TableContainer>
 
+          </Grid>
+          <Grid item xs={12} md={12}>
+          <Typography variant="h5" p={2} >
+              Extra Payments
+            </Typography>
+            <TableContainer component={Paper} style={{ height: 250  }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Amount</TableCell>
+                    <TableCell>Notes</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                
+                <TableBody>
+                  {extraPayment.map((data, ind) => {
 
+
+                    return (
+                        <TableRow key={ind}>
+                          <TableCell>
+                              {data.date}
+                          </TableCell>
+
+
+                          <TableCell>
+                              {data.amount}
+                          </TableCell>
+
+
+                          <TableCell>
+                              {data.note}
+                          </TableCell>
+
+                          <TableCell>
+                              {data.status ? <Typography  variant="button" p={1} sx={{backgroundColor:"red", borderRadius:3 ,color:'#fff'}} maxWidth={150}>Add on</Typography> : <Typography  variant="button" p={1} sx={{backgroundColor:"green", borderRadius:3 ,color:'#fff'}} maxWidth={150}>Discount</Typography> }
+                          </TableCell>
+
+
+                          {localStorage.getItem('usertype') === 'owner' ? (
+                            null
+                          ) : (<TableCell>
+                            <FadeMenu updateItem={(e) => handleUPDATE(e, true, 'EDIT', { Amount: data.amount, expId: data.expId, date: data.date, note: data.note, status: data.status })} callback={() => { deleteConfirm(data.expId) }} />
+                          </TableCell>)}
+                        </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+
+
+
+            </TableContainer >
           </Grid>
         </Grid>
 
@@ -318,7 +478,7 @@ export const HistoryTotalResult = ({
           bottom: 20
         }}
       >
-        <a href={`https://wa.me/91${router.query.phNo}?text=${whatsAppMsg}`} target="_blank" rel="noopener noreferrer">
+        <a href={`https://wa.me/91${sessionStorage.getItem('Cphone')}?text=${whatsAppMsg}`} target="_blank" rel="noopener noreferrer">
           <WhatsAppIcon style={{ fontSize: 50, color: "#25D366" }} />
         </a>
       </div>
