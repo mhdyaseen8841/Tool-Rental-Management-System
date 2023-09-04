@@ -392,8 +392,11 @@ console.log(res)
   }
 
   useEffect(() => {
-    getItems();
+    getItems(); 
   }, []);
+  useEffect(() => {
+    setcName(sessionStorage.getItem("Cname"));
+  }, [sessionStorage.getItem("Cname")]);
 
   return (
     <>

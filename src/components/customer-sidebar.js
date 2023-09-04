@@ -51,11 +51,7 @@ let item = [
     icon: (<TextSnippetIcon fontSize="small" />),
     title: 'Notes'
   },
-  {
-    href: '/extrapayment',
-    icon: (<CurrencyRupeeIcon fontSize="small" />),
-    title: 'Extra Payment'
-  },
+ 
   {
     href: '/historyTotal',
     icon: (<CalculateIcon fontSize="small" />),
@@ -244,7 +240,7 @@ title={"Items list"}
             <NavItem
               key={item.title}
               icon={item.icon}
-              href={'/singleItemHistory?id='+item.id}
+              href={'/singleItemHistory?id='+item.id+'&name='+item.title}
               title={item.title}
             />
           ))}

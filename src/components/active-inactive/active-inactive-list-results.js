@@ -25,6 +25,8 @@ import {
   SvgIcon,
   Button
 } from '@mui/material';
+import GetCustomerProfile from '../customer-history/GetCustomerProfile'
+
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
 // import FullScreenDialog from './active-inactive';
@@ -114,7 +116,11 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
+  const [profileOpen,setProfileOpen] = useState(false)
 
+  const onProfileClose =()=>{
+    setProfileOpen(false)
+  }
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleClose = () => {
@@ -294,8 +300,14 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
       <Card {...rest}>
 <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer}/>
         {addDialog}
+
+        <GetCustomerProfile open={profileOpen}
+        onClose={onProfileClose}
+        cId={cId}
+        />
         <PerfectScrollbar>
           <Box >
+
             <TableContainer style={{ maxHeight: '400px' }}>
               <Table>
                 <TableHead>
@@ -329,20 +341,23 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                           }}
                         >
                           <Avatar
+                             onClick={() =>{
+                              setCid(customer.cId)
+                              setProfileOpen(true)
 
+                             } }
                             sx={{ mr: 2 }}
 
                           >
                             {customer.cName ? (getInitials(customer.cName)) : ""}
                           </Avatar>
-                          <Link href={`/history/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
                             <Typography
                               color="textPrimary"
                               variant="body1"
                             >
                               {customer.cName}
                             </Typography>
-                          </Link>
+                        
                         </Box>
                       </TableCell>
                       <TableCell>

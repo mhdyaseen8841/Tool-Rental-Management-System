@@ -10,7 +10,7 @@ import { useTheme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import { AccountPopover } from './account-popover';
 import { getInitials } from '../utils/get-initials';
-
+import GetCustomerProfile from './customer-history/GetCustomerProfile'
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[3]
@@ -22,8 +22,20 @@ export const CustomerNavbar = (props) => {
   const [openAccountPopover, setOpenAccountPopover] = useState(false);
     const theme = useTheme();
     const Router = useRouter();
+const [open,setOpen] = useState(false)
+
+const onClose =()=>{
+  setOpen(false)
+}
+
   return (
     <>
+
+    <GetCustomerProfile
+    open={open}
+    onClose={onClose}
+    cId={sessionStorage.getItem("Cid")}
+    />
       <DashboardNavbarRoot
         sx={{
           left: {
@@ -59,27 +71,26 @@ export const CustomerNavbar = (props) => {
                     cursor: 'pointer',
                     height: 40,
                     width: 40,
-                    ml: 1,
+                    mr: 2,
+                 
                     color:"gray"
                   }}
-                  onClick={()=>{Router.push('/customers')}}/>
+                  onClick={()=>{
+                    sessionStorage.clear()
+                    Router.push('/customers')}}/>
          
-          {/* <Avatar
-                  onClick={() => setOpenAccountPopover(true)}
+          <Avatar
+                  onClick={() => setOpen(true)}
                   ref={settingsRef}
                          
                         
                       >
-                        { localStorage.getItem("username")?  getInitials(localStorage.getItem("username") ) : getInitials("Admin" )}
-                      </Avatar> */}
+                        { sessionStorage.getItem("Cname")?  getInitials(sessionStorage.getItem("Cname") ) : getInitials("Customer" )}
+                      </Avatar>
           
         </Toolbar>
       </DashboardNavbarRoot>
-      <AccountPopover
-        anchorEl={settingsRef.current}
-        open={openAccountPopover}
-        onClose={() => setOpenAccountPopover(false)}
-      />
+     
     </>
   );
 };

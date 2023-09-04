@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container, Grid, Pagination,Snackbar,Alert } from '@mui/material';
+import { Box, Container, Grid, Pagination,Snackbar,Alert, Typography } from '@mui/material';
 import { useEffect,useState } from 'react';
 
 import { HistoryListResults } from '../components/customer-history/history-list-results';
@@ -27,6 +27,7 @@ const Page = () => {
 
   const [customers, setCustomers] = useState([])
   const [item,setItem] = useState([])
+
   const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
@@ -102,6 +103,7 @@ const handleClose = ()=>{
  
  useEffect(() => {
  let id = sessionStorage.getItem("Cid")
+ setItem(router.query.name)
   if(!id){
 Router.push('/dashboard')
   }else{
@@ -128,6 +130,7 @@ Router.push('/dashboard')
       }}
     >
       <Container maxWidth={false}>
+       
         <HistoryListToolbar  getdata={getCustomer}   cId={router.query.cId} cName={router.query.cName} />
         <Box sx={{ mt: 3 }}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -137,7 +140,7 @@ Router.push('/dashboard')
 </Snackbar>
 
 
-  <ItemNameResult customers={customers}  getdata={getCustomer} />
+  <ItemNameResult itemName={item} customers={customers}  getdata={getCustomer} />
      
 
 

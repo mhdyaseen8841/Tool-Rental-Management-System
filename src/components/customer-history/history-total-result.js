@@ -309,7 +309,7 @@ export const HistoryTotalResult = ({
                 Item Total + Extra Charges
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {items.items}
+                {items ? items.items:0.00}
               </Typography>
             </Paper>
           </Grid>
@@ -320,7 +320,7 @@ export const HistoryTotalResult = ({
                 Total Paid
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {items.paid}
+                {items ? items.paid:0.00}
               </Typography>
             </Paper>
           </Grid>
@@ -332,7 +332,7 @@ export const HistoryTotalResult = ({
                 Pending Amount
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {(items.items - items.paid).toFixed(2)}
+                {items ? ((items.items - items.paid).toFixed(2)):0.00}
               </Typography>
             </Paper>
           </Grid>

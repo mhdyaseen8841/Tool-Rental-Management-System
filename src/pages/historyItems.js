@@ -30,7 +30,7 @@ const Page = () => {
   const [payment, setPayments]  = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
-  const [cName, setCname] = useState('');
+  let cName='';
   const [phNo, setPhNo] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
@@ -108,7 +108,7 @@ const handleClose = ()=>{
       else {
 
    let id = sessionStorage.getItem("Cid")
-   cName= sessionStorage.getItem("Cname")
+    cName= sessionStorage.getItem("Cname")
     phNo = sessionStorage.getItem("Cphone")
     
    console.log(id)
