@@ -30,6 +30,7 @@ import {
 
 import { useEffect } from 'react';
 
+import requestPost from '../../../serviceWorker'
 
 export const ReportListResults = ({ data, label, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -39,11 +40,12 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
   const [addDialog, setDialog] = useState();
   const [filter, setFilter] = useState(false);
 
+let totalPending = 0;
   const [checked, setChecked] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState([]);
   
-  const heading = label.slice(1, -1)
+  const heading = label.slice(1)
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
@@ -98,11 +100,48 @@ if (index !== -1) {
     setDialog();
   };
 
+
+
+  const [totalItems, setTotalItems] = useState([{}])
+
+  function getItems(){
+    let data=  {
+      "type" : "SP_CALL",
+      "requestId" : 1200005,
+      request: {
+     }
+}
+
+  requestPost(data).then((res)=>{
+
+    if(res.errorCode===3){
+      Router
+      .push(
+      
+      {
+        pathname: '/',
+        query: { redirect: '1' },
+      })
+  }else{
+
+    if(res.result[0] ==null){
+      setTotalItems([])
+    }else{
+      setTotalItems(res.result)
+    }
+
+  }
+   
+  })
+
+}
+
   useEffect(() => {
 
     console.log(label)
     // console.log(items)
-   
+    getItems()
+    
 
   }, [])
 
@@ -176,11 +215,8 @@ const genereatePdf = () => {
       if(i == 0){
         dt.push(e.name);
       }
-      else if(i === ele.length - 1) {
-        dt.push(e.pendingAmount);
-      }
       else{
-        dt.push(e.pendingStock);
+        dt.push(e.pending);
       }
     })
     return dt;
@@ -214,7 +250,7 @@ const genereatePdf = () => {
   doc.text(title, marginLeft, 20);
   //doc.autoTable(content);
   doc.setFontSize(10);
-  doc.text(40, 35, "Total Amount Pending : " + Math.ceil(labelCounts.pendingAmount*100)/100 + " Rs.")
+  doc.text(40, 35, "Total Amount Pending : " + totalPending + " Rs.")
 
   doc.setFontSize(10);
   doc.text(40, 45, newdat)
@@ -299,10 +335,6 @@ const genereatePdf = () => {
 
               )}
 
-              <TableCell>
-                {label[label.length - 1]}
-              </TableCell>
-
             </TableRow>
           </TableHead>
           <TableBody>
@@ -311,7 +343,8 @@ const genereatePdf = () => {
 
               let firstValue = row[0];
               let lastValue = row[row.length - 1];
-              let middleValues = row.slice(1, -1);
+              let middleValues = row.slice(1);
+
               return (
 
                 <TableRow key={index}>
@@ -322,23 +355,104 @@ const genereatePdf = () => {
 
   selectedIndex.map((index) => {
     return (
-      <TableCell  sx={{border:1,backgroundColor:'#ff0000'}}  key={index}> {middleValues[index].pendingStock}</TableCell>
+      <TableCell  sx={{border:1}}  key={index}>
+        
+        {middleValues[index].pendingStock !== 0 ? (
+                    <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
+                      {middleValues[index].pending}
+                    </div>
+                  ) : (
+                    <div />
+                  )}
+
+        
+         
+         </TableCell>
     )
   }
   )
   ):(
-    middleValues.map((cell, index) => (
-      <TableCell sx={{border:1}}  key={index}>{cell.pendingStock}</TableCell>
-    ))
+    
+    middleValues.map((cell, index) => {
+
+     if(index === middleValues.length-1){
+      console.log("------------------------------------------------------")
+totalPending+=middleValues[index].pending
+     }
+
+     return(
+      <TableCell sx={{border:1}}  key={index}>
+
+
+{middleValues[index].pendingStock !== 0 ? (
+                    <div style={{ color: 'white', background: 'red', maxWidth: '130px', textAlign: 'center' }}>
+                      {middleValues[index].pending}
+                    </div>
+                  ) : (
+                    <div />
+                  )}
+      </TableCell>
+     )
+            })
   )}
              
 
-                  <TableCell sx={{border:1}} key={index}>{lastValue.pendingAmount}</TableCell>
+                 
                 </TableRow>
+
+                
 
               )
 
             })}
+{filter ? (
+
+<TableRow>
+<TableCell sx={{border:1}} >
+      Total
+    </TableCell>
+
+{selectedIndex.map((label, index) =>{
+console.log(selectedIndex)
+const value = totalItems.find((item) => item.iName === heading[label]);
+console.log(value)
+if(label!=heading.length-1){
+
+return(
+<TableCell sx={{border:1}}  key={label}>
+available:{value.aStock} <br></br>
+pending:{value.tStock - value.aStock}<br></br>
+total:{value.tStock}
+</TableCell>
+)
+}
+})}
+  </TableRow>
+):(
+<TableRow>
+<TableCell sx={{border:1}} >
+      Total
+    </TableCell>
+
+{heading.slice(0,-1).map((label, index) =>{
+console.log(totalItems)
+console.log(totalPending)
+const value = totalItems.find((item) => item.iName === label);
+console.log(value)
+return(
+<TableCell sx={{border:1}}  key={label}>
+available:{value.aStock} <br></br>
+pending:{value.tStock - value.aStock}<br></br>
+total:{value.tStock}
+</TableCell>
+)
+})}
+<TableCell sx={{border:1}}  key={label}>
+Grand Amount:<br></br>{Math.trunc(totalPending*100)/100}
+</TableCell>
+  </TableRow>
+
+)}
 
           </TableBody>
         </Table>
