@@ -140,7 +140,9 @@ export default function GetCustomerProfile(details) {
               return(
                 <a
                 href={"https://aonerentals.in/tools/src/uploads/" + doc.file}
-                target="_blank">
+                rel="noreferrer noopener" 
+                target="_blank"
+                key={doc}>
               <img
               width={250}
               height={200}

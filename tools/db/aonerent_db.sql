@@ -472,7 +472,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
 		    'mId',mId,
         'Date',cDate,
         'status',status
-    )ORDER BY mId DESC),']') as result from renthistorymaster where cId = json_value(request,'$.cId')); 
+    )ORDER BY mId),']') as result from renthistorymaster where cId = json_value(request,'$.cId')); 
     set datas = (select JSON_ARRAY());
     set cnt = IFNULL((select JSON_LENGTH(masterData)-1),-1);
     set i = 0;
@@ -988,10 +988,10 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
                                 if pendingStock > 0 then
                                   set activeCust = 1;
                                 end if;
-                          set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingStock', IF(pendingStock = 0, '', pendingStock))));
+                          set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending', IF(pendingStock = 0, '', pendingStock))));
                           set j=j+1;
                     END LOOP;
-                    set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pendingAmount',getPendingAmount(JSON_VALUE(id,'$.cId')))));
+                    set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending',getPendingAmount(JSON_VALUE(id,'$.cId')))));
                     set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
                     if activeCust = 0 and getPendingAmount(JSON_VALUE(id,'$.cId')) = 0 then
                       set datas = (select JSON_REMOVE(datas,concat('$[',JSON_LENGTH(datas)-1,']')));
@@ -1223,7 +1223,7 @@ END$$
 --
 -- Functions
 --
-CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`cid` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
+CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`id` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
 	DECLARE sData JSON;
   DECLARE mData JSON;
   DECLARE fData JSON;
@@ -1235,14 +1235,14 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`cid` I
   DECLARE cnt int;
   set sData  = (select concat('[',group_concat(json_object('price',getRentPrice(rh.itemId, rh.hDate, rhm.cId, rh.pending))),']') 
     from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId 
-    where rhm.cId = cid and rh.status=1 and rh.pending != 0);
+    where rhm.cId = id and rh.status=1 and rh.pending != 0);
     set err = (select JSON_EXTRACT(sData,'$[0]'));
     if err = 'null' OR err is null THEN
     	set sData = (SELECT JSON_ARRAY());
     end if;
   set mData = (SELECT JSON_ARRAY());
 	set mData = (select concat('[',group_concat(json_object('price',rc.price)),']') 
-  from rentcalculations rc where rc.cId = cid);
+  from rentcalculations rc where rc.cId = id);
     set err = (select JSON_EXTRACT(mData,'$[0]'));
     if err = 'null' OR err is null THEN
     	set mData = (SELECT JSON_ARRAY());
@@ -1260,11 +1260,11 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`cid` I
       set total = total + iprice;
       set i = i+1;
     END LOOP;
-    set iprice = (select sum(amount) from extrapayment where cId = cid and status = 1);
+    set iprice = (select sum(amount) from extrapayment where cId = id and status = 1);
     set total = total + IFNULL(iprice,0);
-    set oprice = (select sum(amount) from extrapayment where cId = cid and status = 0);
+    set oprice = (select sum(amount) from extrapayment where cId = id and status = 0);
     set total = total - IFNULL(oprice,0);
-    set oprice = (select sum(amount) from paymentcollection where cId = cid );
+    set oprice = (select sum(amount) from paymentcollection where cId = id );
     set total = total - IFNULL(oprice,0);
     Return ABS(total);
 END$$
@@ -1729,6 +1729,14 @@ ALTER TABLE `users`
 --
 ALTER TABLE `renthistory`
   ADD CONSTRAINT `renthistory_ibfk_1` FOREIGN KEY (`mId`) REFERENCES `renthistorymaster` (`mId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `renthistorymaster `
+--
+
+ALTER TABLE `renthistorymaster`
+  ADD CONSTRAINT `renthistorymaster_ibfk_1` FOREIGN KEY (`cId`) REFERENCES `customermaster` (`cId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
