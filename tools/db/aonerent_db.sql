@@ -27,6 +27,7 @@ DELIMITER $$
 --
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1000001` (IN `request` JSON)   BEGIN
 	declare sts int;
+  SET SESSION group_concat_max_len = 1000000;
     set sts = (select count(uId) from users where username = json_value(request,"$.username"));
     if sts = 0 then
 		insert into users(userName,password,userType,status) values(json_value(request,"$.username"),MD5(json_value(request,"$.password")),json_value(request,"$.usertype"),1);
@@ -37,16 +38,19 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1000001` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1000002` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 	update users set userType = json_value(request,"$.userType") where uId=json_value(request,"$.uId");
     select JSON_OBJECT("errorCode",1,"result","updated successfully") as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1000003` (IN `request` JSON)   BEGIN
-	update users set status = 0 where uId=json_value(request,"$.uId");
+	 SET SESSION group_concat_max_len = 1000000;
+  update users set status = 0 where uId=json_value(request,"$.uId");
     select JSON_OBJECT("errorCode",1,"result","updated successfully") as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1000005` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'uId',uId,
         'username',userName,
@@ -66,6 +70,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100001` (IN `request` JS
     DECLARE cnt int;
     DECLARE i int;
     DECLARE cid int;
+     SET SESSION group_concat_max_len = 1000000;
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
     SET plac = json_value(request, '$.address');
@@ -90,6 +95,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100002` (IN `request` JS
     DECLARE plac text;
 	DECLARE num varchar(20);
     DECLARE alterNum varchar(20);
+     SET SESSION group_concat_max_len = 1000000;
     SET nam = json_value(request, '$.name');
     SET mob = json_value(request, '$.mobile');
     SET plac = json_value(request, '$.address');
@@ -116,6 +122,7 @@ END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100003` (IN `request` JSON)   BEGIN
 	DECLARE num int;
+   SET SESSION group_concat_max_len = 1000000;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
      SELECT JSON_OBJECT('errorCode',0,'errorMsg','User Not Found') as result;
@@ -133,6 +140,7 @@ END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100004` (IN `request` JSON)   BEGIN
 	DECLARE num int;
+   SET SESSION group_concat_max_len = 1000000;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
      SELECT JSON_OBJECT('errorCode',0,'errorMsg','User Not Found') as result;
@@ -177,11 +185,13 @@ END$$
 
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100007` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 update customermaster set status = 0 where cId = json_value(request,'$.cId');
 select JSON_OBJECT("errorCode",1,"errorMsg","Customer Activated");
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100008` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'docData',docData,
         					   'dId',dId
@@ -191,6 +201,7 @@ END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100009` (IN `request` JSON)   BEGIN
   DECLARE documents JSON;
+   SET SESSION group_concat_max_len = 1000000;
   set documents = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT('dId',dId,'file',file))) from document WHERE cId = JSON_VALUE(request,'$.cId'));
   if documents is null or JSON_VALUE(documents,'$[0]') is null then
       set documents = (select json_array());
@@ -211,6 +222,7 @@ END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100013` (IN `request` JSON)   BEGIN
 	DECLARE num int;
+   SET SESSION group_concat_max_len = 1000000;
     set num = (select cId from customermaster where cId = json_value(request,'$.cId'));
     IF num IS NULL THEN
      SELECT JSON_OBJECT('errorCode',0,'errorMsg','User Not Found') as result;
@@ -226,6 +238,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200001` (IN `request` JS
     DECLARE mont decimal(10,2);
 	  DECLARE stck int;
     DECLARE num varchar(50);
+     SET SESSION group_concat_max_len = 1000000;
     SET nam = json_value(request, '$.itemName');
     SET mont = json_value(request, '$.monthly');
     SET stck = json_value(request, '$.stock');
@@ -246,6 +259,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200002` (IN `request` JS
     DECLARE mont decimal(10,2);
     DECLARE daily decimal(10,2);
     DECLARE num varchar(20);
+     SET SESSION group_concat_max_len = 1000000;
     SET nam = json_value(request, '$.itemName');
     SET mont = json_value(request, '$.monthly');
     set num = (select iName from items where iName = nam and itemId != json_value(request,'$.itemId'));
@@ -275,9 +289,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200005` (IN `request` JS
 	DECLARE rentStock int;
 	DECLARE returnStock int;
 	DECLARE pStock int;
-
-
-
+  SET SESSION group_concat_max_len = 1000000;
 	set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,
                                'iName',iName,
                                'mRent',mRent,
@@ -329,7 +341,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200006` (IN `request` JS
 
 	DECLARE itemData JSON;
 	DECLARE cid int;
-
+  SET SESSION group_concat_max_len = 1000000;
   set cid = JSON_VALUE(request,'$.cId');
 	set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,
                                'iName',iName,
@@ -347,6 +359,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300001` (IN `request` JS
 	declare stats int;
     declare qtty int;
     declare sqty int;
+     SET SESSION group_concat_max_len = 1000000;
     set stats = JSON_VALUE(request,'$.status');
     set qtty = JSON_VALUE(request,'$.qty');
     set sqty = (select tStock from items where itemId = JSON_VALUE(request,'$.itemId'));
@@ -365,6 +378,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300001` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300005` (IN `request` JSON)   BEGIN
+  SET SESSION group_concat_max_len = 1000000;
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
                                'sId',sId,
                                'date',DATE_FORMAT(sDate, "%d-%m-%Y"),
@@ -387,6 +401,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400001` (IN `request` JS
     DECLARE hid int;
     declare stas int;
     declare mrate decimal;
+    SET SESSION group_concat_max_len = 1000000;
     set stas = 0;
     set id = JSON_VALUE(request,'$.cId');
     set stats = JSON_VALUE(request,'$.status');
@@ -434,6 +449,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400003` (IN `request` JS
 	declare ststs int;
     declare qsty int;
     declare id int;
+    SET SESSION group_concat_max_len = 1000000;
     set ststs = (select status from renthistory where hId = json_value(request,'$.hId'));
     set id = (select itemId from renthistory where hId = json_value(request,'$.hId'));
     if ststs = 1 then
@@ -450,7 +466,30 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400003` (IN `request` JS
 	end if;
 END$$
 
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400004` (IN `request` JSON)   BEGIN
+    declare mhid int;
+    SET SESSION group_concat_max_len = 1000000;
+    set ststs = (select status from renthistory where hId = json_value(request,'$.hId'));
+    set id = (select itemId from renthistory where hId = json_value(request,'$.hId'));
+    if ststs = 1 then
+		set qsty = (select qty from renthistory where hId = json_value(request,'$.hId'));
+        set qsty = json_value(request,'$.qty') - qsty;
+		update renthistory
+        set hDate = json_value(request,'$.date'),
+        qty = json_value(request,'$.qty')
+        where hId = json_value(request,'$.hId');
+        update dailynotes set nDate = json_value(request,'$.date') where cId = (select cId from renthistory where hId = json_value(request,'$.hId'));
+		select JSON_OBJECT("errorCode",1,"errorMsg","Update Successfully") as result;
+	else
+		select JSON_OBJECT("errorCode",0,"errorMsg","Wrong Status") as result;
+	end if;
+END$$
+
+
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400005` (IN `request` JSON)   BEGIN
+  SET SESSION group_concat_max_len = 1000000;
 	select json_object("errorCode",1,"result",json_array(group_concat(json_object(
 		'hId',rh.hId,
         'item',it.iName,
@@ -467,6 +506,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
     DECLARE cnt int;
     declare pendingsum int;
     DECLARE i int;
+    declare delStatus int;
+    SET SESSION group_concat_max_len = 1000000;
     set masterData =
 	(select concat('[',group_concat(json_object(
 		    'mId',mId,
@@ -482,11 +523,13 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
 			END IF;
             set rnthsry = json_extract(masterData, concat('$[',i,']'));
             set pendingsum = (select sum(pending) from renthistory where mId = JSON_VALUE(rnthsry,"$.mId"));
+            set delStatus = IF((DATEDIFF(curdate(),JSON_VALUE(rnthsry,"$.Date"))) > 7,0,1);
             set datas = (select JSON_ARRAY_APPEND(datas, '$', JSON_OBJECT(
         "mId",cast(JSON_VALUE(rnthsry,"$.mId") as unsigned),
         "Date",DATE_FORMAT(JSON_VALUE(rnthsry,"$.Date"), "%d-%m-%Y"),
          "status",cast(JSON_VALUE(rnthsry,"$.status") as unsigned),
-         "pending",IFNULL(cast(pendingsum as unsigned),0)
+         "pending",IFNULL(cast(pendingsum as unsigned),0),
+         "deleteStatus",delStatus
          )));
             set i=i+1;
      END LOOP;
@@ -503,6 +546,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1500002` (IN `request` JS
     declare cid int;
     declare j int;
     declare cct int;
+    SET SESSION group_concat_max_len = 1000000;
     set cid = JSON_VALUE(request,'$.cId');
 	set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT('id',itemId,'name',iName)),']') from items);
     set cct = JSON_LENGTH(items) - 1;
@@ -539,6 +583,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1500005` (IN `request` JS
     declare cmpData1 JSON;
     declare cmpData2 JSON;
     declare output JSON;
+    SET SESSION group_concat_max_len = 1000000;
     set id = JSON_VALUE(request,'$.cId');
 	set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT('id',itemId,'name',iName)),']') from (select i.itemId as itemId, i.iName as iName from renthistory rh INNER JOIN renthistorymaster rhm on rh.mId = rhm.mId inner join items i on i.itemId = rh.itemId where rhm.cId = id GROUP BY i.itemId) as datatbl);
     
@@ -592,6 +637,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600002` (IN `request` JS
     DECLARE cid int;
     DECLARE itemid int;
     DECLARE qtyy int;
+    SET SESSION group_concat_max_len = 1000000;
     set cid = (SELECT rentcalculations.cId from rentcalculations where rId = JSON_VALUE(request,'$.rId'));
     set dat = (SELECT rentDate from rentcalculations where rId = JSON_VALUE(request,'$.rId'));
     
@@ -615,6 +661,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
   DECLARE sData JSON;
   DECLARE mData JSON;
   DECLARE err varchar(20);
+  SET SESSION group_concat_max_len = 1000000;
   set sData = (SELECT JSON_ARRAY());
   set sData  = (select json_array(group_concat(json_object(
         'rId',0,
@@ -650,11 +697,13 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700001` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 	insert into paymentcollection(cId,pdate,amount) values(json_value(request,"$.cId"),json_value(request,"$.date"),json_value(request,"$.amount"));
     select JSON_OBJECT("errorCode",1,"result","Add successfully") as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700002` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 	update paymentcollection set amount = json_value(request,"$.amount") where pId = json_value(request,"$.pId");
     select JSON_OBJECT("errorCode",1,"result","Edit successfully") as result;
 END$$
@@ -683,6 +732,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
     DECLARE extra JSON;
     DECLARE total decimal(20,2);
     DECLARE paid decimal(20,2);
+    SET SESSION group_concat_max_len = 1000000;
     set rentamounts = (select JSON_ARRAY());
     set rentItems = (select JSON_ARRAY());
     set itemsFinal = (select JSON_ARRAY());
@@ -732,35 +782,63 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
     set datas = (SELECT JSON_ARRAY());
     set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT("itemId",itemId,"itemName",itemName,"amount",amount)),']') from (select i.itemId,i.iName as itemName ,SUM(rc.price) as amount from rentcalculations rc inner join items i on rc.itemid = i.itemId where cId=JSON_VALUE(request,"$.cId") group by rc.itemid) as calc);
     if items is null or JSON_EXTRACT(items,'$[0]') is null then
+    
       set items = (select JSON_ARRAY());
     end if;
     set cnt = JSON_LENGTH(rentItems) - 1;
     set cct = JSON_LENGTH(items) - 1;
     set i = 0;
-		cmpinsert:  LOOP
-			IF  i > cnt THEN
-				LEAVE  cmpinsert;
-			END IF;
-      set cmpData = (select json_extract(rentItems, concat('$[',i,']')));
-      set j = 0;
-      set amt = 0;
-		    innerloop:  LOOP
-			    IF  j > cct THEN
-				    LEAVE  innerloop;
-			    END IF;
-          set cmpData1 = (select json_extract(items, concat('$[',j,']')));
-          if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
-            set amt = JSON_VALUE(cmpData,"$.amount") + JSON_VALUE(cmpData1,"$.amount");
-            set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
-            LEAVE  innerloop;
-          end if;
-          set j = j+1;
-          END LOOP;
-          if amt = 0 then
-             set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',cmpData));
-          end if;
-      set i = i+1;
-    END LOOP;
+    if cnt > cct then
+		  cmpinsert:  LOOP
+			  IF  i > cnt THEN
+				  LEAVE  cmpinsert;
+			  END IF;
+        set cmpData = (select json_extract(rentItems, concat('$[',i,']')));
+        set j = 0;
+        set amt = 0;
+		      innerloop:  LOOP
+			      IF  j > cct THEN
+				      LEAVE  innerloop;
+			      END IF;
+            set cmpData1 = (select json_extract(items, concat('$[',j,']')));
+            if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
+              set amt = JSON_VALUE(cmpData,"$.amount") + JSON_VALUE(cmpData1,"$.amount");
+              set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
+              LEAVE  innerloop;
+            end if;
+            set j = j+1;
+            END LOOP;
+            if amt = 0 then
+              set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',cmpData));
+            end if;
+        set i = i+1;
+      END LOOP;
+    else 
+      cmpinsert:  LOOP
+			  IF  i > cct THEN
+				  LEAVE  cmpinsert;
+			  END IF;
+        set cmpData = (select json_extract(items, concat('$[',i,']')));
+        set j = 0;
+        set amt = 0;
+		      innerloop:  LOOP
+			      IF  j > cct THEN
+				      LEAVE  innerloop;
+			      END IF;
+            set cmpData1 = (select json_extract(rentItems, concat('$[',j,']')));
+            if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
+              set amt = JSON_VALUE(cmpData,"$.amount") + JSON_VALUE(cmpData1,"$.amount");
+              set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
+              LEAVE  innerloop;
+            end if;
+            set j = j+1;
+            END LOOP;
+            if amt = 0 then
+              set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',cmpData));
+            end if;
+        set i = i+1;
+      END LOOP;
+    end if;
 
     set cct = JSON_LENGTH(itemsFinal) - 1;
     set i = 0;
@@ -828,6 +906,7 @@ END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700010` (IN `request` JSON)   BEGIN
 	DECLARE datas JSON;
+   SET SESSION group_concat_max_len = 1000000;
     set datas = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("expId",expId,"date",date,"amount",amount,"note",note,"status",status))) from extrapayment where cId = JSON_VALUE(request,"$.cId"));
     select JSON_OBJECT("errorCode",1,"result",datas) as result;
 END$$
@@ -838,6 +917,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1800002` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1800005` (IN `request` JSON)   BEGIN
+ SET SESSION group_concat_max_len = 1000000;
 	SELECT JSON_OBJECT("errorCode",1,"result",JSON_ARRAY(
     GROUP_CONCAT(
     	JSON_OBJECT(
@@ -864,6 +944,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300005` (IN `request` JS
     DECLARE cnt int;
     DECLARE i int;
     declare amt decimal(20,2);
+     SET SESSION group_concat_max_len = 1000000;
 	set tcustomer = IFNULL((select count(cId) FROM customermaster where status  = 0 ),0);
     set titems = IFNULL((select count(itemId) FROM items),0);
     set tamount = IFNULL((select sum(amount) FROM paymentcollection ),0);
@@ -924,6 +1005,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
     DECLARE pendingStock int;
     DECLARE cntitem int;
     declare activeCust int;
+     SET SESSION group_concat_max_len = 1000000;
     set itemData = JSON_VALUE(request,'$.items') ;
         if JSON_LENGTH(itemData) = 0  or itemData is null then 
               set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
@@ -1021,6 +1103,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300007` (IN `request` JS
         DECLARE i int;
         DECLARE j int;
         DECLARE sts int; 
+         SET SESSION group_concat_max_len = 1000000;
         set sts = 0;
 
         set date1 = IFNULL(JSON_VALUE(request,'$.from'),0);
@@ -1120,6 +1203,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
     DECLARE jcnt int;
     DECLARE icnt int;
     DEClARE sts int;
+     SET SESSION group_concat_max_len = 1000000;
     set fdatas = (select JSON_ARRAY());
     set dates = (select concat('[',GROUP_CONCAT(json_object('hDate',hDate)),']') from (select distinct hDate from renthistory rh inner join renthistorymaster rhm where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
     set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from (select distinct rh.itemId,i.iName from renthistory rh inner join renthistorymaster rhm inner join items i on i.itemId = rh.itemId where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
@@ -1167,6 +1251,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `newrentcalculation` (IN `
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     declare days int;
+     SET SESSION group_concat_max_len = 1000000;
     set unitp = (select rate from ratecard where itemId = item and cId =id  limit 1);
     set days = DATEDIFF(redat, dat);
     if days > 30 then
@@ -1186,6 +1271,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `id`
     DECLARE datas JSON;
     DECLARE cnt int;
     DECLARE i int;
+     SET SESSION group_concat_max_len = 1000000;
     set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId,"hDate",rh.hDate)),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = id and rh.status=0 and rh.pending!=0);
     if rnthsry is null then
 		  set rnthsry = (select JSON_ARRAY());
@@ -1233,6 +1319,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`id` IN
   DECLARE err varchar(20);
   DECLARE i int;
   DECLARE cnt int;
+   SET SESSION group_concat_max_len = 1000000;
   set sData  = (select concat('[',group_concat(json_object('price',getRentPrice(rh.itemId, rh.hDate, rhm.cId, rh.pending))),']') 
     from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId 
     where rhm.cId = id and rh.status=1 and rh.pending != 0);
@@ -1273,6 +1360,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getRentPrice` (`item` INT(
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
     declare days int;
+     SET SESSION group_concat_max_len = 1000000;
     set unitp = (select rate from ratecard where itemId = item and cId =id  limit 1);
     set days = DATEDIFF(CURDATE(), dat);
     if days > 30 then

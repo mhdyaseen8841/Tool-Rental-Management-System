@@ -277,7 +277,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
         // console.log(opts);
         if (
           opts.column.index != 0 &&
-          opts.column.index != label.length - 1 &&
+          opts.column.index != headers[0].length - 1 &&
           opts.row.section == "body"
         ) {
           if (opts.cell.raw != "") {
@@ -293,7 +293,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
           opts.cell.styles.textColor = "#000";
           opts.cell.styles.fontStyle = "bold";
           opts.cell.styles.fillColor = "#dee0df";
-          if (opts.column.index == label.length - 1) {
+          if (opts.column.index == headers[0].length - 1) {
             opts.cell.styles.fontSize = 12;
           }
         }
@@ -352,11 +352,11 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
 
               {filter
                 ? selectedOptions.map((label) => {
-                    return <TableCell key={label}>{label}</TableCell>;
-                  })
+                  return <TableCell key={label}>{label}</TableCell>;
+                })
                 : heading.map((label) => {
-                    return <TableCell key={label}>{label}</TableCell>;
-                  })}
+                  return <TableCell key={label}>{label}</TableCell>;
+                })}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -375,60 +375,60 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
 
                   {filter
                     ? selectedIndex.map((index) => {
-                        if (index === middleValues.length - 1) {
-                          console.log("------------------------------------------------------");
-                          totalPending += middleValues[index].pending;
-                        }
-                        return (
-                          <TableCell sx={{ border: 1 }} key={index}>
-                            {middleValues[index].pending != 0 ? (
-                              <div
-                                style={{
-                                  color: "white",
-                                  background: "red",
-                                  maxWidth: "60px",
-                                  textAlign: "center",
-                                }}
-                              >
-                                {middleValues[index].pending}
-                              </div>
-                            ) : (
-                              <div />
-                            )}
-                          </TableCell>
-                        );
-                      })
+                      if (index === middleValues.length - 1) {
+                        console.log("------------------------------------------------------");
+                        totalPending += middleValues[index].pending;
+                      }
+                      return (
+                        <TableCell sx={{ border: 1 }} key={index}>
+                          {middleValues[index].pending != 0 ? (
+                            <div
+                              style={{
+                                color: "white",
+                                background: "red",
+                                maxWidth: "60px",
+                                textAlign: "center",
+                              }}
+                            >
+                              {middleValues[index].pending}
+                            </div>
+                          ) : (
+                            <div />
+                          )}
+                        </TableCell>
+                      );
+                    })
                     : middleValues.map((cell, index) => {
-                        if (index === middleValues.length - 1) {
-                          console.log("------------------------------------------------------");
-                          totalPending += middleValues[index].pending;
-                        }
+                      if (index === middleValues.length - 1) {
+                        console.log("------------------------------------------------------");
+                        totalPending += middleValues[index].pending;
+                      }
 
-                        return (
-                          <TableCell sx={{ border: 1 }} key={index}>
-                            {middleValues[index].pending != 0 ? (
-                              <div
-                                style={{
-                                  color: "white",
-                                  background: "red",
-                                  maxWidth: "130px",
-                                  textAlign: "center",
-                                }}
-                              >
-                                {middleValues[index].pending}
-                              </div>
-                            ) : (
-                              <div />
-                            )}
-                          </TableCell>
-                        );
-                      })}
+                      return (
+                        <TableCell sx={{ border: 1 }} key={index}>
+                          {middleValues[index].pending != 0 ? (
+                            <div
+                              style={{
+                                color: "white",
+                                background: "red",
+                                maxWidth: "130px",
+                                textAlign: "center",
+                              }}
+                            >
+                              {middleValues[index].pending}
+                            </div>
+                          ) : (
+                            <div />
+                          )}
+                        </TableCell>
+                      );
+                    })}
                 </TableRow>
               );
             })}
             {filter ? (
               <TableRow
-              sx={{backgroundColor:"#dee0df", fontWeight:"bold"}}
+                sx={{ backgroundColor: "#dee0df", fontWeight: "bold" }}
               >
                 <TableCell sx={{ border: 1 }}>Total</TableCell>
 
@@ -458,7 +458,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
               </TableRow>
             ) : (
               <TableRow
-              sx={{backgroundColor:"#dee0df", fontWeight:"bold"}}
+                sx={{ backgroundColor: "#dee0df", fontWeight: "bold" }}
               >
                 <TableCell sx={{ border: 1 }}>Total</TableCell>
 
@@ -470,18 +470,18 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
                   return (
                     <TableCell sx={{ border: 1 }} key={label}>
                       <Typography sx={{ fontWeight: "bold" }}>
-                      available:{value.aStock} <br></br>
-                      pending:{value.tStock - value.aStock}
-                      <br></br>
-                      total:{value.tStock}
+                        available:{value.aStock} <br></br>
+                        pending:{value.tStock - value.aStock}
+                        <br></br>
+                        total:{value.tStock}
                       </Typography>
                     </TableCell>
                   );
                 })}
                 <TableCell sx={{ border: 1 }} key={label}>
-                <Typography sx={{ fontWeight: "bold" }}>
-                  Grand Amount:<br></br>
-                  {Math.trunc(totalPending * 100) / 100}
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    Grand Amount:<br></br>
+                    {Math.trunc(totalPending * 100) / 100}
                   </Typography>
                 </TableCell>
               </TableRow>
