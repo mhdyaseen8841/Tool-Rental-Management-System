@@ -470,20 +470,8 @@ END$$
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400004` (IN `request` JSON)   BEGIN
     declare mhid int;
     SET SESSION group_concat_max_len = 1000000;
-    set ststs = (select status from renthistory where hId = json_value(request,'$.hId'));
-    set id = (select itemId from renthistory where hId = json_value(request,'$.hId'));
-    if ststs = 1 then
-		set qsty = (select qty from renthistory where hId = json_value(request,'$.hId'));
-        set qsty = json_value(request,'$.qty') - qsty;
-		update renthistory
-        set hDate = json_value(request,'$.date'),
-        qty = json_value(request,'$.qty')
-        where hId = json_value(request,'$.hId');
-        update dailynotes set nDate = json_value(request,'$.date') where cId = (select cId from renthistory where hId = json_value(request,'$.hId'));
-		select JSON_OBJECT("errorCode",1,"errorMsg","Update Successfully") as result;
-	else
-		select JSON_OBJECT("errorCode",0,"errorMsg","Wrong Status") as result;
-	end if;
+    DELETE from renthistorymaster where mId = json_value(request,'$.mId');
+    select JSON_OBJECT("errorCode",1,"errorMsg","Delete Successfully") as result;
 END$$
 
 

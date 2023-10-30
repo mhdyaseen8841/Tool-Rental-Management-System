@@ -6,12 +6,13 @@ import { ActiveInactiveListToolbar } from '../components/active-inactive/active-
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 import Router from 'next/router';
+import Loader from '../components/Loader';
 const Page = () => {
 
 
 
   const [customers, setCustomers] = useState([{}])
-
+  const [loader, setLoader] = useState(true)
 function getCustomer(){
   let data=  {
     "type" : "SP_CALL",
@@ -36,7 +37,7 @@ function getCustomer(){
     }else{
       setCustomers(res.result)
     }
-   
+    setLoader(false)
 
   }
   })
@@ -60,7 +61,8 @@ return(
         Active/Inactive Customers | TRMS
       </title>
     </Head>
-    <Box
+    {loader ? <Loader/>  
+    :<Box
       component="main"
       sx={{
         flexGrow: 1,
@@ -74,6 +76,7 @@ return(
         </Box>
       </Container>
     </Box>
+}
   </>
 );
     }
