@@ -1,16 +1,18 @@
 import Head from 'next/head';
 import { useEffect,useState } from 'react';
-import { Box, Container } from '@mui/material';
+import { Box, Container, CircularProgress } from '@mui/material';
 import { CustomerListResults } from '../components/customer/customer-list-results';
 import { CustomerListToolbar } from '../components/customer/customer-list-toolbar';
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 import Router from 'next/router';
+import Loader from '../components/Loader';
 const Page = () => {
 
 
 
-  const [customers, setCustomers] = useState([{}])
+const [customers, setCustomers] = useState([{}])
+const [loader, setLoader] = useState(true)
 
 function getCustomer(){
   let data=  {
@@ -36,7 +38,7 @@ function getCustomer(){
     }else{
       setCustomers(res.result)
     }
-   
+   setLoader(false)
 
   }
   })
@@ -60,7 +62,8 @@ return(
         Customers | TRMS
       </title>
     </Head>
-    <Box
+    {loader ? <Loader/>  
+    :<Box
       component="main"
       sx={{
         flexGrow: 1,
@@ -74,6 +77,7 @@ return(
         </Box>
       </Container>
     </Box>
+    }
   </>
 );
     }
