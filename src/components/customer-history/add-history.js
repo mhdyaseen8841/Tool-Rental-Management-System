@@ -265,6 +265,7 @@ export default function FullScreenDialog(details) {
   <DatePicker
     label="Select Date"
     format="DD-MM-YYYY"
+    inputFormat="dd-MM-yyyy" 
     value={selectedDate}
     shouldDisableDate={disableFutureDates}
     sx={{ width: '40%' }}

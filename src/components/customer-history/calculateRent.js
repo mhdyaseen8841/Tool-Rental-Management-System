@@ -22,7 +22,7 @@ export default function CalculateScreenDialog(details) {
     Amount: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Amount is required'),
     
   });
-
+console.log(new Date())
   const initialDate = update ? details.data.date : new Date();
   const [selectedDate, setSelectedDate] = useState(initialDate); // Set the initial state to the current date
 
@@ -96,11 +96,13 @@ export default function CalculateScreenDialog(details) {
             <Stack direction={'row'}  justifyContent={"end"} gap={1}>
   <DatePicker
     label="Select Date"
-    format="DD-MM-YYYY"
+    format="dd-mm-yyyy"        
+    inputFormat="dd-MM-yyyy"    
     value={selectedDate}
     shouldDisableDate={disableFutureDates}
     sx={{ width: '40%' }}
     onChange={(newDate) => {
+      console.log(newDate)
       setSelectedDate(newDate);
       getData(newDate);
 
