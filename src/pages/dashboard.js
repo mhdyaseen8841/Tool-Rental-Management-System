@@ -13,7 +13,7 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import { useRouter } from 'next/router';
 import requestPost from '../../serviceWorker';
 import Router from 'next/router';
-
+import Loader from '../components/Loader';
 const Page = () => {
 const router=useRouter()
 
@@ -25,6 +25,7 @@ const [customers, setCustomers] = useState('')
 const [items, setItems] = useState('')
 const [amount, setAmount] = useState('')
 const [users, setUsers] = useState('')
+const [loader, setLoader] = useState(true)
 
 function getDashboardData(){
   let data=  {
@@ -54,7 +55,7 @@ function getDashboardData(){
       setGraphLabel(res.result.graph.label)
    setPieData(res.result.pie.pieData)
     setPieLabel(res.result.pie.pieLabel)
-
+    setLoader(false)
   }
   })
   // .catch((err)=>{
@@ -76,6 +77,9 @@ useEffect(() => {
         Dashboard | AONERENTALS
       </title>
     </Head>
+    
+    {loader ? <Loader/>  
+    :
     <Box
       component="main"
       sx={{
@@ -146,6 +150,7 @@ useEffect(() => {
         </Grid>
       </Container>
     </Box>
+}
   </>
 );
     }

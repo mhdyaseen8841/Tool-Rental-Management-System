@@ -6,13 +6,14 @@ import { ReportListToolbar } from "../components/report/report-list-toolbar";
 
 import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
-
+import Loader from '../components/Loader';
 import Router from 'next/router';
 const Page = () => {
 
     const [data, setData] = useState([])
     const [label , setLabel] = useState([])
- 
+    const [loader, setLoader] = useState(true)
+
   const [items, setItems] = useState({})
 
   function getItems(){
@@ -47,7 +48,7 @@ console.log(res.result.label)
         setLabel(res.result.label)
     //   setItems(res.result)
     }
-
+    setLoader(false)
   }
    
   })
@@ -68,6 +69,8 @@ console.log(res.result.label)
         Customers | Material Kit
       </title>
     </Head>
+    {loader && <Loader/>  }
+    
     <Box
       component="main"
       sx={{
@@ -82,6 +85,7 @@ console.log(res.result.label)
         </Box>
       </Container>
     </Box>
+
   </>
 );
     }

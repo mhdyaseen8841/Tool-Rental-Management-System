@@ -9,6 +9,9 @@ import {
   Button,
   Card,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   Table,
   TableBody,
   TableCell,
@@ -16,6 +19,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
@@ -23,13 +27,53 @@ import FadeMenu from '../more-items-btn';
 import FullScreenDialog from './update-history';
 import requestPost from '../../../serviceWorker'
 import { DataUsageSharp } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Router from 'next/router';
 import { useEffect } from 'react';
+
+
+
+export default function AlertDialog(props) {
+ 
+  const confirm = () => {
+    props.deleteCustomer();
+  };
+
+  const handleClose = () => {
+    props.setOpen(false);
+  };
+
+  return (
+    <div>
+     
+      <Dialog
+        open={props.open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+         Confirm Delete?
+        </DialogTitle>
+        
+        <DialogActions>
+          <Button color="error" onClick={handleClose}>Decline</Button>
+          <Button color="success" onClick={confirm} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
+
 
 export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [page, setPage] = useState(0);
+  const [mId, setMid] = useState('');
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
 
@@ -38,8 +82,43 @@ export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
   };
 
 
-  
+  const deleteConfirm = (mid) => {
+    setAlertOpen(true)
+    setMid(mid)
+  }
 
+
+  const deleteUser = ()=>{
+    let del = {
+      "type" : "SP_CALL",
+      "requestId" : 1400004,
+      request: {
+       "mId": mId
+     }
+    }
+    requestPost(del).then((res)=>{
+      console.log(mId)
+      if(res.errorCode===3){
+        Router
+        .push(
+        
+        {
+          pathname: '/',
+          query: { redirect: '1' },
+        })
+    }else if(res.errorcode ==0){
+        
+     
+      }else{
+        setAlertOpen(false)
+        getdata()
+        
+      }
+     
+    })
+setMid('')
+
+  }
 
 const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
   setOpen(true);
@@ -167,6 +246,8 @@ const handleHModalAdd = (e,mid) => {
   return (
     
     <Card {...rest}>
+       <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser}/>
+
         {addDialog}
       <PerfectScrollbar>
         <Box >
@@ -181,7 +262,9 @@ const handleHModalAdd = (e,mid) => {
                 <TableCell>
                  Date
                 </TableCell>
-             
+             <TableCell>
+              Actions
+             </TableCell>
                 
                 {/* {localStorage.getItem('usertype') === 'owner' ? (
     null
@@ -221,6 +304,25 @@ const handleHModalAdd = (e,mid) => {
     <FadeMenu   updateItem={(e)=>handleAdd(e,true,'UPDATE', {name:customer.item,hId:customer.hId,qty:customer.qty})} />
     </TableCell>)} */}
                  
+                 <TableCell>  
+                  {customer.deleteStatus  == '1' ? (
+    <Tooltip title="Delete">          
+    <DeleteIcon cursor={'pointer'}  color="error"  onClick={()=>{deleteConfirm(customer.mId)}} />
+    </Tooltip>
+
+  ) : (
+    <Tooltip title="Can't Delete, history older than 1 week">          
+    <DeleteIcon cursor={'pointer'}  color="disabledColor"  />
+    </Tooltip>
+  )} 
+                 
+
+               
+    
+
+   
+
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

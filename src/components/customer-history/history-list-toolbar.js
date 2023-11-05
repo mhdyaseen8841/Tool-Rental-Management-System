@@ -113,6 +113,7 @@ console.log(req)
         onClose={handleClose}
         open={open}
         submit={add}
+        button="Add"
       />
     ));
     

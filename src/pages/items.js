@@ -8,10 +8,12 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import requestPost from '../../serviceWorker'
 
 import Router from 'next/router';
+import Loader from '../components/Loader';
 const Page = () => {
 
  
   const [items, setItems] = useState([{}])
+  const [loader, setLoader] = useState(true)
 
   function getItems(){
     let data=  {
@@ -38,7 +40,7 @@ const Page = () => {
     }else{
       setItems(res.result)
     }
-
+    setLoader(false)
   }
    
   })
@@ -61,7 +63,8 @@ const Page = () => {
         Customers | Material Kit
       </title>
     </Head>
-    <Box
+    {loader ? <Loader/>  
+    :<Box
       component="main"
       sx={{
         flexGrow: 1,
@@ -75,6 +78,7 @@ const Page = () => {
         </Box>
       </Container>
     </Box>
+}
   </>
 );
     }

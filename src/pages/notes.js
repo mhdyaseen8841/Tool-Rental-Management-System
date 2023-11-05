@@ -12,7 +12,7 @@ import { CustomerLayout } from "../components/customer-layout";
 import requestPost from '../../serviceWorker'
 
 import { useRouter } from 'next/router';
-
+import Loader from '../components/Loader';
 import Router from 'next/router';
 const Page = () => {
 
@@ -32,6 +32,7 @@ const Page = () => {
 const [table,setTable]=useState(1)
 const [data,setData]=useState({})
 
+const [loader, setLoader] = useState(true)
 
 
 const handleClose = ()=>{
@@ -77,7 +78,8 @@ const handleClose = ()=>{
        setItem(res.result.label)
      }
     
- 
+     setLoader(false)
+
    }
    })
    .catch((err)=>{
@@ -114,7 +116,8 @@ Router.push('/dashboard')
       Notes | TRMS
       </title>
     </Head>
-    <Box
+    {loader ? <Loader/>  
+    : <Box
       component="main"
       sx={{
         flexGrow: 1,
@@ -138,6 +141,7 @@ Router.push('/dashboard')
         </Box>
       </Container>
     </Box>
+}
   </>
 );
     }

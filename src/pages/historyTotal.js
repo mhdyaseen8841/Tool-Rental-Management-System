@@ -17,7 +17,7 @@ import requestPost from '../../serviceWorker'
 import { useRouter } from 'next/router';
 import { HistoryTotalResult } from '../components/customer-history/history-total-result';
 import {RateCardResult} from '../components/customer-history/RateCardResult'
-
+import Loader from '../components/Loader';
 import Router from 'next/router';
 const Page = () => {
 
@@ -36,6 +36,7 @@ const Page = () => {
 const [table,setTable]=useState(1)
 const [data,setData]=useState({})
 
+const [loader, setLoader] = useState(true)
 
 
 const handleClose = ()=>{
@@ -74,23 +75,7 @@ const handleClose = ()=>{
 
     if(res.result){
          
-        // if((res.result[0][0] ==null) && (res.result[1][0] == null)){
-        //   setCustomers([])
-        //   setPayments([])
-        // }else{
-        //   if(res.result[0][0] ==null){
-        //     setCustomers([])
-        //     setPayments(res.result[1])
-        //   }else if(res.result[1][0] == null){
-           
-        //     setCustomers(res.result[0])
-        //     setPayments([])
-        //   }else{
-        //     setCustomers(res.result[0])
-        //     setPayments(res.result[1])
-        //   }
-          
-        // }
+    
 
         setCustomers(res.result[0])
         setPayments(res.result[1])
@@ -107,6 +92,7 @@ const handleClose = ()=>{
     
           }
  
+          setLoader(false)
    }
    })
    .catch((err)=>{
@@ -145,7 +131,8 @@ Router.push('/dashboard')
       History | TRMS
       </title>
     </Head>
-    <Box
+    {loader ? <Loader/>  
+    : <Box
       component="main"
       sx={{
         flexGrow: 1,
@@ -169,6 +156,7 @@ Router.push('/dashboard')
         </Box>
       </Container>
     </Box>
+}
   </>
 );
     }

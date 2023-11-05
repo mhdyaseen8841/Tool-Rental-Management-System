@@ -17,7 +17,7 @@ import requestPost from '../../serviceWorker'
 import { useRouter } from 'next/router';
 import { HistoryTotalResult } from '../components/customer-history/history-total-result';
 import {RateCardResult} from '../components/customer-history/RateCardResult'
-
+import Loader from '../components/Loader';
 import Router from 'next/router';
 const Page = () => {
 
@@ -34,6 +34,7 @@ const Page = () => {
   const [error, setError] = useState('')
 const [table,setTable]=useState(1)
 const [data,setData]=useState({})
+const [loader, setLoader] = useState(true)
 
 
 
@@ -78,7 +79,7 @@ const handleClose = ()=>{
        setCustomers(res.result)
      }
     
- 
+     setLoader(false)
    }
    })
    .catch((err)=>{
@@ -110,7 +111,8 @@ Router.push('/dashboard')
       History | TRMS
       </title>
     </Head>
-    <Box
+    {loader ? <Loader/>  
+    : <Box
       component="main"
       sx={{
         flexGrow: 1,
@@ -134,6 +136,7 @@ Router.push('/dashboard')
         </Box>
       </Container>
     </Box>
+}
   </>
 );
     }
