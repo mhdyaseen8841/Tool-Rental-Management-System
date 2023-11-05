@@ -130,7 +130,7 @@ export const CustomerNotes = ({ customers,items, getdata, ...rest }) => {
           style={{
             color:  'white',
             background: noteItem.status !== 0 ? 'red' : 'green',
-            maxWidth: '60px',
+   
             textAlign: 'center',
             borderRadius: '16px', 
             padding: '8px', 
