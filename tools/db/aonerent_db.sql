@@ -452,7 +452,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400003` (IN `request` JS
     SET SESSION group_concat_max_len = 1000000;
     set ststs = (select status from renthistory where hId = json_value(request,'$.hId'));
     set id = (select itemId from renthistory where hId = json_value(request,'$.hId'));
-    if ststs = 1 then
+    if ststs = 1 then-
 		set qsty = (select qty from renthistory where hId = json_value(request,'$.hId'));
         set qsty = json_value(request,'$.qty') - qsty;
 		update renthistory 
@@ -470,8 +470,13 @@ END$$
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400004` (IN `request` JSON)   BEGIN
     declare mhid int;
     SET SESSION group_concat_max_len = 1000000;
-    DELETE from renthistorymaster where mId = json_value(request,'$.mId');
-    select JSON_OBJECT("errorCode",1,"errorMsg","Delete Successfully") as result;
+    set mhid = (select mId from renthistorymaster where mId = json_value(request,'$.mId'));
+    if mhid is not null then
+      DELETE from renthistorymaster where mId = json_value(request,'$.mId');
+      select JSON_OBJECT("errorCode",1,"errorMsg","Delete Successfully") as result;
+    else
+      select JSON_OBJECT("errorCode",0,"errorMsg","Wrong mId") as result;
+    end if;
 END$$
 
 

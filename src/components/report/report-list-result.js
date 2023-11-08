@@ -281,8 +281,8 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
           opts.row.section == "body"
         ) {
           if (opts.cell.raw != "") {
-            opts.cell.styles.textColor = "#fff";
-            opts.cell.styles.fillColor = "#c00";
+            opts.cell.styles.textColor = "#000";
+            opts.cell.styles.fillColor = "#dee0df";
           }
         }
         if (
@@ -290,9 +290,9 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
           opts.row.index == datas.length - 2 ||
           opts.row.index == datas.length - 3
         ) {
-          opts.cell.styles.textColor = "#000";
+          opts.cell.styles.textColor = "#fff";
+          opts.cell.styles.fillColor = "#c00";
           opts.cell.styles.fontStyle = "bold";
-          opts.cell.styles.fillColor = "#dee0df";
           if (opts.column.index == headers[0].length - 1) {
             opts.cell.styles.fontSize = 12;
           }
