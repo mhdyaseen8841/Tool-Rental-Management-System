@@ -176,13 +176,14 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
 
 
-const handleHModalAdd = (e,mid) => {
+const handleHModalAdd = (e,mid,hStatus) => {
   //setOpen(true); 
   setDialog(() => (
     <GetHistoryDialog
       onClose={handleClose}
       open={true}
       mId={mid}
+      hStatus={hStatus}
     />
   ));
 
@@ -284,7 +285,7 @@ const handleHModalAdd = (e,mid) => {
                 >
                  
                  <TableCell
-                  onClick={(e)=>handleHModalAdd(e,customer.mId)}
+                  onClick={(e)=>handleHModalAdd(e,customer.mId,customer.status)}
                   >
                     
                       <Button sx={{ backgroundColor: customer.status ? '#f32013' : '#4BB543' }}

@@ -95,17 +95,27 @@ export default function GetHistoryDialog(details) {
                     <Typography >{item.date}</Typography>
                   </Grid>
 
-                  <Grid item xs={3}>
+                  <Grid item xs={details.hStatus ? 2 : 3}>
                     <Typography >{item.item}</Typography>
                   </Grid>
 
-                  <Grid item xs={3}>
+                  <Grid item xs={details.hStatus ? 2 : 3}>
                     <Typography >₹{item.rate}</Typography>
                   </Grid>
 
-                  <Grid item xs={3}>
+                  <Grid item xs={details.hStatus ? 2 : 3}>
                     <Typography >qty:{item.qty}</Typography>
                   </Grid>
+{details.hStatus ?
+(
+<Grid item xs={3}>
+<Typography >
+<span style={{ fontWeight: 'bold' }}>Total:₹{item.qty*item.rate}</span></Typography>
+</Grid>
+):
+(<></>)
+}
+                
 
                 </Grid>
               </>)
