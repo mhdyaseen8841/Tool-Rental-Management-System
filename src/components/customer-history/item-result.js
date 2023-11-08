@@ -165,7 +165,7 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
             <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }}>Total Items</Typography></TableCell>
             {itemTotalArr.map((total, ind) => (
               <TableCell key={ind} >
-                <Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }} >{total}</Typography> 
+                <Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }} >{Math.abs(total)}</Typography> 
               </TableCell>
             ))}
           </TableRow>
