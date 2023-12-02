@@ -31,7 +31,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
 
   
   const add = (data,file,cPic) => {
-   console.log("hey")
     let req = {
       "type": "SP_CALL",
       "requestId": 1100001,
@@ -52,10 +51,6 @@ const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
         "doc": file[i]
       });
     }
-
-console.log("req-------------------")
-
-console.log(req);
 
 requestPost(req).then((res)=>{
 

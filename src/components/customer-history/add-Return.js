@@ -25,6 +25,8 @@ import {
   TableCell,
   Container,
   Typography,
+  Backdrop,
+  CircularProgress,
 
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -36,14 +38,15 @@ import Router from 'next/router';
 
 
 export default function ReturnDialog(details) {
-console.log('detailsssssssssssssssssssssssssss')
-console.log(details)
+
 
   const [update, setUpdate] = useState(details.updated);
   const [noOfRows, setNoOfRows] = useState(1);
   const [items, setItems] = useState([]);
   const [qtyerror, setQtyError] = useState('');
   const [qterr, setqtErr] = useState(false);
+  const [backDropOpen, setBackDropOpen] = useState(false);
+
   const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ""))
   // const [itemsArr,setItemsArr]=useState([{}])
   const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
@@ -68,12 +71,10 @@ console.log(details)
       }
       
     }
-    console.log('cccccccccccccccccccccccccccccccccccc')
-    console.log(details.cId)
+
    
     requestPost(requestdata2).then((res) => {
-console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
-      console.log(res.result);
+
       if (res.errorCode === 3) {
         Router
           .push(
@@ -86,7 +87,6 @@ console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
         if (res.result[0] == null) {
           setItems([])
         } else {
-          console.log(res.result);
           setItems(res.result);
          
         }
@@ -145,13 +145,9 @@ console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
           } else {
 
             let Inote = document.getElementById(`notes${ind}`).value;
-            console.log("--------------------------------------")
-            console.log(Inote)
             if (!Inote) {
               Inote = ""
             }
-            console.log("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
-console.log(items[ind])
             itemsArr.push({
               "itemId": items[ind].itemId,
               "qty": element.value,
@@ -169,8 +165,7 @@ console.log(items[ind])
       }else{
       // details.submit(notes,itemsArr);
       if (flag == false) {
-        console.log('details')
-        console.log(itemsArr)
+        setBackDropOpen(true)
         details.submit(itemsArr,selectedDate);
       } 
     }
@@ -222,6 +217,12 @@ console.log(items[ind])
         </Snackbar>
       }
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
+      <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={backDropOpen}
+        >
+          <CircularProgress color="primary" />
+        </Backdrop>
         <AppBar sx={{ position: 'relative', background: '#5048E5' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">

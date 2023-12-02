@@ -6,7 +6,7 @@ function formatError(){
     print json_encode($format);
  }
  function formatChecker($key,$array){
-     if(array_key_exists($key, $array)){
+     if(array_key_exists($key, (array)$array)){
          return true;
      }
      else{

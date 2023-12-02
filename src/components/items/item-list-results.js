@@ -38,8 +38,6 @@ export const ItemListResults = ({ items,getdata, ...rest }) => {
   
   const handlePopup = (e, itemId) => {
     setOpen(true);
-    console.log("--------------------------------------------------------------")
-    console.log(itemId)
     setDialog(() => (
   
       <FullScreenDialogPopup
@@ -124,8 +122,6 @@ const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
   
   const add = (data) => {
     
-console.log("noteeee check")
-console.log(data)
     let req={
       "type" : "SP_CALL",
       "requestId" : 1300001,

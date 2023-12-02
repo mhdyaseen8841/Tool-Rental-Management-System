@@ -95,7 +95,6 @@ export const CustomerSidebar = (props) => {
   );
   function getItems() {
     let a = sessionStorage.getItem("Cid")
-    console.log(a)
     let data = {
       type: "SP_CALL",
       requestId: 1200006,
@@ -121,7 +120,6 @@ export const CustomerSidebar = (props) => {
             setButtons([]);
           } else {
             setButtons(res.result);
-            console.log(res.result);
             items.push(
   ...res.result.map((dt) => {
     // Check if the item already exists in the array

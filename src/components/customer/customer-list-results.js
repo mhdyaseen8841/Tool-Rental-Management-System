@@ -212,7 +212,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
         {addDialog}
       <PerfectScrollbar>
         <Box >
-        <TableContainer style={{ maxHeight: '400px' }}>
+        <TableContainer style={{ maxHeight: '700px' }}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -240,9 +240,10 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
                   hover
                   key={customer.cId}
                   selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                  
                 >
                 
-                  <TableCell>
+                  <TableCell sx={{ padding: '4px'}}>
                     <Box
                       sx={{
                         alignItems: 'center',
@@ -252,7 +253,7 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
                     >
                       <Avatar
                         
-                        sx={{ mr: 2 }}
+                        sx={{ mr: 2,ml:2 }}
                         
                       >
                       {customer.cName?(getInitials(customer.cName)):""}  
@@ -267,12 +268,12 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
                       </Link>
                     </Box>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ padding: '2px'}}>
             {customer.mobile}
              <br />
                {customer.altermobile}
              </TableCell>
-             <TableCell>
+             <TableCell sx={{ padding: '2px'}}>
                   {localStorage.getItem('usertype') === 'owner' ? (
     null
   ) : (   

@@ -308,11 +308,11 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
         <PerfectScrollbar>
           <Box >
 
-            <TableContainer style={{ maxHeight: '400px' }}>
+            <TableContainer style={{ maxHeight: '700px' }}>
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>
+                    <TableCell >
                       Name
                     </TableCell>
                     <TableCell>
@@ -330,9 +330,10 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                       hover
                       key={customer.cId}
                       selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                      sx={{padding:0}}
                     >
 
-                      <TableCell>
+                      <TableCell sx={{padding:'4px'}}>
                         <Box
                           sx={{
                             alignItems: 'center',
@@ -346,7 +347,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                               setProfileOpen(true)
 
                              } }
-                            sx={{ mr: 2 }}
+                            sx={{ mr: 2, ml:2 }}
 
                           >
                             {customer.cName ? (getInitials(customer.cName)) : ""}
@@ -360,12 +361,12 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                         
                         </Box>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{padding:'4px'}}>
                         {customer.mobile}
                         <br />
                         {customer.altermobile}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{padding:'4px'}}>
                       {localStorage.getItem('usertype') === 'owner' ? 
                         null
                        :

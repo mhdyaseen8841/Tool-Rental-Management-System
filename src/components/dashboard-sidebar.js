@@ -145,7 +145,6 @@ export const DashboardSidebar = (props) => {
         <Box sx={{ flexGrow: 1 }}>
           {items.map((item) => {
 if(localStorage.getItem('usertype') === 'owner' && item.isOwner ){
-  console.log(item.isOwner)
 return(
     <NavItem
       key={item.title}

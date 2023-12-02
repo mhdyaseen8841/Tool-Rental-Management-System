@@ -44,10 +44,8 @@ export default function GetCustomerProfile(details) {
         if (res.errorcode == 0) {
         } else {
           if (!res.result) {
-            console.log(res.result);
             setData({});
           } else {
-            console.log(res.result);
 
             setData(res.result);
           }

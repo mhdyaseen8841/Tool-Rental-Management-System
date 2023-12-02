@@ -14,8 +14,12 @@
         authentication($data->request);
     }
     else if(formatChecker('type',$data) && $data->type == "SP_CALL"){
-       sessionValidate();
-        spCall($data->request,$data->requestId);
+       //sessionValidate();
+       if($data->requestId == 1100001){
+            sp1100001($data->request);
+       } else {
+            spCall($data->request,$data->requestId);
+       }
     }
     else{
         formatError();

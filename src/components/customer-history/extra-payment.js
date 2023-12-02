@@ -104,17 +104,11 @@ export const ExtraPayment = ({ customers, getdata, ...rest }) => {
 
   const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
 
- console.log('heyyyyyyyyyy')
     setOpen(true);
-    
-    
-  
+
     
     const add = (date,datas) => {
-      console.log(datas)
-      
-      
-  
+
       let req={
         "type" : "SP_CALL",
         "requestId" : 1700007,
@@ -228,13 +222,9 @@ export const ExtraPayment = ({ customers, getdata, ...rest }) => {
   };
 
   useEffect(() => {
-    console.log('customerffffffffffffffffffffffffffs')
-    console.log(customers)
-
     setData(customers)
-
-  
     }, [customers]);
+    
   return (
 
     <Card {...rest}>

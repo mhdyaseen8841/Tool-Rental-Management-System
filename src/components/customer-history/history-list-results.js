@@ -97,7 +97,6 @@ export const HistoryListResults = ({ customers,getdata, ...rest  }) => {
      }
     }
     requestPost(del).then((res)=>{
-      console.log(mId)
       if(res.errorCode===3){
         Router
         .push(
@@ -239,10 +238,6 @@ const handleHModalAdd = (e,mid,hStatus) => {
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
-
-  useEffect(() => {
-    console.log(customers)
-  }, [])
 
   return (
     

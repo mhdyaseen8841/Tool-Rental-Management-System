@@ -88,9 +88,6 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
   };
 
   useEffect(() => {
-    console.log('customerffffffffffffffffffffffffffs')
-    console.log(customers)
-    console.log(items)
     setData(customers)
     setItem(items)
   

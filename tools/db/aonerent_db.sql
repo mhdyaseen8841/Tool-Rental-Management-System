@@ -162,7 +162,7 @@ DECLARE datas JSON;
                                'proof',proof,
                                'coName',coName,
                                'coMobile',coMobile
-                               ))) as result from customermaster WHERE status = 0);
+                               ) ORDER BY cName)) as result from customermaster WHERE status = 0);
   select JSON_OBJECT('errorCode',1,'result',datas) as result;
 
 END$$
@@ -178,7 +178,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100006` (IN `request` JS
                                'proof',proof,
                                'coName',coName,
                                'coMobile',coMobile
-                               )))) as result from customermaster WHERE status=1;
+                               ) ORDER BY cName))) as result from customermaster WHERE status=1;
 
 END$$
 
@@ -687,6 +687,15 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
     	set mData = (SELECT JSON_ARRAY());
     end if;
     select json_object("errorCode",1,"result",JSON_MERGE(sData,mData)) as result;
+END$$
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600006` (IN `request` JSON)   BEGIN
+  DECLARE sData DECIMAL(10,2);
+  SET SESSION group_concat_max_len = 1000000;
+  set sData  = (select SUM((rate / 30)*rh.pending) as rate
+    from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId inner join ratecard rc on rhm.cId = rc.cId and rc.itemId = rh.itemId
+    where rhm.cId = json_value(request,'$.cId') and rh.status=1 and rh.pending != 0);
+    select JSON_OBJECT('data',sData) as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700001` (IN `request` JSON)   BEGIN

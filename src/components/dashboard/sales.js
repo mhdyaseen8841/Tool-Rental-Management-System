@@ -30,7 +30,6 @@ export const Sales = (props) => {
       }
     }
     requestPost(data).then((res) => {
-      console.log(res);
       if (res.errorCode === 3) {
         Router
           .push(
@@ -41,7 +40,6 @@ export const Sales = (props) => {
       } else {
         if (res.errorCode === 1) {
           if (res.result[0] != null) {
-            console.log(res.result);
             setItems(res.result.map((dt) => { return { itemName: dt.iName, itemId: dt.itemId } }))
           }
         }
@@ -59,9 +57,7 @@ export const Sales = (props) => {
         items: selectedItem
       }
     }
-    console.log(data);
     requestPost(data).then((res) => {
-      console.log(res);
       if (res.errorCode === 3) {
         Router
           .push(
@@ -174,7 +170,6 @@ export const Sales = (props) => {
     const {
       target: { value },
     } = event;
-    console.log(value);
     setSelectedItems(value);
   };
 

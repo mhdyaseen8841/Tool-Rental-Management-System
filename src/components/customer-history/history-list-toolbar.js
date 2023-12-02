@@ -34,9 +34,6 @@ import CalculateScreenDialog from "./calculateRent";
 
 
 export const HistoryListToolbar = (props) => {
-  console.log("prooooooooooops")
-  console.log(props)
-  console.log(sessionStorage.getItem("Cid"))
   const [open, setOpen] = useState(true);
   const [Sopen, setSOpen] = useState(false);
 
@@ -66,8 +63,6 @@ export const HistoryListToolbar = (props) => {
   const handleCalculate = (e) => {
     
     const add = (date, data) => {
-      console.log(data)
-      console.log(date)
       let req =  {
         "type" : "SP_CALL",
         "requestId" : 1700006,
@@ -79,7 +74,6 @@ export const HistoryListToolbar = (props) => {
 "status" : data.Status
        }
   }
-console.log(req)
       requestPost(req).then((res) => {
 
 
@@ -133,7 +127,6 @@ console.log(req)
           items: items,
         },
       };
-console.log(req)
       requestPost(req).then((res) => {
 
 
@@ -282,19 +275,15 @@ console.log(req)
       }
 
       requestPost(req).then((res) => {
-        console.log('1111111111111111111111111111111111111111111111111')
-console.log(res)
         if (res.errorCode === 3) {
           Router
             .push('/')
 
         } else {
-          console.log('22222222222222222222222')
           if (res.errorcode == 0) {
             setDialog();
 
           } else {
-            console.log('33333333333333333333333')
             props.getdata();
 
             setDialog();

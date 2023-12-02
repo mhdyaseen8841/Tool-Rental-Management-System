@@ -31,9 +31,7 @@ function getData(){
 }
 
 
-console.log(datas)
   requestPost(datas).then((res)=>{
-    console.log(res.result)
 
     if(res.errorCode===3){
       Router
