@@ -226,7 +226,7 @@ if (isset($_REQUEST["cId"])) {
                                     </div>
 
 
-                                    <div class="table-responsive" style="max-height:500px;height: 250px;">
+                                    <div class="table-responsive" style="max-height:500px;height: 300px;">
                                         <table class="table w-100">
                                             <h4 id="itemTableFoot"></h4>
                                             <thead>
@@ -242,6 +242,7 @@ if (isset($_REQUEST["cId"])) {
                                             </thead>
                                             <tbody id="itemTable">
                                                 <?php
+                                                $pendings = array(); 
                                                 foreach ($itData as $key => $value) {
                                                     echo "<tr>";
                                                     foreach ($value as $key1 => $value1) {
@@ -250,6 +251,7 @@ if (isset($_REQUEST["cId"])) {
                                                         } else {
                                                             $income = $value1->incoming;
                                                             $outgo = $value1->outgoing;
+                                                            $pendings[$key1] = $pendings[$key1] + ($outgo->qty - $income->qty);
                                                             echo "<td align='center'>";
                                                             if ($income->qty != 0) {
                                                                 echo "<div style='background:green;width:50px;color:white;font-weight:bold;'>" . $income->qty . "</div>";
@@ -262,9 +264,13 @@ if (isset($_REQUEST["cId"])) {
                                                     }
                                                     echo "</tr>";
                                                 } ?>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
+                                                <?php
+                                                    echo "<tr style='background : white; position: sticky; bottom: 0;z-index:99;'>";
+                                                    echo "<th>Pending</th>";
+                                                    foreach ($pendings as $key => $value) {
+                                                        echo "<th style='font-weight:bold;text-align:center; font-size:16px'>".$value."</th>";
+                                                    }
+                                                ?>
                                                 </tr>
                                             </tbody>
 

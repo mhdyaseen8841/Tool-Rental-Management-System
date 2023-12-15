@@ -231,6 +231,17 @@ export const HistoryTotalResult = ({
   }
 
   useEffect(() => {
+    let  data =  {
+      "type" : "SP_CALL",
+    "requestId" : 1600006,
+       request: {
+    "cId":sessionStorage.getItem("Cid")
+      }
+    }
+
+    requestPost(data).then((res)=>{
+      setDailytotal(res.data)
+    })
 
     let totalAmount = 0;
     let totalPaidAmount = 0;
@@ -250,19 +261,6 @@ export const HistoryTotalResult = ({
       }else{
         ex -= extraPayment[i].amount
       }
-
-      let  data =  {
-        "type" : "SP_CALL",
-      "requestId" : 1600006,
-         request: {
-      "cId":sessionStorage.getItem("Cid")
-        }
-      }
-  
-      requestPost(data).then((res)=>{
-        setDailytotal(res.data)
-      })
-      
     }
 
     setTotal(totalAmount);
@@ -280,7 +278,7 @@ export const HistoryTotalResult = ({
       setAdvance(0);
     }
     getPendingItems();
-  }, [customers, payments]);
+  }, [customers]);
 
 
   const deleteUsers = () => {
@@ -340,7 +338,7 @@ export const HistoryTotalResult = ({
                 Total Paid
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {items ? items.paid : 0.00}
+                {items ? (items.paid ? items.paid : 0.00) : 0.00}
               </Typography>
             </Paper>
           </Grid>

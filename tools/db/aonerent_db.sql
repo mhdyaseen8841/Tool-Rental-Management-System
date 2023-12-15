@@ -692,7 +692,7 @@ END$$
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600006` (IN `request` JSON)   BEGIN
   DECLARE sData DECIMAL(10,2);
   SET SESSION group_concat_max_len = 1000000;
-  set sData  = (select SUM((rate / 30)*rh.pending) as rate
+  set sData  = (select SUM(IF(DATEDIFF(curdate(),rh.hDate)>30,(rate / 30)*rh.pending,0)) as rate
     from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId inner join ratecard rc on rhm.cId = rc.cId and rc.itemId = rh.itemId
     where rhm.cId = json_value(request,'$.cId') and rh.status=1 and rh.pending != 0);
     select JSON_OBJECT('data',sData) as result;

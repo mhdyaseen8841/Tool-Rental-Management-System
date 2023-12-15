@@ -108,9 +108,10 @@ export default function FullScreenDialog(details) {
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
       setBackDropOpen(true)
-      details.submit(values, docs, customerPhoto)
-
-
+      details.submit(values, docs, customerPhoto);
+      setTimeout(() => {
+        setBackDropOpen(false)
+      }, 2000);
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
