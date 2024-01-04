@@ -106,7 +106,7 @@ export default function AlertDialog(props) {
 
 export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(1000);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
@@ -308,7 +308,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
         <PerfectScrollbar>
           <Box >
 
-            <TableContainer style={{ maxHeight: '500px' }}>
+            <TableContainer style={{ maxHeight: '2000px' }}>
               <Table>
                 <TableHead>
                   <TableRow>

@@ -1,11 +1,16 @@
 import axios from "axios";
 import Router from 'next/router';
 
-const ServiceURL = 'https://aonerentals.in/tools/src/API/' //live server 
 
-// const ServiceURL = 'http://localhost/tools/src/API/' //development server
+export const baseUrl = 'https://aonerentals.in/'; // main
 
-// const ServiceURL = 'https://03e0-202-164-138-93.ngrok-free.app/tools/src/API/' //development NGROK server
+// export const baseUrl = 'https://godown.aonerentals.in/'; // godown server
+
+// export const baseUrl = 'http://localhost/' //development server
+
+
+const ServiceURL = `${baseUrl}tools/src/API/` //live server 
+
 
 const requestPost = async (data)=>{
 

@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Router from 'next/router';
-import requestPost from "../../../serviceWorker";
+import requestPost, { baseUrl } from "../../../serviceWorker";
 import React from "react";
 import FadeMenu from "../more-items-btn";
 import FullScreenDialog from "./update-payment";
@@ -312,7 +312,7 @@ export const HistoryTotalResult = ({
 
   }
 
-  const whatsAppMsg = `*AONE RENTAL* %0a https://aonerentals.in/tools/src/user/?cId=${sessionStorage.getItem('Cid')}`;
+  const whatsAppMsg = `*AONE RENTAL* %0a ${baseUrl}tools/src/user/?cId=${sessionStorage.getItem('Cid')}`;
 
   return (
     <>

@@ -452,7 +452,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400003` (IN `request` JS
     SET SESSION group_concat_max_len = 1000000;
     set ststs = (select status from renthistory where hId = json_value(request,'$.hId'));
     set id = (select itemId from renthistory where hId = json_value(request,'$.hId'));
-    if ststs = 1 then-
+    if ststs = 1 then
 		set qsty = (select qty from renthistory where hId = json_value(request,'$.hId'));
         set qsty = json_value(request,'$.qty') - qsty;
 		update renthistory 

@@ -57,7 +57,6 @@ let items = [
     icon: (<UsersIcon fontSize="small" />),
     title: 'Inactive Customers',
     isOwner: false
-
   },
 ];
 

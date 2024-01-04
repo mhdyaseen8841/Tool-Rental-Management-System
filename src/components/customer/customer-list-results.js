@@ -109,7 +109,7 @@ export default function AlertDialog(props) {
 
 export const CustomerListResults = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(1000);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
@@ -120,7 +120,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
   const [alertOpen, setAlertOpen] = useState(false);
   const [cId, setCid] = useState('');
   const handleClose = () => {
@@ -274,7 +274,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
         {addDialog}
         <PerfectScrollbar>
           <Box >
-            <TableContainer style={{ maxHeight: '500px' }}>
+            <TableContainer style={{ maxHeight: '2000px' }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
