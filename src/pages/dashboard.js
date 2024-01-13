@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { Box, Container, Grid } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import { Budget } from '../components/dashboard/budget';
 import { LatestOrders } from '../components/dashboard/latest-orders';
 import { LatestProducts } from '../components/dashboard/latest-products';
@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import requestPost from '../../serviceWorker';
 import Router from 'next/router';
 import Loader from '../components/Loader';
+import { PendingItems } from '../components/dashboard/pending-items';
 const Page = () => {
   const router = useRouter()
 
@@ -21,9 +22,11 @@ const Page = () => {
   const [graphLabel, setGraphLabel] = useState([])
   const [pieData, setPieData] = useState([])
   const [pieLabel, setPieLabel] = useState([])
+  const [pendingItems, setpendingItems] = useState([])
   const [customers, setCustomers] = useState('')
   const [items, setItems] = useState('')
   const [amount, setAmount] = useState('')
+
   const [users, setUsers] = useState('')
   const [loader, setLoader] = useState(true)
 
@@ -63,6 +66,36 @@ const Page = () => {
     //   })
 
 
+
+
+
+    data = {
+      "type": "SP_CALL",
+      "requestId": 1200005,
+      "request": {
+      }
+    }
+
+
+    requestPost(data).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else {
+
+
+        // setData(res.result)
+        setpendingItems(res.result)
+
+      }
+    })
+    // .catch((err)=>{
+    //   setCustomers([{}])
+    //   })
   }
 
   useEffect(() => {
@@ -94,9 +127,9 @@ const Page = () => {
             >
               <Grid
                 item
-                lg={3}
+                xl={4}
+                lg={4}
                 sm={6}
-                xl={3}
                 xs={12}
               >
                 <TotalCustomers data={customers} />
@@ -104,8 +137,8 @@ const Page = () => {
               </Grid>
               <Grid
                 item
-                xl={3}
-                lg={3}
+                xl={4}
+                lg={4}
                 sm={6}
                 xs={12}
               >
@@ -113,14 +146,14 @@ const Page = () => {
               </Grid>
               <Grid
                 item
-                xl={3}
-                lg={3}
+                xl={4}
+                lg={4}
                 sm={6}
                 xs={12}
               >
                 <TasksProgress data={users} />
               </Grid>
-              <Grid
+              {/* <Grid
                 item
                 xl={3}
                 lg={3}
@@ -128,6 +161,11 @@ const Page = () => {
                 xs={12}
               >
                 <TotalProfit sx={{ height: '100%' }} data={amount} />
+              </Grid> */}
+              <Grid
+                item
+                xs={12}>
+                <PendingItems values={pendingItems} />
               </Grid>
               <Grid
                 item

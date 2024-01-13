@@ -1012,7 +1012,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
         if JSON_LENGTH(itemData) = 0  or itemData is null then 
               set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
         end if;
-    set customerData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('cId',`cId`,'name',`cName`,'Phone',`mobile`)),']') from customermaster where status = 0);
+    set customerData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('cId',`cId`,'name',`cName`,'Phone',`mobile`) ORDER BY cName ASC),']') from customermaster where status = 0);
 
     if JSON_EXTRACT(itemData,'$[0]') is null THEN
     	set itemData = (select JSON_ARRAY());
