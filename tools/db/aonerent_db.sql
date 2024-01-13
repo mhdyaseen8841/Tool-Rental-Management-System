@@ -1207,7 +1207,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
     DEClARE sts int;
      SET SESSION group_concat_max_len = 1000000;
     set fdatas = (select JSON_ARRAY());
-    set dates = (select concat('[',GROUP_CONCAT(json_object('hDate',hDate)),']') from (select distinct hDate from renthistory rh inner join renthistorymaster rhm where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
+    set dates = (select concat('[',GROUP_CONCAT(json_object('hDate',hDate) order by hDate),']') from (select distinct hDate from renthistory rh inner join renthistorymaster rhm where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
     set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from (select distinct rh.itemId,i.iName from renthistory rh inner join renthistorymaster rhm inner join items i on i.itemId = rh.itemId where rhm.cId = JSON_VALUE(request, '$.cId')) as indus);
     if dates is null then
       set dates = (select JSON_ARRAY());
@@ -1225,7 +1225,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
         set date1 = (select json_extract(dates, concat('$[',j,']')));
         set i=0;
         set datas = (select JSON_ARRAY());
-        set datas = (select JSON_ARRAY_APPEND(datas,'$',JSON_VALUE(date1, '$.hDate')));
+        set datas = (select JSON_ARRAY_APPEND(datas,'$',DATE_FORMAT(JSON_VALUE(date1, '$.hDate'), "%d-%m-%Y")));
         set sts = 0;
         innerloop : LOOP
           IF i > icnt THEN
@@ -1742,7 +1742,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customermaster`
 --
 ALTER TABLE `customermaster`
-  MODIFY `cId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1035;
+  MODIFY `cId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000;
 
 --
 -- AUTO_INCREMENT for table `document`
@@ -1754,31 +1754,31 @@ ALTER TABLE `document`
 -- AUTO_INCREMENT for table `extrapayment`
 --
 ALTER TABLE `extrapayment`
-  MODIFY `expId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `expId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `itemId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `login_session`
 --
 ALTER TABLE `login_session`
-  MODIFY `sId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `sId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `paymentcollection`
 --
 ALTER TABLE `paymentcollection`
-  MODIFY `pId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `pId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `ratecard`
 --
 ALTER TABLE `ratecard`
-  MODIFY `rId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `rId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `rentcalculations`
@@ -1790,25 +1790,25 @@ ALTER TABLE `rentcalculations`
 -- AUTO_INCREMENT for table `renthistory`
 --
 ALTER TABLE `renthistory`
-  MODIFY `hId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `hId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `renthistorymaster`
 --
 ALTER TABLE `renthistorymaster`
-  MODIFY `mId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `mId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `stockupdate`
 --
 ALTER TABLE `stockupdate`
-  MODIFY `sId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `sId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `uId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- Constraints for dumped tables

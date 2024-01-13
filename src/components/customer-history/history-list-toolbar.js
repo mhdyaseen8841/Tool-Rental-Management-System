@@ -26,6 +26,7 @@ import ReturnDialog from "./add-Return";
 import AddPaymetDialog from "./add-payment";
 import requestPost from "../../../serviceWorker";
 import { mt } from "date-fns/locale";
+import { format } from 'date-fns';
 import Router from 'next/router';
 import CalculateScreenDialog from "./calculateRent";
 
@@ -45,7 +46,7 @@ export const HistoryListToolbar = (props) => {
   const [Copen, setCopen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  
+
 
   const handleConfirmClose = () => {
     setConfirmOpen(false);
@@ -61,19 +62,19 @@ export const HistoryListToolbar = (props) => {
 
 
   const handleCalculate = (e) => {
-    
+
     const add = (date, data) => {
-      let req =  {
-        "type" : "SP_CALL",
-        "requestId" : 1700006,
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1700006,
         "request": {
-  	"cId" :  sessionStorage.getItem("Cid"),
-      	"amount" : data.Amount,
-"date" : date,
-"note" : data.Notes,
-"status" : data.Status
-       }
-  }
+          "cId": sessionStorage.getItem("Cid"),
+          "amount": data.Amount,
+          "date": format(date, "yyyy-MM-dd"),
+          "note": data.Notes,
+          "status": data.Status
+        }
+      }
       requestPost(req).then((res) => {
 
 
@@ -110,20 +111,21 @@ export const HistoryListToolbar = (props) => {
         button="Add"
       />
     ));
-    
+
   }
 
   const handleAdd = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
 
     const add = (items, date) => {
+      console.log(date);
       let req = {
         type: "SP_CALL",
         requestId: 1400001,
         request: {
           cId: sessionStorage.getItem("Cid"),
           status: 1,
-          date: date,
+          date: format(date, "yyyy-MM-dd"),
           items: items,
         },
       };
@@ -168,14 +170,14 @@ export const HistoryListToolbar = (props) => {
 
     setOpen(true);
 
-    const add = (amount,date) => {
+    const add = (amount, date) => {
       let req = {
         "type": "SP_CALL",
         "requestId": 1700001,
         request: {
           "cId": cId,
           "amount": amount,
-          "date":date
+          "date": format(date, "yyyy-MM-dd")
         }
       };
       requestPost(req).then((res) => {
@@ -262,14 +264,14 @@ export const HistoryListToolbar = (props) => {
   const handleReturn = (e, upd = Boolean(false), button = "ADD", data = {}) => {
     setOpen(true);
 
-    const add = ( items,date) => {
+    const add = (items, date) => {
       const req = {
         "type": "SP_CALL",
         "requestId": 1400001,
         "request": {
           "cId": cId,
           "status": 0,
-          "date": date,
+          "date": format(date, "yyyy-MM-dd"),
           "items": items
         }
       }
@@ -382,7 +384,7 @@ export const HistoryListToolbar = (props) => {
   }
 
   useEffect(() => {
-    getItems(); 
+    getItems();
   }, []);
   useEffect(() => {
     setcName(sessionStorage.getItem("Cname"));

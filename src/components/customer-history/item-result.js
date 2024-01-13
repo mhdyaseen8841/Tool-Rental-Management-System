@@ -33,7 +33,7 @@ import { borderBottom } from '@mui/system';
 
 
 
-export const ItemResult = ({ customers,items, getdata, ...rest }) => {
+export const ItemResult = ({ customers, items, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -41,12 +41,12 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
   const [addDialog, setDialog] = useState();
   const [data, setData] = useState([])
   const [item, setItem] = useState([])
- 
+
   const handleClose = () => {
     setDialog();
   };
 
-  
+
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
 
@@ -90,84 +90,90 @@ export const ItemResult = ({ customers,items, getdata, ...rest }) => {
   useEffect(() => {
     setData(customers)
     setItem(items)
-  
-    }, [customers]);
-    const [total,setTotal]=useState([])
-    let itemTotalArr=[]
+
+  }, [customers]);
+  const [total, setTotal] = useState([])
+  let itemTotalArr = []
   return (
 
     <Card {...rest}>
 
       <PerfectScrollbar>
         <Box >
-          <TableContainer component={Paper} style={{ maxHeight: 600}}>
-          <Table stickyHeader>
-  <TableHead>
-    <TableRow>
-      <TableCell>Date</TableCell>
-      
-      {item.map((itemHead, ind) => (
-        <TableCell key={ind}>{itemHead.name}</TableCell>
-      ))}
-      
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    {data.map((customer) => {
-      // let itemTotals = customer.slice(1).map((item) => item.incoming.qty - item.outgoing.qty);
+          <TableContainer component={Paper} style={{ maxHeight: 600 }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
 
-      return (
-        <React.Fragment key={customer.mId}>
-          <TableRow sx={{borderBottom:3,borderColor:'#aaa'}}>
-            <TableCell sx={{ whiteSpace: 'nowrap' ,borderBottom:1,borderColor:'#aaa'}}>{customer[0]}</TableCell>
-            
-            {customer.slice(1).map((item, ind) => {
-               if(itemTotalArr[ind]==undefined){
-                itemTotalArr[ind]=item.incoming.qty - item.outgoing.qty
-                  }
-                else{
-                itemTotalArr[ind]+=item.incoming.qty - item.outgoing.qty
-                }
-              return (
-              
-              <TableCell key={ind} sx={{borderBottom:1,borderColor:'#aaa'}}>
-                <Stack>
-                  {item.outgoing.qty !== 0 ? (
-                    <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center' }}>
-                      {item.outgoing.qty}
-                    </div>
-                  ) : (
-                    <div />
-                  )}
-                  {item.incoming.qty !== 0 ? (
-                    <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center' }}>
-                      {item.incoming.qty}
-                    </div>
-                  ) : (
-                    <div />
-                  )}
-                </Stack>
-              </TableCell>
-            )})}
-            
-          </TableRow>
+                  {item.map((itemHead, ind) => (
+                    <TableCell key={ind} sx={{ textAlign: 'center' }}>{itemHead.name}</TableCell>
+                  ))}
 
-          
-        </React.Fragment>
-      );
-    })}
-  </TableBody>
-  <TableFooter sx={{position:'-webkit-sticky'}}>
-  <TableRow style={{ backgroundColor: '#aaa' }}>
-            <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }}>Total Items</Typography></TableCell>
-            {itemTotalArr.map((total, ind) => (
-              <TableCell key={ind} >
-                <Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign:'center' }} >{Math.abs(total)}</Typography> 
-              </TableCell>
-            ))}
-          </TableRow>
-  </TableFooter>
-</Table>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((customer) => {
+                  // let itemTotals = customer.slice(1).map((item) => item.incoming.qty - item.outgoing.qty);
+
+                  return (
+                    <React.Fragment key={customer.mId}>
+                      <TableRow sx={{ borderBottom: 3, borderColor: '#aaa' }}>
+                        <TableCell sx={{ whiteSpace: 'nowrap', borderBottom: 1, borderColor: '#aaa' }}>{customer[0]}</TableCell>
+
+                        {customer.slice(1).map((item, ind) => {
+                          if (itemTotalArr[ind] == undefined) {
+                            itemTotalArr[ind] = item.incoming.qty - item.outgoing.qty
+                          }
+                          else {
+                            itemTotalArr[ind] += item.incoming.qty - item.outgoing.qty
+                          }
+                          return (
+
+                            <TableCell key={ind} sx={{ borderBottom: 1, borderColor: '#aaa', justifyContent: 'center', alignItems: 'center' }}>
+                              <Stack sx={{ alignItems: 'center' }}>
+                                {item.outgoing.qty !== 0 ? (
+                                  <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center', padding: '2px' }}>
+                                    {item.outgoing.qty}
+                                  </div>
+                                ) : (
+                                  <div />
+                                )}
+                                {item.incoming.qty !== 0 ? (
+                                  <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center', width: '80px' }}>
+                                    {item.incoming.qty}
+                                  </div>
+                                ) : (
+                                  <div />
+                                )}
+                              </Stack>
+                            </TableCell>
+                          )
+                        })}
+
+                      </TableRow>
+
+
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+              <TableFooter sx={{
+                left: 0,
+                bottom: 0, // <-- KEY
+                zIndex: 2,
+                position: 'sticky'
+              }}>
+                <TableRow style={{ backgroundColor: '#bbb' }}>
+                  <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center', fontSize: '20px' }}>Total Items</Typography></TableCell>
+                  {itemTotalArr.map((total, ind) => (
+                    <TableCell key={ind} sx={{ textAlign: 'center' }}>
+                      <Typography variant='h5' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center' }} >{Math.abs(total)}</Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableFooter>
+            </Table>
           </TableContainer >
         </Box>
       </PerfectScrollbar>

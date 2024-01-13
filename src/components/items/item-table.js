@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Chip from '@mui/material/Chip';
 import {
 
   Table,
@@ -10,6 +9,8 @@ import {
   TableRow,
   Card,
   TableContainer,
+  Chip,
+  Typography
 
 } from '@mui/material';
 import requestPost from '../../../serviceWorker'
@@ -103,8 +104,8 @@ export default function ItemTable(details) {
                       {row.qty}
                     </TableCell>
                     <TableCell>
-                      {row.status == 1 ? <Chip label="Purchased" color="success" />
-                        : <Chip label="Lossed" color="danger" />}
+                      {row.status == 1 ? <Typography sx={{backgroundColor:'success.main' ,borderRadius:'20px',textAlign:'center',color:'white',fontWeight:'500',width:'100px'}}>Purchased</Typography>
+                        : <Typography sx={{backgroundColor:'error.main' ,borderRadius:'20px' ,textAlign:'center',color:'white',fontWeight:'500',width:'80px'}}>Loss</Typography>}
                     </TableCell>
                     <TableCell>
                       {row.note}
@@ -120,13 +121,6 @@ export default function ItemTable(details) {
             </TableBody>
           </Table>
         </TableContainer>
-
-
-        <TablePagination
-          component="div"
-
-
-        />
       </Card>
     </div>
   );
