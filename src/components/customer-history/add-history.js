@@ -37,6 +37,8 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Backdrop,
+  CircularProgress,
 
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -52,10 +54,12 @@ export default function FullScreenDialog(details) {
   const [items, setItems] = useState([]);
   const [qtyerror, setQtyError] = useState('');
   const [qterr, setQtErr] = useState(false);
+  const [backDropOpen, setBackDropOpen] = useState(false);
+
   const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ''));
 
   const [selectedQuantities, setSelectedQuantities] = useState(Array(noOfRows).fill(1));
- 
+
   const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
 
   const getData = (date) => {
@@ -78,8 +82,6 @@ export default function FullScreenDialog(details) {
     }
 
     requestPost(requestdata2).then((res) => {
-      console.log('5555555555555555555555555555555555')
-      console.log(res)
       if (res.errorCode === 3) {
         Router
           .push(
@@ -151,6 +153,7 @@ export default function FullScreenDialog(details) {
               }
 
               else {
+                setBackDropOpen(true)
                 setQtyError('')
                 setQtErr(false)
 
@@ -193,10 +196,10 @@ export default function FullScreenDialog(details) {
           setQtyError('Add atleast one item')
           setQtErr(true)
         } else {
-          console.log("----------------------sdsdfsfd")
           setQtyError('')
           setQtErr(false)
-          details.submit(itemsArr,selectedDate)
+          console.log(selectedDate);
+          details.submit(itemsArr, selectedDate)
         }
       }
 
@@ -242,6 +245,12 @@ export default function FullScreenDialog(details) {
   return (
     <>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={backDropOpen}
+        >
+          <CircularProgress color="primary" />
+        </Backdrop>
         <AppBar sx={{ position: 'relative', background: '#5048E5' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">
@@ -261,25 +270,25 @@ export default function FullScreenDialog(details) {
             <Typography variant="h4">RENT HISTORY</Typography>
 
 
-            <Stack direction={'row'}  justifyContent={"end"} gap={1}>
-  <DatePicker
-    label="Select Date"
-    format="DD-MM-YYYY"
-    inputFormat="dd-MM-yyyy" 
-    value={selectedDate}
-    shouldDisableDate={disableFutureDates}
-    sx={{ width: '40%' }}
-    onChange={(newDate) => {
-      setSelectedDate(newDate);
-      getData(newDate);
+            <Stack direction={'row'} justifyContent={"end"} gap={1}>
+              <DatePicker
+                label="Select Date"
+                format="DD-MM-YYYY"
+                inputFormat="dd-MM-yyyy"
+                value={selectedDate}
+                shouldDisableDate={disableFutureDates}
+                sx={{ width: '40%' }}
+                onChange={(newDate) => {
+                  setSelectedDate(newDate);
+                  getData(newDate);
+                  console.log(newDate);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </Stack>
 
-    }}
-    renderInput={(params) => <TextField {...params} />}
-  />
-</Stack>
 
 
-      
             {[...Array(noOfRows)].map((elementInArray, ind) => (
               <Stack direction="row" key={ind} spacing={2}>
                 <FormControl fullWidth key={ind}>
@@ -310,7 +319,7 @@ export default function FullScreenDialog(details) {
                     label="Quantity"
                     variant="outlined"
                     type="number"
-                    value={selectedQuantities[ind]}
+                    // value={selectedQuantities[ind]}
                     onChange={(event) => {
                       setSelectedQuantities((prevQuantities) => {
                         prevQuantities[ind] = event.target.value;
@@ -319,7 +328,7 @@ export default function FullScreenDialog(details) {
                     }}
                     id={`qty${ind}`}
                     labelId={`qty-label-${ind}`}
-                    defaultValue={1}
+                  // defaultValue= {1}
                   />
                 </FormControl>
 
@@ -348,7 +357,7 @@ export default function FullScreenDialog(details) {
                 </Typography>
               </div>
               <Stack direction="row" alignItems="center" spacing={2}>
-              
+
               </Stack>
               <Button
                 variant="contained"

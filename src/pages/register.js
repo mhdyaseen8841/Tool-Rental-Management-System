@@ -51,7 +51,7 @@ const Register = () => {
         )
     }),
     onSubmit: () => {
-     Router.push('/dashboard')
+      Router.push('/dashboard')
         .catch(console.error);
     }
   });

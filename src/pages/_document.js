@@ -51,8 +51,8 @@ class CustomDocument extends Document {
           />
         </Head>
         <body>
-        <Main />
-        <NextScript />
+          <Main />
+          <NextScript />
         </body>
       </Html>
     );

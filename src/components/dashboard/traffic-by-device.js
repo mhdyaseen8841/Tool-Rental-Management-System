@@ -3,7 +3,6 @@ import { Box, Card, CardContent, CardHeader, Divider, Typography, useTheme } fro
 
 export const TrafficByDevice = (props) => {
   const theme = useTheme();
-console.log(props);
   const data = {
     datasets: [
       {

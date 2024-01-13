@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Stack, Container, Typography, TextField, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Stack, Container, Typography, TextField, ToggleButtonGroup, ToggleButton, Backdrop, CircularProgress } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
@@ -14,15 +14,14 @@ import dayjs from 'dayjs';
 
 
 export default function CalculateScreenDialog(details) {
-  console.log(details);
   const [update, setUpdate] = useState(details.updated);
   const [toggleStatus, setToggleStatus] = useState(details.updated ? details.data.status == 0 ? "0" : "1":"0");
+  const [backDropOpen, setBackDropOpen] = useState(false);
 
   const validSchema = Yup.object().shape({
     Amount: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Amount is required'),
     
   });
-console.log(new Date())
   const initialDate = update ? details.data.date : new Date();
   const [selectedDate, setSelectedDate] = useState(initialDate); // Set the initial state to the current date
 
@@ -45,9 +44,8 @@ console.log(new Date())
     },
     validationSchema: validSchema,
     onSubmit: (values) => {
-        
+      setBackDropOpen(true)
       values.Status = toggleStatus;
-      console.log(values)
       details.submit(selectedDate,values);
     },
   });
@@ -66,6 +64,12 @@ console.log(new Date())
   return (
     <div>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
+      <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={backDropOpen}
+        >
+          <CircularProgress color="primary" />
+        </Backdrop>
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">
@@ -102,7 +106,6 @@ console.log(new Date())
     shouldDisableDate={disableFutureDates}
     sx={{ width: '40%' }}
     onChange={(newDate) => {
-      console.log(newDate)
       setSelectedDate(newDate);
       getData(newDate);
 

@@ -57,7 +57,6 @@ let items = [
     icon: (<UsersIcon fontSize="small" />),
     title: 'Inactive Customers',
     isOwner: false
-
   },
 ];
 
@@ -145,7 +144,6 @@ export const DashboardSidebar = (props) => {
         <Box sx={{ flexGrow: 1 }}>
           {items.map((item) => {
 if(localStorage.getItem('usertype') === 'owner' && item.isOwner ){
-  console.log(item.isOwner)
 return(
     <NavItem
       key={item.title}

@@ -70,7 +70,7 @@ function applySortFilter(array, comparator, query) {
 
 
 export default function AlertDialog(props) {
- 
+
   const confirm = () => {
     props.deleteCustomer();
   };
@@ -81,7 +81,7 @@ export default function AlertDialog(props) {
 
   return (
     <div>
-     
+
       <Dialog
         open={props.open}
         onClose={handleClose}
@@ -89,9 +89,9 @@ export default function AlertDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-         Confirm Delete?
+          Confirm Delete?
         </DialogTitle>
-        
+
         <DialogActions>
           <Button color="error" onClick={handleClose}>Decline</Button>
           <Button color="success" onClick={confirm} autoFocus>
@@ -106,7 +106,7 @@ export default function AlertDialog(props) {
 
 export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(1000);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
@@ -116,9 +116,9 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
-  const [profileOpen,setProfileOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
 
-  const onProfileClose =()=>{
+  const onProfileClose = () => {
     setProfileOpen(false)
   }
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -298,21 +298,21 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
         </Card>
       </Box>
       <Card {...rest}>
-<AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer}/>
+        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer} />
         {addDialog}
 
         <GetCustomerProfile open={profileOpen}
-        onClose={onProfileClose}
-        cId={cId}
+          onClose={onProfileClose}
+          cId={cId}
         />
         <PerfectScrollbar>
           <Box >
 
-            <TableContainer style={{ maxHeight: '400px' }}>
+            <TableContainer style={{ maxHeight: '2000px' }}>
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>
+                    <TableCell >
                       Name
                     </TableCell>
                     <TableCell>
@@ -330,9 +330,10 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                       hover
                       key={customer.cId}
                       selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+                      sx={{ padding: 0 }}
                     >
 
-                      <TableCell>
+                      <TableCell sx={{ padding: '4px' }}>
                         <Box
                           sx={{
                             alignItems: 'center',
@@ -341,44 +342,44 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                           }}
                         >
                           <Avatar
-                             onClick={() =>{
+                            onClick={() => {
                               setCid(customer.cId)
                               setProfileOpen(true)
 
-                             } }
-                            sx={{ mr: 2 }}
+                            }}
+                            sx={{ mr: 2, ml: 2 }}
 
                           >
                             {customer.cName ? (getInitials(customer.cName)) : ""}
                           </Avatar>
-                            <Typography
-                              color="textPrimary"
-                              variant="body1"
-                            >
-                              {customer.cName}
-                            </Typography>
-                        
+                          <Typography
+                            color="textPrimary"
+                            variant="body1"
+                          >
+                            {customer.cName}
+                          </Typography>
+
                         </Box>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ padding: '4px' }}>
                         {customer.mobile}
                         <br />
                         {customer.altermobile}
                       </TableCell>
-                      <TableCell>
-                      {localStorage.getItem('usertype') === 'owner' ? 
-                        null
-                       :
-                        
-                       <><Button
-                       onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId,Carename:customer.coName,CareMobnum:customer.coMobile })}
-                     >Edit</Button><Button color="success" onClick={()=>handleActive(customer.cId)}>Active</Button>
-                     <Button  color="error" onClick={()=>deleteConfirm(customer.cId)}>Delete</Button></>
-                        
-                      }
+                      <TableCell sx={{ padding: '4px' }}>
+                        {localStorage.getItem('usertype') === 'owner' ?
+                          null
+                          :
+
+                          <><Button
+                            onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile })}
+                          >Edit</Button><Button color="success" onClick={() => handleActive(customer.cId)}>Active</Button>
+                            <Button color="error" onClick={() => deleteConfirm(customer.cId)}>Delete</Button></>
+
+                        }
                       </TableCell>
 
-                      
+
                     </TableRow>
                   ))}
                 </TableBody>

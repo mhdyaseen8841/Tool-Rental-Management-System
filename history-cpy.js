@@ -199,16 +199,10 @@ if(router.query.cId){
       setCid(router.query.cId)
     }
     else {
-console.log("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
  let id = sessionStorage.getItem("Cid")
- console.log(id)
  if(id){
-  console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
   setCid(id)
-  console.log(id)
  }else{
-console.log(id)
-  console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
 Router.push('/dashboard')
  }
     }

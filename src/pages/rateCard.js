@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import { Box, Container, Grid, Pagination,Snackbar,Alert } from '@mui/material';
-import { useEffect,useState } from 'react';
+import { Box, Container, Grid, Pagination, Snackbar, Alert } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 import { HistoryListResults } from '../components/customer-history/history-list-results';
 // import { HistoryListResults } from '../components/customer-history/history-item-results';
@@ -16,141 +16,133 @@ import requestPost from '../../serviceWorker'
 
 import { useRouter } from 'next/router';
 import { HistoryTotalResult } from '../components/customer-history/history-total-result';
-import {RateCardResult} from '../components/customer-history/RateCardResult'
+import { RateCardResult } from '../components/customer-history/RateCardResult'
 import Loader from '../components/Loader';
 import Router from 'next/router';
 const Page = () => {
 
- 
+
   const router = useRouter();
 
 
   const [customers, setCustomers] = useState([])
-  const [item,setItem] = useState([])
-  const [payment, setPayments]  = useState([])
+  const [item, setItem] = useState([])
+  const [payment, setPayments] = useState([])
   const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
-const [table,setTable]=useState(1)
-const [data,setData]=useState({})
-const [loader, setLoader] = useState(true)
+  const [table, setTable] = useState(1)
+  const [data, setData] = useState({})
+  const [loader, setLoader] = useState(true)
 
 
 
-const handleClose = ()=>{
-  setOpen(false)
- }
+  const handleClose = () => {
+    setOpen(false)
+  }
 
 
 
 
 
- function getCustomer(){
-  console.log(cId)
-  let  data =  {
-    "type" : "SP_CALL",
-  "requestId" : 1800005,
-     request: {
-  "cId":cId
+  function getCustomer() {
+    let data = {
+      "type": "SP_CALL",
+      "requestId": 1800005,
+      request: {
+        "cId": cId
+      }
     }
+
+    requestPost(data).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else {
+
+        if (res.result[0] == null) {
+          setCustomers([])
+
+        } else {
+          setCustomers(res.result)
+        }
+
+        setLoader(false)
+      }
+    })
+      .catch((err) => {
+        setCustomers([])
+      })
+
+
   }
- 
-   requestPost(data).then((res)=>{
-    console.log("fdsfsdffffffffffff" )
-     if(res.errorCode===3){
-       Router
-       .push(
-       
-       {
-         pathname: '/',
-         query: { redirect: '1' },
-       })
-       console.log("sdfasfsfafass")
-   }else{
 
-     if(res.result[0] ==null){
-      setCustomers([])
+  useEffect(() => {
+    let id = sessionStorage.getItem("Cid")
+    if (!id) {
+      Router.push('/dashboard')
+    } else {
+      setCid(id)
+      getCustomer()
+    }
 
-     }else{
-    
-       console.log(res.result)
-       console.log(res.result)
-       setCustomers(res.result)
-     }
-    
-     setLoader(false)
-   }
-   })
-   .catch((err)=>{
-    console.log("eeeeeeeeeeeeeeeeeeee")
-    console.log(err)
-     setCustomers([])
-     })
- 
- 
- }
- 
- useEffect(() => {
- let id = sessionStorage.getItem("Cid")
-  if(!id){
-Router.push('/dashboard')
-  }else{
-    setCid( id)
-    getCustomer()
-  }
-  
- }, [cId])
- 
+  }, [cId])
 
 
-  return(
-  <>
-    <Head>
-      <title>
-      History | TRMS
-      </title>
-    </Head>
-    {loader ? <Loader/>  
-    : <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth={false}>
-        <HistoryListToolbar  getdata={getCustomer}   cId={router.query.cId} cName={router.query.cName} />
-        <Box sx={{ mt: 3 }}>
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-  <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-    {error}
-  </Alert>
-</Snackbar>
+
+  return (
+    <>
+      <Head>
+        <title>
+          History | TRMS
+        </title>
+      </Head>
+      {loader ? <Loader />
+        : <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            py: 8
+          }}
+        >
+          <Container maxWidth={false}>
+            <HistoryListToolbar getdata={getCustomer} cId={router.query.cId} cName={router.query.cName} />
+            <Box sx={{ mt: 3 }}>
+              <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                  {error}
+                </Alert>
+              </Snackbar>
 
 
-<RateCardResult  customers={customers} getdata={getCustomer} />
-     
+              <RateCardResult customers={customers} getdata={getCustomer} />
 
 
+
+            </Box>
+          </Container>
         </Box>
-      </Container>
-    </Box>
+      }
+    </>
+  );
 }
-  </>
-);
-    }
-    
 
 
-Page.getLayout = (page) =>{
+
+Page.getLayout = (page) => {
 
 
- return(
-  <CustomerLayout >
-    {page}
-  </CustomerLayout>
-);
+  return (
+    <CustomerLayout >
+      {page}
+    </CustomerLayout>
+  );
 }
 
 export default Page;

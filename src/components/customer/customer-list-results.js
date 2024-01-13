@@ -7,6 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { filter } from 'lodash';
 import Link from 'next/link';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
   Box,
@@ -29,13 +30,14 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
-import FullScreenDialog from './active-inactive';
+import FullScreenDialog from '../active-inactive/add-customer';
 import requestPost from '../../../serviceWorker'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Stack, color } from '@mui/system';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -71,7 +73,7 @@ function applySortFilter(array, comparator, query) {
 
 
 export default function AlertDialog(props) {
- 
+
   const confirm = () => {
     props.deleteCustomer();
   };
@@ -82,7 +84,7 @@ export default function AlertDialog(props) {
 
   return (
     <div>
-     
+
       <Dialog
         open={props.open}
         onClose={handleClose}
@@ -90,9 +92,9 @@ export default function AlertDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-         Confirm Delete?
+          Confirm Delete?
         </DialogTitle>
-        
+
         <DialogActions>
           <Button color="error" onClick={handleClose}>Decline</Button>
           <Button color="success" onClick={confirm} autoFocus>
@@ -105,9 +107,9 @@ export default function AlertDialog(props) {
 }
 
 
-export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
+export const CustomerListResults = ({ customers, getdata, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(1000);
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
@@ -118,11 +120,71 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
   const [alertOpen, setAlertOpen] = useState(false);
   const [cId, setCid] = useState('');
   const handleClose = () => {
     setDialog();
+  };
+
+
+  const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
+
+    setOpen(true);
+    let cid = data.cid;
+
+    const add = (data, file) => {
+
+
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1100002,
+        request: {
+          "cId": cid,
+          "name": data.CustomerName,
+          "mobile": data.Mobnum,
+          "address": data.Address,
+          "altermobile": data.AltMobnum,
+          "proof": file,
+          "coName": data.Carename,
+          "coMobile": data.CareMobnum,
+        }
+      }
+
+      requestPost(req).then((res) => {
+        if (res.errorCode === 3) {
+          Router
+            .push(
+              {
+                pathname: '/',
+                query: { redirect: '1' },
+              })
+
+        } else if (res.errorcode == 0) {
+
+        } else {
+          getdata()
+
+        }
+
+        setDialog();
+      });
+
+
+    }
+
+
+    setDialog(() => (
+
+      <FullScreenDialog
+        onClose={handleClose}
+        open={open}
+        submit={add}
+        updated={upd}
+        button={button}
+        data={data}
+      />
+    ));
   };
 
   const deleteConfirm = (cid) => {
@@ -130,32 +192,32 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
     setCid(cid)
   }
 
-  const deleteUser = ()=>{
+  const deleteUser = () => {
     let del = {
-      "type" : "SP_CALL",
-      "requestId" : 1100003,
+      "type": "SP_CALL",
+      "requestId": 1100003,
       request: {
-       "cId": cId
-     }
+        "cId": cId
+      }
     }
-    requestPost(del).then((res)=>{
-      if(res.errorCode===3){
+    requestPost(del).then((res) => {
+      if (res.errorCode === 3) {
         Router
-        .push(
-        
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-    }else if(res.errorcode ==0){
-        
-     
-      }else{
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else if (res.errorcode == 0) {
+
+
+      } else {
         setAlertOpen(false)
         getdata()
-        
+
       }
-     
+
     })
 
 
@@ -170,9 +232,9 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
   };
 
   const handleFilterByName = (event) => {
-    if(event.target.value.length >=3){
+    if (event.target.value.length >= 3) {
       setFilterName(event.target.value);
-    }else{
+    } else {
       setFilterName("");
     }
   };
@@ -180,116 +242,122 @@ export const CustomerListResults = ({ customers,getdata, ...rest  }) => {
   const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
   return (
     <>
-    <Box sx={{ mt: 3, mb:3 }}>
-      <Card >
-        <CardContent>
-          <Box sx={{ maxWidth: 500 }}>
-            <TextField
-              fullWidth
-              onChange={handleFilterByName}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SvgIcon
-                      color="action"
-                      fontSize="small"
-                    >
-                      <SearchIcon />
-                    </SvgIcon>
-                  </InputAdornment>
-                )
-              }}
-              placeholder="Search customer"
-              variant="outlined"
-            />
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
-    <Card {...rest}>
-    <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser}/>
+      <Box sx={{ mt: 3, mb: 3 }}>
+        <Card >
+          <CardContent>
+            <Box sx={{ maxWidth: 500 }}>
+              <TextField
+                fullWidth
+                onChange={handleFilterByName}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SvgIcon
+                        color="action"
+                        fontSize="small"
+                      >
+                        <SearchIcon />
+                      </SvgIcon>
+                    </InputAdornment>
+                  )
+                }}
+                placeholder="Search customer"
+                variant="outlined"
+              />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+      <Card {...rest}>
+        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser} />
 
         {addDialog}
-      <PerfectScrollbar>
-        <Box >
-        <TableContainer style={{ maxHeight: '400px' }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Mobile Number
-                </TableCell>
-                {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<TableCell>
-    Actions
-   </TableCell>)}
-      
-            
+        <PerfectScrollbar>
+          <Box >
+            <TableContainer style={{ maxHeight: '2000px' }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
 
-                
-              </TableRow>
-            </TableHead>
-            <TableBody style={{ overflowY: 'scroll' }}>
-              {filteredUsers.slice(0, limit).map((customer) => (
-                <TableRow
-                  hover
-                  key={customer.cId}
-                  selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
-                >
-                
-                  <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex',
-                        cursor: 'pointer'
-                      }}
+                    <TableCell>
+                      Name
+                    </TableCell>
+                    <TableCell>
+                      Mobile Number
+                    </TableCell>
+                    {localStorage.getItem('usertype') === 'owner' ? (
+                      null
+                    ) : (<TableCell>
+                      Actions
+                    </TableCell>)}
+
+
+
+
+                  </TableRow>
+                </TableHead>
+                <TableBody style={{ overflowY: 'scroll' }}>
+                  {filteredUsers.slice(0, limit).map((customer) => (
+                    <TableRow
+                      hover
+                      key={customer.cId}
+                      selected={selectedCustomerIds.indexOf(customer.cId) !== -1}
+
                     >
-                      <Avatar
-                        
-                        sx={{ mr: 2 }}
-                        
-                      >
-                      {customer.cName?(getInitials(customer.cName)):""}  
-                      </Avatar>
-                      <Link href={`/historyItems/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                         {customer.cName} 
-                      </Typography>
-                      </Link>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-            {customer.mobile}
-             <br />
-               {customer.altermobile}
-             </TableCell>
-             <TableCell>
-                  {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (   
-    <Tooltip title="Delete">          
-    <DeleteIcon cursor={'pointer'} color="error"  onClick={()=>{deleteConfirm(customer.cId)}} />
-    </Tooltip>
-  )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          </TableContainer>
-        </Box>
-      </PerfectScrollbar>
-    
-    </Card>
+
+                      <TableCell sx={{ padding: '4px' }}>
+                        <Box
+                          sx={{
+                            alignItems: 'center',
+                            display: 'flex',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Avatar
+
+                            sx={{ mr: 2, ml: 2 }}
+
+                          >
+                            {customer.cName ? (getInitials(customer.cName)) : ""}
+                          </Avatar>
+                          <Link href={`/historyItems/?cId=${customer.cId}&cName=${customer.cName}&phNo=${customer.mobile}`}>
+                            <Typography
+                              color="textPrimary"
+                              variant="body1"
+                            >
+                              {customer.cName}
+                            </Typography>
+                          </Link>
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ padding: '2px' }}>
+                        {customer.mobile}
+                        <br />
+                        {customer.altermobile}
+                      </TableCell>
+                      <TableCell sx={{ padding: '2px' }}>
+                        {localStorage.getItem('usertype') === 'owner' ? (
+                          null
+                        ) : (
+                          <Stack direction={'row'} spacing={2}>
+                            <EditIcon color='primary' cursor={'pointer'}
+                              onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile })}
+                            >Edit</EditIcon>
+                            <Tooltip title="Delete">
+                              <DeleteIcon cursor={'pointer'} color="error" onClick={() => { deleteConfirm(customer.cId) }} />
+                            </Tooltip>
+                          </Stack>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </PerfectScrollbar>
+
+      </Card>
     </>
   );
 };

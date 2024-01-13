@@ -150,7 +150,7 @@ CREATE  PROCEDURE `1100005` (IN `request` JSON)   BEGIN
                                'proof',proof,
                                'coName',coName,
                                'coMobile',coMobile
-                               )))) as result from customermaster WHERE status = 0;
+                               )))) as result from customermaster WHERE status = 0 order by cName;
 
 END$$
 
@@ -164,7 +164,7 @@ CREATE  PROCEDURE `1100006` (IN `request` JSON)   BEGIN
                                'proof',proof,
                                'coName',coName,
                                'coMobile',coMobile
-                               )))) as result from customermaster WHERE status=1;
+                               )))) as result from customermaster WHERE status=1 order by cName;
 
 END$$
 

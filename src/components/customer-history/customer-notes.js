@@ -86,9 +86,6 @@ export const CustomerNotes = ({ customers,items, getdata, ...rest }) => {
   };
 
   useEffect(() => {
-    console.log('customerffffffffffffffffffffffffffs')
-    console.log(customers)
-    console.log(items)
     setData(customers)
     setItem(items)
   

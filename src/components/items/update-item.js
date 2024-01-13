@@ -42,7 +42,6 @@ export default function FullScreenDialogUpdate(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values) => {
-    console.log(values)
       details.submit(values)
     }
   });

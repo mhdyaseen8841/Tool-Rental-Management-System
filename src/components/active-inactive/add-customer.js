@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Stack, Container, Typography, TextField, Checkbox, Alert, Grid } from '@mui/material';
+import { Stack, Container, Typography, TextField, Checkbox, Alert, Grid, Backdrop, CircularProgress } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
@@ -17,15 +17,16 @@ import FileUpload from 'react-material-file-upload';
 
 
 export default function FullScreenDialog(details) {
- 
- 
+
+
   const [update, setUpdate] = useState(details.updated);
   const [files, setFiles] = useState([]);
   const [docs, setDocs] = useState([]);
   const [imgPreviews, setImgPreviews] = useState([]);
   const [customerPhoto, setCustomerPhoto] = useState(null);
- 
-  
+  const [backDropOpen, setBackDropOpen] = useState(false);
+
+
   const getBase64 = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -37,21 +38,21 @@ export default function FullScreenDialog(details) {
       };
     });
   };
-  
+
   const handleFileChange = (event) => {
     setFiles(event);
     const fileObjs = event && event.length ? Array.from(event) : [];
     if (!fileObjs.length) {
       return;
     }
-  
+
     const promises = fileObjs.map((fileObj) => {
       return new Promise((resolve, reject) => {
         new Compressor(fileObj, {
           quality: 0.6,
           success: (compressedResult) => {
             getBase64(compressedResult).then((result) => {
-            
+
               resolve(result);
             }).catch((err) => {
               reject(err);
@@ -63,7 +64,7 @@ export default function FullScreenDialog(details) {
         });
       });
     });
-  
+
     Promise.all(promises).then((results) => {
       setImgPreviews((prevPreviews) => {
         return [...prevPreviews, ...results];
@@ -75,7 +76,7 @@ export default function FullScreenDialog(details) {
       console.error(err);
     });
   };
-  
+
   const handleRemoveImage = (index) => {
     setImgPreviews((prevPreviews) => {
       const newPreviews = [...prevPreviews];
@@ -83,7 +84,7 @@ export default function FullScreenDialog(details) {
       return newPreviews;
     });
   };
- 
+
 
 
   const validSchema = Yup.object().shape({
@@ -94,23 +95,23 @@ export default function FullScreenDialog(details) {
     Carename: Yup.string().matches(/^\S/, 'Whitespace is not allowed'),
     CareMobnum: Yup.string().matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
   });
-console.log(details.data)
   const [alertMsg, setAlert] = useState();
   const formik = useFormik({
     initialValues: {
-      CustomerName: update ? details.data.name :'',
+      CustomerName: update ? details.data.name : '',
       Mobnum: update ? details.data.mobile : '',
-      AltMobnum : update ? details.data.altNum : '',
+      AltMobnum: update ? details.data.altNum : '',
       Address: update ? details.data.address : '',
       Carename: update ? details.data.Carename : '',
       CareMobnum: update ? details.data.CareMobnum : ''
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-    
-      details.submit(values,docs,customerPhoto)
-     
-
+      setBackDropOpen(true)
+      details.submit(values, docs, customerPhoto);
+      setTimeout(() => {
+        setBackDropOpen(false)
+      }, 2000);
     }
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
@@ -121,21 +122,20 @@ console.log(details.data)
     // Update the state variable with the selected photo
     getBase64(file).then((result) => {
       setCustomerPhoto(result);
-      console.log(result)
     }).catch((err) => {
       reject(err);
     });
-   
+
   };
   // Define handleRemovePhoto function
   const handleRemovePhoto = () => {
     // Reset the customer photo state variable
     setCustomerPhoto(null);
   };
-  
 
-  
-  
+
+
+
   const alertTimeOut = () => {
     setTimeout(() => {
       setAlert();
@@ -145,11 +145,17 @@ console.log(details.data)
     formik.resetForm();
     details.onClose();
   };
- 
+
   return (
     <div>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
-        <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={backDropOpen}
+        >
+          <CircularProgress color="primary" />
+        </Backdrop>
+        <AppBar sx={{ position: 'relative', background: '#5048E5' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">
               <CloseIcon />
@@ -163,11 +169,11 @@ console.log(details.data)
           </Toolbar>
         </AppBar>
         <Container maxWidth="sm">
-          
+
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Typography variant="h4">CUSTOMER DETAILS</Typography>
-            
-            {}
+
+            { }
             <TextField
               fullWidth
               type="text"
@@ -178,55 +184,55 @@ console.log(details.data)
               helperText={touched.CustomerName && errors.CustomerName}
             />
             <TextField
-           
-           fullWidth
-           type="text"
-           label="Mobile Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('Mobnum')}
-           error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-           helperText={touched.Mobnum && errors.Mobnum || alertMsg}
-         />
-         <TextField
-           
-           fullWidth
-           type="text"
-           label="Alternative Number"
-           variant="outlined"
-           value={details.update ? details.data.name : ''}
-           {...getFieldProps('AltMobnum')}
-           error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
-           helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
-         />
 
-         
-         <Grid container spacing={0} >
-  <Grid item xs={6} sm={6}> 
-    <TextField
-      fullWidth
-      type="text"
-      label="Care of name"
-      variant="outlined"
-      value={details.update ? details.data.Carename : ''}
-      {...getFieldProps('Carename')}
-      error={Boolean(touched.Carename && errors.Carename || alertMsg)}
-      helperText={touched.Carename && errors.Carename || alertMsg}
-    />
-  </Grid>
-  <Grid item xs={6} sm={6} style={{paddingLeft: '10px'}} >
-    <TextField
-      fullWidth
-      type="text"
-      label="Mobile Number"
-      variant="outlined"
-      value={details.update ? details.data.CareMobnum : ''}
-      {...getFieldProps('CareMobnum')}
-      error={Boolean(touched.CareMobnum && errors.CareMobnum || alertMsg)}
-      helperText={touched.CareMobnum && errors.CareMobnum || alertMsg}
-    />
-  </Grid>
-</Grid>
+              fullWidth
+              type="text"
+              label="Mobile Number"
+              variant="outlined"
+              value={details.update ? details.data.name : ''}
+              {...getFieldProps('Mobnum')}
+              error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
+              helperText={touched.Mobnum && errors.Mobnum || alertMsg}
+            />
+            <TextField
+
+              fullWidth
+              type="text"
+              label="Alternative Number"
+              variant="outlined"
+              value={details.update ? details.data.name : ''}
+              {...getFieldProps('AltMobnum')}
+              error={Boolean(touched.AltMobnum && errors.AltMobnum || alertMsg)}
+              helperText={touched.AltMobnum && errors.AltMobnum || alertMsg}
+            />
+
+
+            <Grid container spacing={0} >
+              <Grid item xs={6} sm={6}>
+                <TextField
+                  fullWidth
+                  type="text"
+                  label="Care of name"
+                  variant="outlined"
+                  value={details.update ? details.data.Carename : ''}
+                  {...getFieldProps('Carename')}
+                  error={Boolean(touched.Carename && errors.Carename || alertMsg)}
+                  helperText={touched.Carename && errors.Carename || alertMsg}
+                />
+              </Grid>
+              <Grid item xs={6} sm={6} style={{ paddingLeft: '10px' }} >
+                <TextField
+                  fullWidth
+                  type="text"
+                  label="Mobile Number"
+                  variant="outlined"
+                  value={details.update ? details.data.CareMobnum : ''}
+                  {...getFieldProps('CareMobnum')}
+                  error={Boolean(touched.CareMobnum && errors.CareMobnum || alertMsg)}
+                  helperText={touched.CareMobnum && errors.CareMobnum || alertMsg}
+                />
+              </Grid>
+            </Grid>
 
             <TextField
               fullWidth
@@ -237,7 +243,7 @@ console.log(details.data)
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
-{update?'':<> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
+            {update ? '' : <> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
               <label htmlFor="customer-photo-upload" style={{ display: 'block', marginBottom: '1rem' }}>
                 <input
                   id="customer-photo-upload"
@@ -250,42 +256,42 @@ console.log(details.data)
                   Upload Photo
                 </Button>
               </label></>}
-             
-              {/* Render the customer photo preview */}
-              {customerPhoto && (
-                <div style={{ position: 'relative' }}>
-                  <img
-                    style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', cursor: 'pointer' }}
-                    src={customerPhoto}
-                    alt="Customer Photo"
-                  />
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    style={{ position: 'absolute', top: '5px', right: '5px' }}
-                    onClick={handleRemovePhoto}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              )}
-            
+
+            {/* Render the customer photo preview */}
+            {customerPhoto && (
+              <div style={{ position: 'relative' }}>
+                <img
+                  style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', cursor: 'pointer' }}
+                  src={customerPhoto}
+                  alt="Customer Photo"
+                />
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{ position: 'absolute', top: '5px', right: '5px' }}
+                  onClick={handleRemovePhoto}
+                >
+                  Remove
+                </Button>
+              </div>
+            )}
+
             {imgPreviews.map((preview, index) => {
-  return (
-    <div key={index}>
-      <img
-        style={{width: 150, height: 150, objectFit: 'contain' ,cursor: "pointer"}}
-        src={`${preview}`}
-        role="presentation"
-        alt="no network"
-      />
-      <button onClick={() => handleRemoveImage(index)}>Remove</button>
-    </div>
-  );
-})}
-{update?'':    <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
-}
-          
+              return (
+                <div key={index}>
+                  <img
+                    style={{ width: 150, height: 150, objectFit: 'contain', cursor: "pointer" }}
+                    src={`${preview}`}
+                    role="presentation"
+                    alt="no network"
+                  />
+                  <button onClick={() => handleRemoveImage(index)}>Remove</button>
+                </div>
+              );
+            })}
+            {update ? '' : <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
+            }
+
           </Stack>
         </Container>
       </Dialog>

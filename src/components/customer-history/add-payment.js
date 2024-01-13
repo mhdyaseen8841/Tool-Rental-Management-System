@@ -14,6 +14,8 @@ import {
   Stack,
   Container,
   Typography,
+  Backdrop,
+  CircularProgress,
  
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -30,6 +32,7 @@ export default function AddPaymetDialog(details) {
  
 
   const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
+  const [backDropOpen, setBackDropOpen] = useState(false);
 
   const getData = (date) => {
     // Your logic to fetch data based on the selected date
@@ -55,6 +58,7 @@ export default function AddPaymetDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
+      setBackDropOpen(true)
       details.submit(values.Amount,selectedDate);
     }
   });
@@ -77,6 +81,12 @@ export default function AddPaymetDialog(details) {
   return (
     <>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
+      <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={backDropOpen}
+        >
+          <CircularProgress color="primary" />
+        </Backdrop>
         <AppBar sx={{ position: 'relative',background: '#5048E5' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={onclose} aria-label="close">

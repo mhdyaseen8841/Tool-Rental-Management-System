@@ -37,7 +37,7 @@ const Login = () => {
     }
   }, [])
 
-  
+
 
   const [open, setOpen] = useState(false)
 
@@ -73,7 +73,6 @@ const Login = () => {
 
 
       requestPost(data).then((res) => {
-        console.log(res);
         if (res.errorCode === 1) {
           localStorage.setItem('usertype', res.data.usertype)
           localStorage.setItem('uId', res.data.uId)
@@ -124,63 +123,63 @@ const Login = () => {
         }}
       >
         <Container maxWidth="sm">
-            <Box sx={{ my: 3 }}>
-              <Typography
-                color="textPrimary"
-                variant="h4"
-              >
-                Sign in
-              </Typography>
-              <Typography
-                color="textSecondary"
-                gutterBottom
-                variant="body2"
-              >
-                Sign in to A-ONE RENTALS
-              </Typography>
-            </Box>
+          <Box sx={{ my: 3 }}>
+            <Typography
+              color="textPrimary"
+              variant="h4"
+            >
+              Sign in
+            </Typography>
+            <Typography
+              color="textSecondary"
+              gutterBottom
+              variant="body2"
+            >
+              Sign in to A-ONE RENTALS
+            </Typography>
+          </Box>
 
 
-            <TextField
-              error={Boolean(formik.touched.username && formik.errors.username)}
+          <TextField
+            error={Boolean(formik.touched.username && formik.errors.username)}
+            fullWidth
+            helperText={formik.touched.username && formik.errors.username}
+            label="username"
+            margin="normal"
+            name="username"
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            type="text"
+            value={formik.values.username}
+            variant="outlined"
+          />
+          <TextField
+            error={Boolean(formik.touched.password && formik.errors.password)}
+            fullWidth
+            helperText={formik.touched.password && formik.errors.password}
+            label="Password"
+            margin="normal"
+            name="password"
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            type="password"
+            value={formik.values.password}
+            variant="outlined"
+            onKeyDown={handleKeyDown}
+          />
+          <Box sx={{ py: 2 }}>
+            <Button
+              color="primary"
+              disabled={formik.isSubmitting}
               fullWidth
-              helperText={formik.touched.username && formik.errors.username}
-              label="username"
-              margin="normal"
-              name="username"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type="text"
-              value={formik.values.username}
-              variant="outlined"
-            />
-            <TextField
-              error={Boolean(formik.touched.password && formik.errors.password)}
-              fullWidth
-              helperText={formik.touched.password && formik.errors.password}
-              label="Password"
-              margin="normal"
-              name="password"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type="password"
-              value={formik.values.password}
-              variant="outlined"
-              onKeyDown={handleKeyDown}
-            />
-            <Box sx={{ py: 2 }}>
-              <Button
-                color="primary"
-                disabled={formik.isSubmitting}
-                fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
-                onClick={formik.handleSubmit}
-              >
-                Sign In Now
-              </Button>
-            </Box>
+              size="large"
+              type="submit"
+              variant="contained"
+              onClick={formik.handleSubmit}
+            >
+              Sign In Now
+            </Button>
+          </Box>
         </Container>
       </Box>
     </>

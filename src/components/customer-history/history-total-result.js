@@ -15,11 +15,11 @@ import {
 } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Router from 'next/router';
-import requestPost from "../../../serviceWorker";
+import requestPost, { baseUrl } from "../../../serviceWorker";
 import React from "react";
 import FadeMenu from "../more-items-btn";
 import FullScreenDialog from "./update-payment";
-import { Stack, color } from "@mui/system";
+import { Box, Stack, color } from "@mui/system";
 import CalculateScreenDialog from "./calculateRent";
 import AlertDialog from "./extra-payment";
 
@@ -38,12 +38,16 @@ export const HistoryTotalResult = ({
   const [addDialog, setDialog] = useState();
   const [addExtraDialog, setExtraDialog] = useState();
   const [total, setTotal] = useState(0);
+  const [dailytotal, setDailytotal] = useState(0.00)
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalDue, setTotalDue] = useState(0);
   const [advance, setAdvance] = useState(0);
-  const [alertOpen,setAlertOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [cId, setCid] = useState('');
   const [pendingItems, setPendingItems] = useState('');
+  const [extra, setExtraPayment] = useState(0);
+
+  const [ItemAmount, setItemAmount] = useState(0);
   const router = useRouter();
 
   const handleClose = () => {
@@ -163,81 +167,85 @@ export const HistoryTotalResult = ({
     ));
   };
 
-  const handleUPDATE = (e, upd , button = 'UPDATE', data = {}) => {
+  const handleUPDATE = (e, upd, button = 'UPDATE', data = {}) => {
 
-    console.log('heyyyyyyyyyy')
-       setOpen(true);
-       
-       
-     
-       
-       const add = (date,datas) => {
-         console.log(datas)
-         
-         
-     
-         let req={
-           "type" : "SP_CALL",
-           "requestId" : 1700007,
-           request: {
-             "expId" : data.expId,
-             "amount" : datas.Amount,
-     "date" : date,
-     "note" : datas.Notes,
-     "status" : datas.Status,
+    setOpen(true);
+
+    const add = (date, datas) => {
+
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1700007,
+        request: {
+          "expId": data.expId,
+          "amount": datas.Amount,
+          "date": date,
+          "note": datas.Notes,
+          "status": datas.Status,
+        }
+      }
+
+
+      requestPost(req).then((res) => {
+        if (res.errorCode === 3) {
+          Router
+            .push(
+
+              {
+                pathname: '/',
+                query: { redirect: '1' },
+              })
+        } else {
+
+
+          if (res.errorcode == 0) {
+
+          } else {
+            getdata()
+
           }
-     }
-     console.log(req)
-     
-     
-     requestPost(req).then((res)=>{
-       if(res.errorCode===3){
-         Router
-         .push(
-         
-         {
-           pathname: '/',
-           query: { redirect: '1' },
-         })
-     }else{
-     
-     
-       if(res.errorcode ==0){
-        
-       }else{
-         getdata()
-         
-       }
-     }
-     
-     setExtraDialog(); 
-     });
-     
-     
-       };
-     
-       setExtraDialog(() => (
-         
-         <CalculateScreenDialog
-           onClose={handleClose}
-           open={true}
-            submit={add}
-            updated={upd}
-            button={button}
-            data={data}
-         />
-       ));
-     };
+        }
 
-     const deleteConfirm = (cid) => {
-      setAlertOpen(true)
-      setCid(cid)
-    }
+        setExtraDialog();
+      });
+
+
+    };
+
+    setExtraDialog(() => (
+
+      <CalculateScreenDialog
+        onClose={handleClose}
+        open={true}
+        submit={add}
+        updated={upd}
+        button={button}
+        data={data}
+      />
+    ));
+  };
+
+  const deleteConfirm = (cid) => {
+    setAlertOpen(true)
+    setCid(cid)
+  }
 
   useEffect(() => {
+    let  data =  {
+      "type" : "SP_CALL",
+    "requestId" : 1600006,
+       request: {
+    "cId":sessionStorage.getItem("Cid")
+      }
+    }
+
+    requestPost(data).then((res)=>{
+      setDailytotal(res.data)
+    })
 
     let totalAmount = 0;
     let totalPaidAmount = 0;
+    let ex = 0;
 
     for (let i = 0; i < customers.length; i++) {
       totalAmount += customers[i].amount;
@@ -247,8 +255,18 @@ export const HistoryTotalResult = ({
       totalPaidAmount += payments[i].amount;
     }
 
+    for (let i = 0; i < extraPayment.length; i++) {
+      if(extraPayment[i].status){
+        ex += extraPayment[i].amount
+      }else{
+        ex -= extraPayment[i].amount
+      }
+    }
+
     setTotal(totalAmount);
     setTotalPaid(totalPaidAmount);
+    setExtraPayment(ex);
+    setItemAmount(items.items - ex);
     if (totalPaidAmount > totalAmount) {
       setTotalDue(0);
     } else {
@@ -260,79 +278,90 @@ export const HistoryTotalResult = ({
       setAdvance(0);
     }
     getPendingItems();
-  }, [customers, payments]);
+  }, [customers]);
 
 
-  const deleteUsers = ()=>{
+  const deleteUsers = () => {
     let del = {
-      "type" : "SP_CALL",
-      "requestId" : 1700008,
+      "type": "SP_CALL",
+      "requestId": 1700008,
       request: {
-       "expId": cId
-     }
+        "expId": cId
+      }
     }
-    requestPost(del).then((res)=>{
-      if(res.errorCode===3){
+    requestPost(del).then((res) => {
+      if (res.errorCode === 3) {
         Router
-        .push(
-        
-        {
-          pathname: '/',
-          query: { redirect: '1' },
-        })
-    }else if(res.errorcode ==0){
-        
-     
-      }else{
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else if (res.errorcode == 0) {
+
+
+      } else {
         setAlertOpen(false)
         getdata()
-        
+
       }
-     
+
     })
 
 
   }
 
-  const whatsAppMsg = `*AONE RENTAL* %0a https://aonerentals.in/tools/src/user/?cId=${sessionStorage.getItem('Cid')}`;
+  const whatsAppMsg = `*AONE RENTAL* %0a ${baseUrl}tools/src/user/?cId=${sessionStorage.getItem('Cid')}`;
 
   return (
     <>
       {addDialog}
       {addExtraDialog}
-      <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUsers}/>
+      <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUsers} />
       <Grid container spacing={3}>
         <Grid container spacing={2} pl={2} pt={2}>
-          <Grid item xs={12} sm={4} md={4}>
+          <Grid item xs={12} sm={3} md={3}>
             <Paper elevation={3} sx={{ bgcolor: "#FF8E2B" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
                 Item Total + Extra Charges
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {items ? items.items:0.00}
+                {items ? items.items : 0.00}
               </Typography>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={4} md={4}>
+          <Grid item xs={12} sm={3} md={3}>
             <Paper elevation={3} sx={{ bgcolor: "#4079FC" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
                 Total Paid
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {items ? items.paid:0.00}
+                {items ? (items.paid ? items.paid : 0.00) : 0.00}
               </Typography>
             </Paper>
           </Grid>
 
 
-          <Grid item xs={12} sm={4} md={4}>
+          <Grid item xs={12} sm={3} md={3}>
             <Paper elevation={3} sx={{ bgcolor: "#D14343" }}>
               <Typography variant="subtitle1" color={"white"} align="center">
                 Pending Amount
               </Typography>
               <Typography variant="h5" color={"white"} align="center">
-                {items ? ((items.items - items.paid).toFixed(2)):0.00}
+                {items ? ((items.items - items.paid).toFixed(2)) : 0.00}
+              </Typography>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} sm={3} md={3}>
+            <Paper elevation={3} sx={{ bgcolor: "#169400" }}>
+              <Typography variant="subtitle1" color={"white"} align="center">
+                Daily Charge
+              </Typography>
+              <Typography variant="h5" color={"white"} align="center">
+                {dailytotal}
               </Typography>
             </Paper>
           </Grid>
@@ -341,10 +370,13 @@ export const HistoryTotalResult = ({
         <Grid container spacing={2} pl={2}>
 
           <Grid item xs={12} md={4}>
-            <Typography variant="h5" p={2} >
+            <Stack direction={"row"} alignItems={"center"} p={0}>
+              <Typography variant="h5" p={2} >
               Item Amounts
-            </Typography>
-            <TableContainer component={Paper} style={{ height: 250  }}>
+              </Typography>
+              <Typography variant="h5" p={1} sx={{ backgroundColor: "red", borderRadius: 3, color: '#fff' }} >₹{Math.abs(ItemAmount.toFixed(2))}</Typography>
+            </Stack>
+            <TableContainer component={Paper} style={{ height: 250 }}>
               <Table stickyHeader>
                 {/* First table */}
                 <TableHead >
@@ -369,11 +401,11 @@ export const HistoryTotalResult = ({
           </Grid>
 
           <Grid item xs={12} md={8}>
-          <Typography variant="h5" p={2} >
+            <Typography variant="h5" p={2} >
               Payments
             </Typography>
 
-            <TableContainer component={Paper} style={{height: 250 }}>
+            <TableContainer component={Paper} style={{ height: 250 }}>
               <Table stickyHeader>
                 {/* Second table */}
                 <TableHead>
@@ -413,10 +445,13 @@ export const HistoryTotalResult = ({
 
           </Grid>
           <Grid item xs={12} md={12}>
-          <Typography variant="h5" p={2} >
-              Extra Payments
-            </Typography>
-            <TableContainer component={Paper} style={{ height: 250  }}>
+            <Stack direction={"row"} alignItems={"center"} p={0}>
+              <Typography variant="h5" p={2} >
+                Extra Payments
+              </Typography>
+              <Typography variant="h5" p={1} sx={{ backgroundColor: "red", borderRadius: 3, color: '#fff' }} >₹{extra}</Typography>
+            </Stack>
+            <TableContainer component={Paper} style={{ height: 250 }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -427,40 +462,40 @@ export const HistoryTotalResult = ({
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
-                
+
                 <TableBody>
                   {extraPayment.map((data, ind) => {
 
-
                     return (
-                        <TableRow key={ind}>
-                          <TableCell>
-                              {data.date}
-                          </TableCell>
+                      <TableRow key={ind}>
+                        <TableCell>
+                          <Typography noWrap>{data.date}</Typography>
+                        </TableCell>
 
 
-                          <TableCell>
-                              {data.amount}
-                          </TableCell>
+                        <TableCell>
+                          {data.amount}
+                        </TableCell>
 
 
-                          <TableCell>
-                              {data.note}
-                          </TableCell>
+                        <TableCell>
+                          {data.note}
+                        </TableCell>
 
-                          <TableCell>
-                              {data.status ? <Typography  variant="button" p={1} sx={{backgroundColor:"red", borderRadius:3 ,color:'#fff'}} maxWidth={150}>Add on</Typography> : <Typography  variant="button" p={1} sx={{backgroundColor:"green", borderRadius:3 ,color:'#fff'}} maxWidth={150}>Discount</Typography> }
-                          </TableCell>
+                        <TableCell noWrap>
+                          {data.status ? <Typography noWrap variant="button" p={1} sx={{ backgroundColor: "red", borderRadius: 3, color: '#fff' }} maxWidth={150}>Add on</Typography> : <Typography noWrap variant="button" p={1} sx={{ backgroundColor: "green", borderRadius: 3, color: '#fff' }} maxWidth={150}>Discount</Typography>}
+                        </TableCell>
 
 
-                          {localStorage.getItem('usertype') === 'owner' ? (
-                            null
-                          ) : (<TableCell>
-                            <FadeMenu updateItem={(e) => handleUPDATE(e, true, 'EDIT', { Amount: data.amount, expId: data.expId, date: data.date, note: data.note, status: data.status })} callback={() => { deleteConfirm(data.expId) }} />
-                          </TableCell>)}
-                        </TableRow>
+                        {localStorage.getItem('usertype') === 'owner' ? (
+                          null
+                        ) : (<TableCell >
+                          <FadeMenu updateItem={(e) => handleUPDATE(e, true, 'EDIT', { Amount: data.amount, expId: data.expId, date: data.date, note: data.note, status: data.status })} callback={() => { deleteConfirm(data.expId) }} />
+                        </TableCell>)}
+                      </TableRow>
                     );
-                  })}
+                  })
+                  }
                 </TableBody>
               </Table>
 

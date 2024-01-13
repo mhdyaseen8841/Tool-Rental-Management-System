@@ -69,9 +69,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
       //check value position in heading array
 
       let index = heading.indexOf(value);
-      console.log("-----------------------------------------------");
-      console.log(value);
-      console.log(index !== -1);
       let dt = [];
       if (index !== -1) {
         // Add the index to the selectedIndex array
@@ -83,8 +80,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
 
       setSelectedOptions(dt.map((opt) => heading[opt]));
     }
-    console.log("heyyyyyyyyyyyyyyyyyyyyyyy");
-    console.log(selectedIndex);
   };
 
   const handleDialogClose = () => {
@@ -121,8 +116,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
   }
 
   useEffect(() => {
-    console.log(label);
-    // console.log(items)
     getItems();
   }, []);
 
@@ -274,7 +267,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
       body: datas,
       theme: "grid",
       createdCell: (opts) => {
-        // console.log(opts);
         if (
           opts.column.index != 0 &&
           opts.column.index != headers[0].length - 1 &&
@@ -376,7 +368,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
                   {filter
                     ? selectedIndex.map((index) => {
                       if (index === middleValues.length - 1) {
-                        console.log("------------------------------------------------------");
                         totalPending += middleValues[index].pending;
                       }
                       return (
@@ -400,7 +391,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
                     })
                     : middleValues.map((cell, index) => {
                       if (index === middleValues.length - 1) {
-                        console.log("------------------------------------------------------");
                         totalPending += middleValues[index].pending;
                       }
 
@@ -433,9 +423,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
                 <TableCell sx={{ border: 1 }}>Total</TableCell>
 
                 {selectedIndex.map((label, index) => {
-                  console.log(selectedIndex);
                   const value = totalItems.find((item) => item.iName === heading[label]);
-                  console.log(value);
                   if (label != heading.length - 1) {
                     return (
                       <TableCell sx={{ border: 1 }} key={label}>
@@ -463,10 +451,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
                 <TableCell sx={{ border: 1 }}>Total</TableCell>
 
                 {heading.slice(0, -1).map((label, index) => {
-                  console.log(totalItems);
-                  console.log(totalPending);
                   const value = totalItems.find((item) => item.iName === label);
-                  console.log(value);
                   return (
                     <TableCell sx={{ border: 1 }} key={label}>
                       <Typography sx={{ fontWeight: "bold" }}>
