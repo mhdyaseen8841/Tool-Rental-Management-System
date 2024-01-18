@@ -367,6 +367,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                         {customer.altermobile}
                       </TableCell>
                       <TableCell sx={{ padding: '4px' }}>
+                        
                         {localStorage.getItem('usertype') === 'owner' ?
                           null
                           :

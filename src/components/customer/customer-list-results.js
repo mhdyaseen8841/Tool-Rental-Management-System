@@ -26,7 +26,10 @@ import {
   Typography,
   SvgIcon,
   Button,
-  Tooltip
+  Tooltip,
+  IconButton,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
@@ -38,6 +41,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Stack, color } from '@mui/system';
+import { MoreVert, SignalCellularNullSharp } from '@material-ui/icons';
+import { useRef } from 'react';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -239,6 +244,39 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
     }
   };
 
+
+  const TableAction = ({ options = [] }) => {
+    const [open, setOpen] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+    const ref = useRef(SignalCellularNullSharp)
+    return (
+      <>
+        <IconButton
+          ref={ref}
+          onClick={(e) => { setOpen(true); setAnchorEl(event.currentTarget); }}
+        >
+          <MoreVert />
+        </IconButton>
+        <Menu
+          anchorEl={ref.current}
+          open={open}
+          onClose={() => { setOpen(false) }}
+          PaperProps={{
+            style: {
+              width: '15ch',
+            },
+          }}
+        >
+          {options.map((option) => (
+            <MenuItem key={option} onClick={option.clickHandle}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Menu>
+      </>
+    )
+  }
+
   const filteredUsers = applySortFilter(customers, getComparator(order, orderBy), filterName);
   return (
     <>
@@ -336,7 +374,16 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
                         {customer.altermobile}
                       </TableCell>
                       <TableCell sx={{ padding: '2px' }}>
-                        {localStorage.getItem('usertype') === 'owner' ? (
+                      {localStorage.getItem('usertype') === 'owner' ? (
+                          null
+                        ) : (
+                        <TableAction
+                          options={[
+                            { label: 'Edit', clickHandle: (e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile }) },
+                            { label: 'Delete', clickHandle: () => { deleteConfirm(customer.cId) }}
+                          ]} />)
+                        }
+                        {/* {localStorage.getItem('usertype') === 'owner' ? (
                           null
                         ) : (
                           <Stack direction={'row'} spacing={2}>
@@ -347,7 +394,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
                               <DeleteIcon cursor={'pointer'} color="error" onClick={() => { deleteConfirm(customer.cId) }} />
                             </Tooltip>
                           </Stack>
-                        )}
+                        )} */}
                       </TableCell>
                     </TableRow>
                   ))}

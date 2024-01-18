@@ -46,7 +46,8 @@ export const ActiveInactiveListToolbar = (props) => {
           "proof": cPic,
           "coName": data.Carename,
           "coMobile": data.CareMobnum,
-          "documents": []
+          "documents": [],
+          "status":1
         }
       };
 
