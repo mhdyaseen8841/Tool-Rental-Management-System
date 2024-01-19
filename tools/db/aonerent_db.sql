@@ -83,7 +83,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100001` (IN `request` JS
     ELSEIF num IS NOT NULL THEN
         SELECT JSON_OBJECT('errorCode',0,'errorMsg','Mobile number already registered') as result;
     ELSE
-        INSERT INTO customermaster(cName,mobile,alterMobile,address,proof,coName,coMobile) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'),json_value(request,'$.coName'),json_value(request,'$.coMobile'));
+        INSERT INTO customermaster(cName,mobile,alterMobile,address,proof,coName,coMobile,status) VALUES(nam,mob,alterNum,plac,json_value(request,'$.proof'),json_value(request,'$.coName'),json_value(request,'$.coMobile'),json_value(request,'$.status'));
      set cid = LAST_INSERT_ID();
         SELECT JSON_OBJECT('errorCode',1,'errorMsg','Inserted Successful','result',JSON_OBJECT('cId',cid,'name',nam,'mobile',mob,'address',plac)) as result;
     END IF;
@@ -218,6 +218,24 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100009` (IN `request` JS
                                'documents',documents
                                )) as result from customermaster WHERE cId = JSON_VALUE(request,'$.cId');
 
+END$$
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100010` (IN `request` JSON)   BEGIN
+  SET SESSION group_concat_max_len = 1000000;
+	SELECT JSON_OBJECT('errorCode', 1, 'result', JSON_ARRAY( JSON_OBJECT( 
+    'cId', cm.cId, 
+    'cName', cm.cName, 
+    'mobile', cm.mobile, 
+    'altermobile', cm.altermobile, 
+    'address', cm.address, 
+    'proof', cm.proof, 
+    'coName', cm.coName, 
+    'coMobile', cm.coMobile, 
+    'lastupdate', MAX(rhm.updateDate)) 
+    order by rhm.updateDate 
+    )) AS result 
+    FROM customermaster cm INNER JOIN renthistorymaster rhm ON rhm.cId = cm.cId WHERE cm.status = 0 
+    GROUP BY cm.cId, cm.cName, cm.mobile, cm.altermobile, cm.address, cm.proof, cm.coName, cm.coMobile LIMIT 30;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100013` (IN `request` JSON)   BEGIN
