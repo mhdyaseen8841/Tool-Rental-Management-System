@@ -505,6 +505,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
 	(select concat('[',group_concat(json_object(
 		    'mId',mId,
         'Date',cDate,
+        'updateDate',updateDate,
         'status',status
     )ORDER BY mId),']') as result from renthistorymaster where cId = json_value(request,'$.cId')); 
     set datas = (select JSON_ARRAY());
@@ -516,7 +517,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
 			END IF;
             set rnthsry = json_extract(masterData, concat('$[',i,']'));
             set pendingsum = (select sum(pending) from renthistory where mId = JSON_VALUE(rnthsry,"$.mId"));
-            set delStatus = IF((DATEDIFF(curdate(),JSON_VALUE(rnthsry,"$.Date"))) > 7,0,1);
+            set delStatus = IF((DATEDIFF(curdate(),JSON_VALUE(rnthsry,"$.updateDate"))) > 7,0,1);
             set datas = (select JSON_ARRAY_APPEND(datas, '$', JSON_OBJECT(
         "mId",cast(JSON_VALUE(rnthsry,"$.mId") as unsigned),
         "Date",DATE_FORMAT(JSON_VALUE(rnthsry,"$.Date"), "%d-%m-%Y"),
@@ -1007,7 +1008,9 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
     DECLARE pendingStock int;
     DECLARE cntitem int;
     declare activeCust int;
-     SET SESSION group_concat_max_len = 1000000;
+     SET SESSION group_concat_max_len = 10000000;
+     SET SESSION max_execution_time=20000;
+     SET session wait_timeout=600;
     set itemData = JSON_VALUE(request,'$.items') ;
         if JSON_LENGTH(itemData) = 0  or itemData is null then 
               set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,'itemName',iName)),']') from items );
@@ -1075,10 +1078,12 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
                           set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending', IF(pendingStock = 0, '', pendingStock))));
                           set j=j+1;
                     END LOOP;
-                    set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending',getPendingAmount(JSON_VALUE(id,'$.cId')))));
-                    set datas = (select JSON_ARRAY_APPEND(datas,'$',fdata));
-                    if activeCust = 0 and getPendingAmount(JSON_VALUE(id,'$.cId')) = 0 then
-                      set datas = (select JSON_REMOVE(datas,concat('$[',JSON_LENGTH(datas)-1,']')));
+                    -- set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending',getPendingAmount(JSON_VALUE(id,'$.cId')))));
+                    set datas = (select JSON_ARRAY_APPEND(datas,'$',(select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending',getPendingAmount(JSON_VALUE(id,'$.cId')))))));
+                    if activeCust = 0 then
+                      if getPendingAmount(JSON_VALUE(id,'$.cId')) = 0 then
+                        set datas = (select JSON_REMOVE(datas,concat('$[',JSON_LENGTH(datas)-1,']')));
+                      end if;
                     end if;
         set i = i+1;
     END LOOP;
@@ -1114,7 +1119,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300007` (IN `request` JS
 
         set dates =
         (
-            select concat('[',GROUP_CONCAT(JSON_OBJECT('hDate',hDate)),']') 
+            select concat('[',GROUP_CONCAT(JSON_OBJECT('hDate',hDate) order by hDate),']') 
                 from  
                 (
                 select hDate from renthistory 
@@ -1587,7 +1592,8 @@ CREATE TABLE `renthistorymaster` (
   `mId` int NOT NULL,
   `cDate` date DEFAULT NULL,
   `cId` int DEFAULT NULL,
-  `status` int DEFAULT NULL
+  `status` int DEFAULT NULL,
+  `updateDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --

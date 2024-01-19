@@ -95,6 +95,7 @@ export default function AddPaymetDialog(details) {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {details.button} ADD PAYMENT
             </Typography>
+            {sessionStorage.getItem("Cname") && <Typography sx={{ ml: 2, flex: 1 }} variant="h5">{sessionStorage.getItem("Cname")}</Typography> }
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               ADD
             </Button>

@@ -259,6 +259,9 @@ export default function FullScreenDialog(details) {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {details.button} RENT HISTORY
             </Typography>
+            
+            {sessionStorage.getItem("Cname") && <Typography sx={{ ml: 2, flex: 1 }} variant="h5">{sessionStorage.getItem("Cname")}</Typography> }
+
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
             </Button>

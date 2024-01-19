@@ -133,14 +133,14 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                             <TableCell key={ind} sx={{ borderBottom: 1, borderColor: '#aaa', justifyContent: 'center', alignItems: 'center' }}>
                               <Stack sx={{ alignItems: 'center' }}>
                                 {item.outgoing.qty !== 0 ? (
-                                  <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center', padding: '2px' }}>
+                                  <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px' }}>
                                     {item.outgoing.qty}
                                   </div>
                                 ) : (
                                   <div />
                                 )}
                                 {item.incoming.qty !== 0 ? (
-                                  <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center', width: '80px' }}>
+                                  <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px'  }}>
                                     {item.incoming.qty}
                                   </div>
                                 ) : (

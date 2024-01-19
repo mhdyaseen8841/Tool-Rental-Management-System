@@ -274,7 +274,9 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
         ) {
           if (opts.cell.raw != "") {
             opts.cell.styles.textColor = "#000";
+            opts.cell.styles.fontStyle = 'bold';
             opts.cell.styles.fillColor = "#dee0df";
+            opts.cell.styles.halign = 'center';
           }
         }
         if (
@@ -285,6 +287,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
           opts.cell.styles.textColor = "#fff";
           opts.cell.styles.fillColor = "#c00";
           opts.cell.styles.fontStyle = "bold";
+          opts.cell.styles.fontSize = 12;
           if (opts.column.index == headers[0].length - 1) {
             opts.cell.styles.fontSize = 12;
           }

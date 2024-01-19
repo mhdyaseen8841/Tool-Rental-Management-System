@@ -92,7 +92,7 @@ export default function AlertDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Confirm Delete?
+          Do you want to Delete <b>{props.cName && props.cName}</b> ?
         </DialogTitle>
 
         <DialogActions>
@@ -123,6 +123,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
   const [rowsPerPage, setRowsPerPage] = useState(100);
   const [alertOpen, setAlertOpen] = useState(false);
   const [cId, setCid] = useState('');
+  const [cName, setCname] = useState('');
   const handleClose = () => {
     setDialog();
   };
@@ -187,9 +188,10 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
     ));
   };
 
-  const deleteConfirm = (cid) => {
+  const deleteConfirm = (cid,name) => {
     setAlertOpen(true)
     setCid(cid)
+    setCname(name)
   }
 
   const deleteUser = () => {
@@ -269,7 +271,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
         </Card>
       </Box>
       <Card {...rest}>
-        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser} />
+        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser} cName = {cName} />
 
         {addDialog}
         <PerfectScrollbar>
@@ -344,7 +346,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
                               onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile })}
                             >Edit</EditIcon>
                             <Tooltip title="Delete">
-                              <DeleteIcon cursor={'pointer'} color="error" onClick={() => { deleteConfirm(customer.cId) }} />
+                              <DeleteIcon cursor={'pointer'} color="error" onClick={() => { deleteConfirm(customer.cId,customer.cName) }} />
                             </Tooltip>
                           </Stack>
                         )}

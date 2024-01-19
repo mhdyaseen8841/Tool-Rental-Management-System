@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Button from '@mui/material/Button';
@@ -15,12 +15,12 @@ import dayjs from 'dayjs';
 
 export default function CalculateScreenDialog(details) {
   const [update, setUpdate] = useState(details.updated);
-  const [toggleStatus, setToggleStatus] = useState(details.updated ? details.data.status == 0 ? "0" : "1":"0");
+  const [toggleStatus, setToggleStatus] = useState(details.updated ? details.data.status == 0 ? "0" : "1" : "0");
   const [backDropOpen, setBackDropOpen] = useState(false);
 
   const validSchema = Yup.object().shape({
     Amount: Yup.string().matches(/^\S/, 'Whitespace is not allowed').required('Amount is required'),
-    
+
   });
   const initialDate = update ? details.data.date : new Date();
   const [selectedDate, setSelectedDate] = useState(initialDate); // Set the initial state to the current date
@@ -38,15 +38,15 @@ export default function CalculateScreenDialog(details) {
 
   const formik = useFormik({
     initialValues: {
-      Amount: update ? details.data.Amount :'',
-      Status: update ? details.data.Status :'1',
-      Notes: update ? details.data.note :'',
+      Amount: update ? details.data.Amount : '',
+      Status: update ? details.data.Status : '1',
+      Notes: update ? details.data.note : '',
     },
     validationSchema: validSchema,
     onSubmit: (values) => {
       setBackDropOpen(true)
       values.Status = toggleStatus;
-      details.submit(selectedDate,values);
+      details.submit(selectedDate, values);
     },
   });
 
@@ -64,7 +64,7 @@ export default function CalculateScreenDialog(details) {
   return (
     <div>
       <Dialog fullScreen open={details.open} onClose={details.onClose}>
-      <Backdrop
+        <Backdrop
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={backDropOpen}
         >
@@ -78,13 +78,14 @@ export default function CalculateScreenDialog(details) {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {details.button} Extra Payment
             </Typography>
+            {sessionStorage.getItem("Cname") && <Typography sx={{ ml: 2, flex: 1 }} variant="h5">{sessionStorage.getItem("Cname")}</Typography> }
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
             </Button>
           </Toolbar>
         </AppBar>
         <Container maxWidth="sm">
-          
+
           <Stack spacing={1} justifyContent="space-between" sx={{ my: 3 }}>
             <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ my: 3 }}>
               <Typography variant="h4">ADD EXTRA PAYMENT</Typography>
@@ -97,22 +98,22 @@ export default function CalculateScreenDialog(details) {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
-            <Stack direction={'row'}  justifyContent={"end"} gap={1}>
-  <DatePicker
-    label="Select Date"
-    format="dd-mm-yyyy"        
-    inputFormat="dd-MM-yyyy"    
-    value={selectedDate}
-    shouldDisableDate={disableFutureDates}
-    sx={{ width: '40%' }}
-    onChange={(newDate) => {
-      setSelectedDate(newDate);
-      getData(newDate);
+            <Stack direction={'row'} justifyContent={"end"} gap={1}>
+              <DatePicker
+                label="Select Date"
+                format="dd-mm-yyyy"
+                inputFormat="dd-MM-yyyy"
+                value={selectedDate}
+                shouldDisableDate={disableFutureDates}
+                sx={{ width: '40%' }}
+                onChange={(newDate) => {
+                  setSelectedDate(newDate);
+                  getData(newDate);
 
-    }}
-    renderInput={(params) => <TextField {...params} />}
-  />
-</Stack>
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </Stack>
             <TextField
               fullWidth
               type="text"
@@ -132,7 +133,7 @@ export default function CalculateScreenDialog(details) {
               helperText={touched.Notes && errors.Notes || alertMsg}
             />
           </Stack>
-          
+
         </Container>
       </Dialog>
     </div>

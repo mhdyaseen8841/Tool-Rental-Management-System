@@ -163,6 +163,8 @@ export default function FullScreenDialog(details) {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {details.button} CUSTOMER
             </Typography>
+
+            
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
             </Button>

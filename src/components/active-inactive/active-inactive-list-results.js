@@ -89,7 +89,7 @@ export default function AlertDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Confirm Delete?
+          Do you want to Delete <b>{props.cName && props.cName}</b> ?
         </DialogTitle>
 
         <DialogActions>
@@ -113,6 +113,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [order, setOrder] = useState('asc');
   const [cId, setCid] = useState('');
+  const [cName, setCname] = useState('');
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
@@ -262,9 +263,10 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
 
 
   }
-  const deleteConfirm = (cid) => {
+  const deleteConfirm = (cid,name) => {
     setAlertOpen(true)
     setCid(cid)
+    setCname(name)
   }
 
 
@@ -298,7 +300,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
         </Card>
       </Box>
       <Card {...rest}>
-        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer} />
+        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer} cName = {cName} />
         {addDialog}
 
         <GetCustomerProfile open={profileOpen}
@@ -374,7 +376,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                           <><Button
                             onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile })}
                           >Edit</Button><Button color="success" onClick={() => handleActive(customer.cId)}>Active</Button>
-                            <Button color="error" onClick={() => deleteConfirm(customer.cId)}>Delete</Button></>
+                            <Button color="error" onClick={() => deleteConfirm(customer.cId,customer.cName)}>Delete</Button></>
 
                         }
                       </TableCell>
