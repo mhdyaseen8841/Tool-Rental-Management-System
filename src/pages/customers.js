@@ -14,10 +14,10 @@ const Page = () => {
   const [customers, setCustomers] = useState([{}])
   const [loader, setLoader] = useState(true)
 
-  function getCustomer() {
+  function getCustomer(requestId = 1100005 ) {
     let data = {
       "type": "SP_CALL",
-      "requestId": 1100005,
+      "requestId": requestId,
       request: {
       }
     }

@@ -222,20 +222,31 @@ END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100010` (IN `request` JSON)   BEGIN
   SET SESSION group_concat_max_len = 1000000;
-	SELECT JSON_OBJECT('errorCode', 1, 'result', JSON_ARRAY( JSON_OBJECT( 
-    'cId', cm.cId, 
-    'cName', cm.cName, 
-    'mobile', cm.mobile, 
-    'altermobile', cm.altermobile, 
-    'address', cm.address, 
-    'proof', cm.proof, 
-    'coName', cm.coName, 
-    'coMobile', cm.coMobile, 
-    'lastupdate', MAX(rhm.updateDate)) 
-    order by rhm.updateDate 
-    )) AS result 
-    FROM customermaster cm INNER JOIN renthistorymaster rhm ON rhm.cId = cm.cId WHERE cm.status = 0 
-    GROUP BY cm.cId, cm.cName, cm.mobile, cm.altermobile, cm.address, cm.proof, cm.coName, cm.coMobile LIMIT 30;
+	SELECT JSON_OBJECT('errorCode', 1, 'result', JSON_ARRAY(GROUP_CONCAT(
+    JSON_OBJECT( 
+        'cId', cm.cId, 
+        'cName', cm.cName, 
+        'mobile', cm.mobile, 
+        'altermobile', cm.altermobile, 
+        'address', cm.address, 
+        'proof', cm.proof, 
+        'coName', cm.coName, 
+        'coMobile', cm.coMobile, 
+        'lastupdate', rhm_max.updateDate
+    )
+    ORDER BY rhm_max.updateDate DESC
+) 
+)) AS result 
+FROM customermaster cm
+INNER JOIN (
+    SELECT cId, MAX(updateDate) AS updateDate
+    FROM renthistorymaster
+    GROUP BY cId 
+    ORDER BY MAX(updateDate) DESC
+    LIMIT 30
+) AS rhm_max ON rhm_max.cId = cm.cId
+WHERE cm.status = 0 
+LIMIT 30;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100013` (IN `request` JSON)   BEGIN
@@ -458,8 +469,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400001` (IN `request` JS
 			set ratest = (select count(rId) from ratecard where cId = id and itemId = json_value(cmpData1,'$.itemId'));
 			SET  i = i + 1;
 		END LOOP;
-		select JSON_OBJECT("errorCode",1,"errorMsg","Inserted Successfully") as result;
     call returnCalculate(id);
+		select JSON_OBJECT("errorCode",1,"errorMsg","Inserted Successfully") as result;
     end if;
 END$$
 
@@ -1272,6 +1283,58 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',items,'data',fdatas)) as result;
 END$$
 
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300010` (IN `request` JSON)   BEGIN
+	  DECLARE stockUpdates JSON;
+    DECLARE stock1 JSON;
+    DECLARE items JSON; 
+    DECLARE item1 JSON;
+    DEClARE data1 JSON;
+    DEClARE datas JSON;
+    DEClARE fdatas JSON;
+    DEClARE label JSON;
+    DEClARE j int;
+    DEClARE i int;
+    DECLARE jcnt int;
+    DECLARE icnt int;
+    SET SESSION group_concat_max_len = 1000000;
+    set label = (SELECT JSON_MERGE((select JSON_ARRAY("DATE")),(select JSON_ARRAY(GROUP_CONCAT(iName SEPARATOR '","')) from items))) ;
+    set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from items);
+    set stockUpdates = (select concat('[',GROUP_CONCAT(json_object('dsmId',dsmId,'date',date)),']') from dailyStockMaster order by date DESC);
+    if label is null then
+      set label = (select JSON_ARRAY());
+    end if;
+    if items is null then
+      set items = (select JSON_ARRAY());
+    end if;
+    if stockUpdates is null then
+      set stockUpdates = (select JSON_ARRAY());
+    end if;
+    set jcnt = JSON_LENGTH(stockUpdates)-1;
+    set icnt = JSON_LENGTH(items)-1;
+    set datas = (select JSON_ARRAY());
+    set j = 0;
+      outerloop : LOOP
+        IF j > jcnt THEN
+           LEAVE outerloop;
+        END IF;
+        set stock1 = (select json_extract(stockUpdates, concat('$[',j,']')));
+        set i=0;
+        set fDatas = (select JSON_OBJECT("DATE",DATE_FORMAT(JSON_VALUE(stock1, '$.date'), "%d-%m-%Y")));
+        innerloop : LOOP
+          IF i > icnt THEN
+            LEAVE innerloop;
+          END IF;
+          set item1 = (select json_extract(items, concat('$[',i,']')));
+          set data1 = (select JSON_OBJECT(i.iName,dsc.Stock)  from dailyStockChild dsc inner join items i on i.itemId = dsc.itemId where dsc.itemId = JSON_VALUE(item1, '$.itemId') and dsc.dsmId = JSON_VALUE(stock1, '$.dsmId'));
+          set fDatas = (select JSON_MERGE(fDatas,data1));
+          set i= i+1;
+        END LOOP;
+        set datas = (select JSON_ARRAY_APPEND(datas,'$',fDatas));
+        set j = j+1;
+    END LOOP;
+    select JSON_OBJECT('errorCode',1,'result',json_object("label",label,"data",datas)) as result;
+END$$
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `newrentcalculation` (IN `item` INT(10), IN `dat` DATE, IN `redat` DATE, IN `id` INT(10), IN `qtyy` INT(10))   BEGIN
 	DECLARE pric decimal(20,2);
     DECLARE unitp decimal(20,2);
@@ -1316,7 +1379,10 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `id`
 				END IF;
                 set qty1 = (select rh.pending from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = id order by rh.hId LIMIT 1);
                 set datas = (select JSON_OBJECT("hId", rh.hId,"date",rh.hDate) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rh.itemId = iId and rh.status = 1 and rh.pending != 0 and rhm.cId = id order by rh.hId LIMIT 1);
-				if pqty < qty1 THEN
+				if JSON_VALUE(datas,'$.date') is null then
+            LEAVE  cmpinsert1;
+        end if;
+        if pqty < qty1 THEN
 					update renthistory set pending = pending - pqty where hId = JSON_VALUE(datas,'$.hId');
 					call newrentcalculation(iId,JSON_VALUE(datas,'$.date'),JSON_VALUE(rnthsry1,'$.hDate'),id,pqty);
 					set pqty = 0;
@@ -1329,6 +1395,64 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `id`
             update renthistory set pending = 0 where hId = JSON_VALUE(rnthsry1,'$.hId');
             set i= i+1;
      END LOOP;
+END$$
+
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `dailyStockEnter` ()   BEGIN
+	DECLARE itemData JSON;
+	DECLARE items JSON;
+	DECLARE fdata JSON;
+	DECLARE i int;
+	DECLARE icnt int;
+	DECLARE aStock int;
+	DECLARE rentStock int;
+	DECLARE returnStock int;
+	DECLARE pStock int;
+  DECLARE dsId int;
+
+  INSERT INTO dailyStockMaster VALUES();
+  set dsId = (SELECT LAST_INSERT_ID());
+   SET SESSION group_concat_max_len = 1000000;
+	set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,
+                               'iName',iName,
+                               'mRent',mRent,
+                               'tStock',tstock,
+                               'status',status)),']') 
+        from  
+        (
+        select i.itemId ,i.iName,i.mRent,i.tstock,i.status from items i GROUP BY i.itemId
+        ) as rh);
+
+	if JSON_EXTRACT(itemData,'$[0]') is null THEN
+    	set itemData = (select JSON_ARRAY());
+    end if;
+
+	    set icnt = JSON_LENGTH(itemData) - 1; 
+		
+		set fdata = (SELECT JSON_ARRAY());
+		set i = 0;
+		OuterLoop : LOOP
+			IF  i > icnt THEN
+				LEAVE OuterLoop;
+			END IF;	
+				set items = (select json_extract(itemData, concat('$[',i,']')));
+
+				set rentStock = (SELECT SUM(rhc.qty) from renthistory rhc  
+                                            where 
+                                            rhc.`itemId` = JSON_VALUE(items,'$.itemId') 
+                                            AND rhc.status = 1);
+
+				set returnStock = (SELECT SUM(rhc.qty) from renthistory rhc  
+                                            where 
+                                            rhc.`itemId` = JSON_VALUE(items,'$.itemId') 
+                                            AND rhc.status = 0);
+
+
+				set pStock = IFNULL(rentStock-IFNULL(returnStock,0),0);
+				set aStock = IFNULL(JSON_VALUE(items,'$.tStock')-pStock,0);
+        INSERT INTO dailyStockChild(dsmId,itemId,Stock) VALUES(dsId,JSON_VALUE(items,'$.itemId'),aStock);
+		set i = i+1;
+		END LOOP;
 END$$
 
 --
@@ -1378,7 +1502,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getPendingAmount` (`id` IN
     set total = total - IFNULL(oprice,0);
     set oprice = (select sum(amount) from paymentcollection where cId = id );
     set total = total - IFNULL(oprice,0);
-    Return ABS(total);
+    Return total;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getRentPrice` (`item` INT(10), `dat` DATE, `id` INT(10), `qtyy` INT(10)) RETURNS DECIMAL(20,2)  BEGIN
@@ -1395,6 +1519,16 @@ CREATE DEFINER=`aonerent_admin`@`localhost` FUNCTION `getRentPrice` (`item` INT(
     end if;
     Return pric; 
 END$$
+
+--
+-- Events
+--
+
+CREATE DEFINER=`aonerent_admin`@`localhost` EVENT `Stock Updation` 
+ON SCHEDULE EVERY 1 DAY STARTS '2024-01-28 00:00:00' 
+ON COMPLETION NOT PRESERVE ENABLE 
+  COMMENT 'add last daily stocks' 
+  DO CALL `dailyStockEnter`();
 
 DELIMITER ;
 

@@ -129,6 +129,8 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [cId, setCid] = useState('');
   const [cName, setCname] = useState('');
+
+  const [islatest, setIsLatest] = useState(false)
   const handleClose = () => {
     setDialog();
   };
@@ -169,7 +171,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
         } else if (res.errorcode == 0) {
 
         } else {
-          getdata()
+          getdata(islatest ? 1100010 : 1100005)
 
         }
 
@@ -193,7 +195,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
     ));
   };
 
-  const deleteConfirm = (cid,name) => {
+  const deleteConfirm = (cid, name) => {
     setAlertOpen(true)
     setCid(cid)
     setCname(name)
@@ -221,7 +223,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
 
       } else {
         setAlertOpen(false)
-        getdata()
+        getdata(islatest ? 1100010 : 1100005)
 
       }
 
@@ -304,12 +306,16 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
                 placeholder="Search customer"
                 variant="outlined"
               />
+              <Stack direction={'row'} gap={2} mt={2}>
+                <Button variant={islatest ? 'contained' : 'outlined'} onClick={() => { getdata(1100010); setIsLatest(true) }}>Latest Updated Customer</Button>
+                <Button variant={islatest ? 'outlined' : 'contained'} onClick={() => { getdata(); setIsLatest(false) }}>All Customers</Button>
+              </Stack>
             </Box>
           </CardContent>
         </Card>
       </Box>
       <Card {...rest}>
-        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser} cName = {cName} />
+        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteUser} cName={cName} />
 
         {addDialog}
         <PerfectScrollbar>
@@ -325,6 +331,11 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
                     <TableCell>
                       Mobile Number
                     </TableCell>
+                    {islatest &&
+                      (<TableCell>
+                        Updated on
+                      </TableCell>)
+                    }
                     {localStorage.getItem('usertype') === 'owner' ? (
                       null
                     ) : (<TableCell>
@@ -375,15 +386,20 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
                         <br />
                         {customer.altermobile}
                       </TableCell>
+                      {islatest &&
+                      (<TableCell>
+                        {customer.lastupdate}
+                      </TableCell>)
+                    }
                       <TableCell sx={{ padding: '2px' }}>
-                      {localStorage.getItem('usertype') === 'owner' ? (
+                        {localStorage.getItem('usertype') === 'owner' ? (
                           null
                         ) : (
-                        <TableAction
-                          options={[
-                            { label: 'Edit', clickHandle: (e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile }) },
-                            { label: 'Delete', clickHandle: () => { deleteConfirm(customer.cId) }}
-                          ]} />)
+                          <TableAction
+                            options={[
+                              { label: 'Edit', clickHandle: (e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile }) },
+                              { label: 'Delete', clickHandle: () => { deleteConfirm(customer.cId, customer.cName) } }
+                            ]} />)
                         }
                         {/* {localStorage.getItem('usertype') === 'owner' ? (
                           null

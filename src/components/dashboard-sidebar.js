@@ -39,6 +39,12 @@ let items = [
     isOwner: false
   },
   {
+    href: '/dailystock',
+    icon: (<InventoryIcon fontSize="small" />),
+    title: 'Daily Stocks',
+    isOwner: false
+  },
+  {
     href: '/users',
     icon: (<UsersIcon fontSize="small" />),
     title: 'Users',
