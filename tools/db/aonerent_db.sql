@@ -814,19 +814,19 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
     set datas = (SELECT JSON_ARRAY());
     set items = (select concat('[',GROUP_CONCAT(JSON_OBJECT("itemId",itemId,"itemName",itemName,"amount",amount)),']') from (select i.itemId,i.iName as itemName ,SUM(rc.price) as amount from rentcalculations rc inner join items i on rc.itemid = i.itemId where cId=JSON_VALUE(request,"$.cId") group by rc.itemid) as calc);
     if items is null or JSON_EXTRACT(items,'$[0]') is null then
-    
       set items = (select JSON_ARRAY());
     end if;
     set cnt = JSON_LENGTH(rentItems) - 1;
     set cct = JSON_LENGTH(items) - 1;
     set i = 0;
-    if cnt > cct then
+    if cnt >= cct then
 		  cmpinsert:  LOOP
 			  IF  i > cnt THEN
 				  LEAVE  cmpinsert;
 			  END IF;
         set cmpData = (select json_extract(rentItems, concat('$[',i,']')));
         set j = 0;
+        set cct = JSON_LENGTH(items) - 1;
         set amt = 0;
 		      innerloop:  LOOP
 			      IF  j > cct THEN
@@ -836,6 +836,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
             if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
               set amt = JSON_VALUE(cmpData,"$.amount") + JSON_VALUE(cmpData1,"$.amount");
               set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
+              set items = (select JSON_REMOVE(items, concat('$[',j,']')));
               LEAVE  innerloop;
             end if;
             set j = j+1;
@@ -845,22 +846,25 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
             end if;
         set i = i+1;
       END LOOP;
-    else 
+      set itemsFinal = (select JSON_MERGE(itemsFinal,items));
+    else
       cmpinsert:  LOOP
 			  IF  i > cct THEN
 				  LEAVE  cmpinsert;
 			  END IF;
         set cmpData = (select json_extract(items, concat('$[',i,']')));
         set j = 0;
+        set cnt = JSON_LENGTH(rentItems) - 1;
         set amt = 0;
 		      innerloop:  LOOP
-			      IF  j > cct THEN
+			      IF  j > cnt THEN
 				      LEAVE  innerloop;
 			      END IF;
             set cmpData1 = (select json_extract(rentItems, concat('$[',j,']')));
             if JSON_VALUE(cmpData,"$.itemId") = JSON_VALUE(cmpData1,"$.itemId") then
               set amt = JSON_VALUE(cmpData,"$.amount") + JSON_VALUE(cmpData1,"$.amount");
               set itemsFinal = (select JSON_ARRAY_APPEND(itemsFinal,'$',JSON_OBJECT("itemId",JSON_VALUE(cmpData,"$.itemId"),"itemName",JSON_VALUE(cmpData,"$.itemName"),"amount",amt)));
+              set rentItems = (select JSON_REMOVE(rentItems, concat('$[',j,']')));
               LEAVE  innerloop;
             end if;
             set j = j+1;
@@ -870,6 +874,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
             end if;
         set i = i+1;
       END LOOP;
+      set itemsFinal = (select JSON_MERGE(itemsFinal,rentItems));
     end if;
 
     set cct = JSON_LENGTH(itemsFinal) - 1;
