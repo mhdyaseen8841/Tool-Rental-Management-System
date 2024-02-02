@@ -29,7 +29,9 @@ import {
   Tooltip,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import FadeMenu from '../more-items-btn';
@@ -118,7 +120,8 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
-
+  const [snackbarOpen,setSnackOpen] = useState(false);
+  const [errorMsg,setErrorMsg] = useState();
   const [order, setOrder] = useState('asc');
 
   const [orderBy, setOrderBy] = useState('name');
@@ -160,6 +163,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
       }
 
       requestPost(req).then((res) => {
+        console.log("edit");
         if (res.errorCode === 3) {
           Router
             .push(
@@ -169,7 +173,8 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
               })
 
         } else if (res.errorcode == 0) {
-
+          setErrorMsg(<Alert severity='error'>{res.errorMsg}</Alert>);
+          setSnackOpen(true);
         } else {
           getdata(islatest ? 1100010 : 1100005)
 
@@ -219,8 +224,8 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
               query: { redirect: '1' },
             })
       } else if (res.errorcode == 0) {
-
-
+        setErrorMsg(<Alert severity='error'>{res.errorMsg}</Alert>);
+        setSnackOpen(true);
       } else {
         setAlertOpen(false)
         getdata(islatest ? 1100010 : 1100005)
@@ -285,6 +290,11 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
   return (
     <>
       <Box sx={{ mt: 3, mb: 3 }}>
+        <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={()=>setSnackOpen(false)}
+        ><Alert severity='error'>sample</Alert></Snackbar>
         <Card >
           <CardContent>
             <Box sx={{ maxWidth: 500 }}>
