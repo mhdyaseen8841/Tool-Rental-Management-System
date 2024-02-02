@@ -1525,7 +1525,7 @@ END$$
 --
 
 CREATE DEFINER=`aonerent_admin`@`localhost` EVENT `Stock Updation` 
-ON SCHEDULE EVERY 1 DAY STARTS '2024-01-28 00:00:00' 
+ON SCHEDULE EVERY 1 DAY STARTS '2024-01-28 23:59:00' 
 ON COMPLETION NOT PRESERVE ENABLE 
   COMMENT 'add last daily stocks' 
   DO CALL `dailyStockEnter`();
@@ -1550,12 +1550,6 @@ CREATE TABLE `customermaster` (
   `status` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `customermaster`
---
-
-INSERT INTO `customermaster` (`cId`, `cName`, `mobile`, `alterMobile`, `address`, `proof`, `coName`, `coMobile`, `status`) VALUES
-(1034, 'Muhammmed Yaseen', '8714914848', NULL, NULL, NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -1584,17 +1578,6 @@ CREATE TABLE `extrapayment` (
   `status` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `extrapayment`
---
-
-INSERT INTO `extrapayment` (`expId`, `cId`, `amount`, `date`, `note`, `status`) VALUES
-(1, 1034, 4005.00, '2023-07-24', 'notes', 0),
-(2, 1034, 500.00, '2023-07-23', 'home rent', 1),
-(4, 1034, 999.00, '2023-07-25', 'home rent', 1),
-(5, 1034, 500.00, '2023-07-24', 'home rent', 1),
-(6, 1034, 999.00, '2023-07-10', 'fdfas', 1),
-(7, 1034, 100.00, '2023-07-25', 'minuse', 0);
 
 -- --------------------------------------------------------
 
@@ -1610,13 +1593,6 @@ CREATE TABLE `items` (
   `status` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `items`
---
-
-INSERT INTO `items` (`itemId`, `iName`, `mRent`, `tStock`, `status`) VALUES
-(1, 'Sheet', 240.00, 322, 1),
-(2, 'ladder', 15000.00, 30, 0);
 
 -- --------------------------------------------------------
 
@@ -1634,23 +1610,6 @@ CREATE TABLE `login_session` (
 
 --
 -- Dumping data for table `login_session`
---
-
-INSERT INTO `login_session` (`sId`, `uId`, `token`, `time`, `platform`) VALUES
-(1, 1, '123', '2023-07-21 05:44:41', 'windows'),
-(2, 1, 'fff65e27bd335d1d3fbd1419d7e8af5b', '2023-07-24 12:07:23', 'desktop/Windows'),
-(3, 1, '063f83894b5cc0500f5b9ec301a076ea', '2023-07-25 15:22:08', 'desktop/Windows'),
-(4, 2, 'fe7eedfc7c9e61715d8087ed4e3338a2', '2023-07-27 08:32:34', 'desktop/Windows'),
-(5, 1, 'd4d2b3009dcd00e078d99891df0c90d7', '2023-07-27 08:35:42', 'desktop/Windows'),
-(6, 2, '3d09ef80e5cd2e7af30c4cb014c0c144', '2023-07-27 08:36:12', 'desktop/Windows'),
-(7, 1, '18c59b998e373d5319c3745b893760cf', '2023-07-27 08:42:34', 'desktop/Windows'),
-(8, 2, '88080f846e625b2f94b7ff36539b66ae', '2023-07-27 08:53:03', 'desktop/Windows'),
-(9, 1, '8aacf99d24c6d9746510322d0f38306f', '2023-07-27 09:13:20', 'desktop/Windows');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `paymentcollection`
 --
 
 CREATE TABLE `paymentcollection` (
@@ -1680,14 +1639,6 @@ CREATE TABLE `ratecard` (
   `rate` decimal(10,2) DEFAULT NULL,
   `status` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Dumping data for table `ratecard`
---
-
-INSERT INTO `ratecard` (`rId`, `itemId`, `cId`, `rate`, `status`) VALUES
-(2, 1, 1034, 240.00, 1),
-(3, 2, 1034, 15000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -1722,17 +1673,6 @@ CREATE TABLE `renthistory` (
   `pending` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `renthistory`
---
-
-INSERT INTO `renthistory` (`hId`, `mId`, `itemId`, `qty`, `hDate`, `note`, `status`, `pending`) VALUES
-(2, 2, 1, 1, '2023-07-17', '', 1, 1),
-(3, 3, 1, 1, '2023-07-17', 'uytytr', 1, 1),
-(4, 4, 1, 1, '2023-07-23', 'ddf', 1, 1),
-(5, 5, 2, 1, '2023-07-23', 'ladder', 1, 1),
-(6, 6, 1, 1, '2023-07-25', 'aasdfas', 1, 1),
-(7, 7, 1, 1, '2023-07-25', 'asdfasdf', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1745,27 +1685,8 @@ CREATE TABLE `renthistorymaster` (
   `cDate` date DEFAULT NULL,
   `cId` int DEFAULT NULL,
   `status` int DEFAULT NULL,
-  `updateDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updateDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Dumping data for table `renthistorymaster`
---
-
-INSERT INTO `renthistorymaster` (`mId`, `cDate`, `cId`, `status`) VALUES
-(2, '2023-07-17', 1034, 1),
-(3, '2023-07-17', 1034, 1),
-(4, '2023-07-23', 1034, 1),
-(5, '2023-07-23', 1034, 1),
-(6, '2023-07-25', 1034, 1),
-(7, '2023-07-25', 1034, 1),
-(12, '2023-07-27', 1034, 0),
-(13, '2023-07-27', 1034, 0),
-(14, '2023-07-27', 1034, 0),
-(15, '2023-07-27', 1034, 0),
-(16, '2023-07-08', 1034, 0),
-(17, '2023-07-08', 1034, 0),
-(18, '2023-07-08', 1034, 0);
 
 -- --------------------------------------------------------
 
@@ -1812,8 +1733,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`uId`, `userName`, `password`, `userType`, `status`) VALUES
 (1, 'admin@123.com', '21232f297a57a5a743894a0e4a801fc3', 'admin', 1),
-(2, 'owner@123.com', 'f2744d74ae037d1766ab076c4b66d315', 'owner', 1),
-(3, 'yaseen', '25d55ad283aa400af464c76d713c07ad', 'admin', 0);
+(2, 'owner@123.com', 'f2744d74ae037d1766ab076c4b66d315', 'owner', 1);
 
 --
 -- Indexes for dumped tables
