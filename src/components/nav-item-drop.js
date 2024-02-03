@@ -28,7 +28,6 @@ export const NavItemDrop = (props) => {
       }}
       {...others}
     >
-      <NextLink href={href} passHref>
         <Button
           component="a"
           startIcon={icon}
@@ -61,7 +60,6 @@ export const NavItemDrop = (props) => {
           <Box sx={{ flexGrow: 1 }}>{title}</Box>
           {arrowIcon}
         </Button>
-      </NextLink>
     </ListItem>
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -16,7 +16,7 @@ import { Users as UsersIcon } from '../icons/users';
 import { XCircle as XCircleIcon } from '../icons/x-circle';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
-import {NavItemDrop} from './nav-item-drop'
+import { NavItemDrop } from './nav-item-drop'
 import requestPost from '../../serviceWorker'
 import HistoryIcon from '@mui/icons-material/History';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
@@ -29,7 +29,7 @@ import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'; // Import t
 
 
 let item = [
-  
+
   {
     href: '/history',
     icon: (<HistoryIcon fontSize="small" />),
@@ -51,7 +51,7 @@ let item = [
     icon: (<TextSnippetIcon fontSize="small" />),
     title: 'Notes'
   },
- 
+
   {
     href: '/historyTotal',
     icon: (<CalculateIcon fontSize="small" />),
@@ -64,15 +64,15 @@ let item = [
   // }
 ];
 
-let items=[]
+// let items = []
 
 
 export const CustomerSidebar = (props) => {
   const { open, onClose } = props;
-  const [buttons, setButtons] = useState([]);
   const [error, setError] = useState('');
   const [errOpen, setErrOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [items,setItems] = useState([])
 
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
@@ -109,7 +109,6 @@ export const CustomerSidebar = (props) => {
       if (res.errorCode === 3) {
         router
           .push(
-
             {
               pathname: '/',
               query: { redirect: '1' },
@@ -117,27 +116,33 @@ export const CustomerSidebar = (props) => {
       } else {
         if (res.result) {
           if (res.result[0] == null) {
-            setButtons([]);
           } else {
-            setButtons(res.result);
-            items.push(
-  ...res.result.map((dt) => {
-    // Check if the item already exists in the array
-    const exists = items.some((item) => item.title === dt.iName);
+            setItems(res.result.map(dt=>{
+              return {
+                href: '/' + dt.iName,
+                icon: <ShoppingBagIcon fontSize="small" />,
+                title: dt.iName,
+                id: dt.itemId
+              }
+            }))
+            // items.push(
+            //   ...res.result.map((dt) => {
+            //     // Check if the item already exists in the array
+            //     const exists = items.some((item) => item.title === dt.iName);
 
-    // Only add the item if it doesn't already exist
-    if (!exists) {
-      return {
-        href: '/' + dt.iName,
-        icon: <ShoppingBagIcon fontSize="small" />,
-        title: dt.iName,
-        id: dt.itemId
-      };
-    }
+            //     // Only add the item if it doesn't already exist
+            //     if (!exists) {
+            //       return {
+            //         href: '/' + dt.iName,
+            //         icon: <ShoppingBagIcon fontSize="small" />,
+            //         title: dt.iName,
+            //         id: dt.itemId
+            //       };
+            //     }
 
-    return null; // Skip this item if it already exists
-  }).filter(Boolean) // Filter out any null values (i.e., items that already exist)
-);
+            //     return null; // Skip this item if it already exists
+            //   }).filter(Boolean) // Filter out any null values (i.e., items that already exist)
+            // );
           }
         } else {
           setError("" + res);
@@ -150,12 +155,12 @@ export const CustomerSidebar = (props) => {
   }
 
   useEffect(() => {
-    if(!localStorage.getItem("uId")){
+    if (!localStorage.getItem("uId")) {
       router.push('/')
-    }else{
+    } else {
       getItems()
     }
-    }, [])
+  }, [])
 
   const content = (
     <>
@@ -201,9 +206,9 @@ export const CustomerSidebar = (props) => {
                 >
                   A-ONE RENTALS
                 </Typography>
-                
+
               </div>
-              
+
             </Box>
           </Box>
         </div>
@@ -214,7 +219,7 @@ export const CustomerSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-        {item.map((item) => (
+          {item.map((item) => (
             <NavItem
               key={item.title}
               icon={item.icon}
@@ -224,31 +229,31 @@ export const CustomerSidebar = (props) => {
           ))}
 
 
-  <NavItemDrop
-        key={"ItemsList"}
-     href=""
-     icon={(<ConstructionIcon fontSize="small" />)}
-title={"Items list"}
-    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-    arrowIcon={isDropdownOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}  />
- 
-             {isDropdownOpen && (
-    <Box>
-     {items.map((item) => (
-            <NavItem
-              key={item.title}
-              icon={item.icon}
-              href={'/singleItemHistory?id='+item.id+'&name='+item.title}
-              title={item.title}
-            />
-          ))}
-    </Box>
-  )}
+          <NavItemDrop
+            key={"ItemsList"}
+            href=""
+            icon={(<ConstructionIcon fontSize="small" />)}
+            title={"Items list"}
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            arrowIcon={isDropdownOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />} />
 
-          
+          {isDropdownOpen && (
+            <Box>
+              {items.map((item) => (
+                <NavItem
+                  key={item.title}
+                  icon={item.icon}
+                  href={'/singleItemHistory?id=' + item.id + '&name=' + item.title}
+                  title={item.title}
+                />
+              ))}
+            </Box>
+          )}
+
+
         </Box>
         <Divider sx={{ borderColor: '#2D3748' }} />
-       
+
       </Box>
     </>
   );

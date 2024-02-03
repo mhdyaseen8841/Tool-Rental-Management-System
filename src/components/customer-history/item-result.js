@@ -119,7 +119,7 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                   return (
                     <React.Fragment key={customer.mId}>
                       <TableRow sx={{ borderBottom: 3, borderColor: '#aaa' }}>
-                        <TableCell sx={{ whiteSpace: 'nowrap', borderBottom: 1, borderColor: '#aaa' }}>{customer[0]}</TableCell>
+                        <TableCell sx={{position: "sticky",left: 0,background: "white", whiteSpace: 'nowrap', borderBottom: 1, borderColor: '#aaa' }}>{customer[0]}</TableCell>
 
                         {customer.slice(1).map((item, ind) => {
                           if (itemTotalArr[ind] == undefined) {
@@ -133,14 +133,14 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                             <TableCell key={ind} sx={{ borderBottom: 1, borderColor: '#aaa', justifyContent: 'center', alignItems: 'center' }}>
                               <Stack sx={{ alignItems: 'center' }}>
                                 {item.outgoing.qty !== 0 ? (
-                                  <div style={{ color: 'white', background: 'red', maxWidth: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px' }}>
+                                  <div style={{ color: 'white', background: 'red', width: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px' }}>
                                     {item.outgoing.qty}
                                   </div>
                                 ) : (
                                   <div />
                                 )}
                                 {item.incoming.qty !== 0 ? (
-                                  <div style={{ color: 'white', background: 'green', maxWidth: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px'  }}>
+                                  <div style={{ color: 'white', background: 'green', width: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px'  }}>
                                     {item.incoming.qty}
                                   </div>
                                 ) : (

@@ -406,6 +406,32 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300001` (IN `request` JS
 	end if;
 END$$
 
+-- edit stock update
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300002` (IN `request` JSON)   BEGIN
+	  declare stats int;
+    declare qtty int;
+    declare sqty int;
+    SET SESSION group_concat_max_len = 1000000;
+    set stats = JSON_VALUE(request,'$.status');
+    set qtty = JSON_VALUE(request,'$.qty');
+    set sqty = (select tStock from items where itemId = JSON_VALUE(request,'$.itemId'));
+    insert into stockupdate(sDate,qty,note,itemId,updateStatus) values(curdate(),qtty,JSON_VALUE(request,'$.note'),JSON_VALUE(request,'$.itemId'),stats);
+    if stats = 1 then
+		update items set tstock = tstock + qtty where itemId = JSON_VALUE(request,'$.itemId');
+        select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
+	else
+		if sqty < qtty then
+			select JSON_OBJECT("errorCode",0,"msg","QUATITY is higher than stock QUATITY") as result;
+        else
+			update items set tstock = tstock - qtty where itemId = JSON_VALUE(request,'$.itemId');
+            select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
+		end if;
+	end if;
+END$$
+
+-- delete stock update
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300005` (IN `request` JSON)   BEGIN
   SET SESSION group_concat_max_len = 1000000;
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
@@ -695,8 +721,8 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
         'qty',rh.pending,
         'price',getRentPrice (rh.itemId, rh.hDate, rhm.Cid, rh.pending),
         'status',0
-    ))) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId 
-    where rhm.cId = json_value(request,'$.cId') and rh.ItemId = json_value(request,'$.itemId') and rh.status=1 and rh.pending != 0);
+    ) ORDER BY rh.hDate )) from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId 
+    where rhm.cId = json_value(request,'$.cId') and rh.ItemId = json_value(request,'$.itemId') and rh.status=1 and rh.pending != 0 );
     set err = (select JSON_EXTRACT(sData,'$[0]'));
     if err = 'null' THEN
     	set sData = (SELECT JSON_ARRAY());
@@ -711,7 +737,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
         'qty',rc.qty,
         'price',rc.price,
         'status',1
-    ))) from rentcalculations rc where rc.cId = json_value(request,'$.cId') AND rc.itemid= json_value(request,'$.itemId'));
+    ))) from rentcalculations rc where rc.cId = json_value(request,'$.cId') AND rc.itemid= json_value(request,'$.itemId') order by rc.rentDate );
     set err = (select JSON_EXTRACT(mData,'$[0]'));
     if err = 'null' THEN
     	set mData = (SELECT JSON_ARRAY());

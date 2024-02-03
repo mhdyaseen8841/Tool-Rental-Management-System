@@ -1,4 +1,4 @@
-import { useState ,useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AuthGuard } from './auth-guard';
@@ -19,16 +19,16 @@ export const CustomerLayout = (props) => {
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
-  const router=useRouter()
+  const router = useRouter()
   useEffect(() => {
-    if(!localStorage.getItem("uId")){
+    if (!localStorage.getItem("uId")) {
       router.push('/')
     }
-    }, [])
+  }, [])
 
-    const setValue= (data)=>{
+  const setValue = (data) => {
 
-    }
+  }
 
   return (
     <AuthGuard>
@@ -39,7 +39,7 @@ export const CustomerLayout = (props) => {
             flex: '1 1 auto',
             flexDirection: 'column',
             width: '100%',
-            backgroundColor:'#eee'
+            backgroundColor: '#eee'
           }}
         >
           {children}
@@ -47,8 +47,8 @@ export const CustomerLayout = (props) => {
       </DashboardLayoutRoot>
       <CustomerNavbar onSidebarOpen={() => setSidebarOpen(true)} />
       <CustomerSidebar
-    setTable= {setValue} 
-    cid={props.cId}
+        setTable={setValue}
+        cid={props.cId}
         onClose={() => setSidebarOpen(false)}
         open={isSidebarOpen}
       />
