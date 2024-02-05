@@ -119,7 +119,7 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                   return (
                     <React.Fragment key={customer.mId}>
                       <TableRow sx={{ borderBottom: 3, borderColor: '#aaa' }}>
-                        <TableCell sx={{position: "sticky",left: 0,background: "white", whiteSpace: 'nowrap', borderBottom: 1, borderColor: '#aaa' }}>{customer[0]}</TableCell>
+                        <TableCell sx={{position: "sticky",left: 0,background: "white", whiteSpace: 'nowrap', borderBottom: 1, borderColor: '#aaa', py: '4px' }}>{customer[0]}</TableCell>
 
                         {customer.slice(1).map((item, ind) => {
                           if (itemTotalArr[ind] == undefined) {
@@ -130,7 +130,7 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                           }
                           return (
 
-                            <TableCell key={ind} sx={{ borderBottom: 1, borderColor: '#aaa', justifyContent: 'center', alignItems: 'center' }}>
+                            <TableCell key={ind} sx={{ borderBottom: 1, borderColor: '#aaa', justifyContent: 'center', alignItems: 'center', py: '4px' }}>
                               <Stack sx={{ alignItems: 'center' }}>
                                 {item.outgoing.qty !== 0 ? (
                                   <div style={{ color: 'white', background: 'red', width: '60px', textAlign: 'center', padding: ' 0 4px 0 4px',fontWeight:'600',fontSize: '16px' }}>
@@ -165,7 +165,7 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                 position: 'sticky'
               }}>
                 <TableRow style={{ backgroundColor: '#bbb' }}>
-                  <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center', fontSize: '20px' }}>Total Items</Typography></TableCell>
+                  <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center', fontSize: '18px' }}>Total Items</Typography></TableCell>
                   {itemTotalArr.map((total, ind) => (
                     <TableCell key={ind} sx={{ textAlign: 'center' }}>
                       <Typography variant='h5' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center' }} >{Math.abs(total)}</Typography>

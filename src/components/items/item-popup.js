@@ -55,8 +55,6 @@ export default function FullScreenDialogPopup(details) {
            
           </Toolbar>
         </AppBar>
-    
-     
         <Container maxWidth="lg" sx={{ pt: 5 }}>
             {addDialog}
          </Container>

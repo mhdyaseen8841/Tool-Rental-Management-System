@@ -8,6 +8,7 @@ import {
   Card,
   Checkbox,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -24,13 +25,16 @@ import FullScreenDialogPopup from './item-popup';
 import FullScreenDialogUpdate from './update-item';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router';
+import AlertDialog from '../customer/customer-list-results';
 
 export const ItemListResults = ({ items, getdata, ...rest }) => {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(0);
   const [open, setOpen] = useState(true);
   const [addDialog, setDialog] = useState();
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [itemId, setItemId] = useState();
+  const [itemName, setItemName] = useState('');
+  const [snackbarOpen, setSnackbaropen] = useState(false);
+  const [errorMsg, setErrormsg] = useState('')
 
   const handleClose = () => {
     setDialog();
@@ -41,7 +45,7 @@ export const ItemListResults = ({ items, getdata, ...rest }) => {
     setDialog(() => (
 
       <FullScreenDialogPopup
-        onClose={handleClose}
+        onClose={() => { handleClose(); getdata(); }}
         open={open}
 
         button="close"
@@ -173,52 +177,53 @@ export const ItemListResults = ({ items, getdata, ...rest }) => {
     ));
   };
 
-
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
-
-    if (event.target.checked) {
-      newSelectedCustomerIds = items.map((items) => items.itemId);
-    } else {
-      newSelectedCustomerIds = [];
+  const handleDelete = () => {
+    let req = {
+      "type": "SP_CALL",
+      "requestId": 1200003,
+      request: {
+        "itemId": itemId,
+      }
     }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
 
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
+    requestPost(req).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
 
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else {
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
 
-  const handleLimitChange = (event) => {
-    setLimit(event.target.value);
-  };
+        if (res.errorcode == 0) {
+          
+        } else {
+          getdata()
+        }
+        setErrormsg(res.errorMsg)
+        setSnackbaropen(true)
+        setAlertOpen(false)
+      }
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
+      setDialog();
+    });
+  }
 
+  const deleteConfirm = (itemid, name) => {
+    setAlertOpen(true)
+    setItemId(itemid)
+    setItemName(name)
+  }
   return (
 
     <Card {...rest}>
       {addDialog}
-
+      <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={handleDelete} cName={itemName} />
+      <Snackbar open={snackbarOpen} onClose={() => { setSnackbaropen(false) }} autoHideDuration={3000} message={errorMsg} anchorOrigin={{ vertical:'bottom',horizontal:'right'  }} />
       <TableContainer >
         <Table>
           <TableHead>
@@ -245,14 +250,13 @@ export const ItemListResults = ({ items, getdata, ...rest }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.slice(0, limit).map((items) => (
+            {items.map((item) => (
               <TableRow
                 hover
-                key={items.itemId}
-                selected={selectedCustomerIds.indexOf(items.itemId) !== -1}
+                key={item.itemId}
               >
 
-                <TableCell style={{ whiteSpace: 'nowrap',cursor:'pointer' }} onClick={(e) => handlePopup(e, items.itemId)}>
+                <TableCell style={{ whiteSpace: 'nowrap', cursor: 'pointer' }} onClick={(e) => handlePopup(e, item.itemId)}>
                   <Box
                     sx={{
                       alignItems: 'center',
@@ -263,26 +267,29 @@ export const ItemListResults = ({ items, getdata, ...rest }) => {
                     <Typography
                       color="textPrimary"
                       variant="body1"
-                      
+
                     >
-                      {items.iName}
+                      {item.iName}
                     </Typography>
                   </Box>
                 </TableCell>
 
                 <TableCell>
-                  ₹{items.mRent}
+                  ₹{item.mRent}
                 </TableCell>
                 <TableCell>
-                  {items.aStock}
+                  {item.aStock}
                 </TableCell>
                 <TableCell>
-                  {items.tStock}
+                  {item.tStock}
                 </TableCell>
                 {localStorage.getItem('usertype') === 'owner' ? (
                   null
                 ) : (<TableCell>
-                  <FadeMenu updateItem={(e) => handleUPDATE(e, true, 'UPDATE', { name: items.iName, itemId: items.itemId })} editUser={(e) => handleAdd(e, true, 'EDIT', { name: items.iName, mRent: items.mRent, dRent: items.dRent, tStock: items.tstock, itemId: items.itemId })} />
+                  <FadeMenu
+                    updateItem={(e) => handleUPDATE(e, true, 'UPDATE', { name: item.iName, itemId: item.itemId })}
+                    editUser={(e) => handleAdd(e, true, 'EDIT', { name: item.iName, mRent: item.mRent, dRent: item.dRent, tStock: item.tstock, itemId: item.itemId })}
+                    callback={() => { deleteConfirm(item.itemId, item.iName) }} />
                 </TableCell>)}
 
 
@@ -291,17 +298,6 @@ export const ItemListResults = ({ items, getdata, ...rest }) => {
           </TableBody>
         </Table>
       </TableContainer>
-
-
-      <TablePagination
-        component="div"
-        count={items.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleLimitChange}
-        page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
     </Card>
   );
 };

@@ -306,6 +306,18 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200002` (IN `request` JS
     END IF;
 END$$
 
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200003` (IN `request` JSON)   BEGIN
+    DECLARE num int;
+    set num = (select COUNT(itemId) from renthistory where itemId = json_value(request,'$.itemId'));
+    IF num > 0 THEN
+	    SELECT JSON_OBJECT('errorCode',0,'errorMsg','not allowed to delete! Item already in use') as result;
+    ELSE
+       delete from items where itemId = json_value(request,'$.itemId');
+       SELECT JSON_OBJECT('errorCode',1,'errorMsg','Deleted Successfully') as result;
+    END IF;
+END$$
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1200005` (IN `request` JSON)   BEGIN
 
 	DECLARE itemData JSON;
@@ -406,31 +418,61 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300001` (IN `request` JS
 	end if;
 END$$
 
--- edit stock update
-
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300002` (IN `request` JSON)   BEGIN
-	  declare stats int;
+	  declare stat int;
     declare qtty int;
     declare sqty int;
-    SET SESSION group_concat_max_len = 1000000;
-    set stats = JSON_VALUE(request,'$.status');
+    declare dqty int;
+    declare siid int;
+    declare itId int;
+    set siid = JSON_VALUE(request,'$.sId');
+    set stat = (select updateStatus from stockupdate where sId = siid);
     set qtty = JSON_VALUE(request,'$.qty');
-    set sqty = (select tStock from items where itemId = JSON_VALUE(request,'$.itemId'));
-    insert into stockupdate(sDate,qty,note,itemId,updateStatus) values(curdate(),qtty,JSON_VALUE(request,'$.note'),JSON_VALUE(request,'$.itemId'),stats);
-    if stats = 1 then
-		update items set tstock = tstock + qtty where itemId = JSON_VALUE(request,'$.itemId');
-        select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
-	else
-		if sqty < qtty then
-			select JSON_OBJECT("errorCode",0,"msg","QUATITY is higher than stock QUATITY") as result;
+    set sqty = (select qty from stockupdate where sId = siid);
+    set itId = (select itemId  from stockupdate where sId = siid);
+    set dqty = (select sqty - qtty); 
+    set sqty = (select tStock from items where itemId = itId);
+    if stat = 1 then
+      if dqty < 0 then
+		    update items set tstock = tstock + ABS(dqty) where itemId = itId;
+      else 
+        update items set tstock = tstock - ABS(dqty) where itemId = itId;
+      end if;
+      select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
+	  else
+		  if sqty < ABS(dqty) then
+			  select JSON_OBJECT("errorCode",0,"msg","QUATITY is higher than stock QUATITY") as result;
+      else
+        if dqty < 0 then
+		      update items set tstock = tstock - ABS(dqty) where itemId = itId;
         else
-			update items set tstock = tstock - qtty where itemId = JSON_VALUE(request,'$.itemId');
-            select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
+          update items set tstock = tstock + ABS(dqty) where itemId = itId;
+        end if;
+        select JSON_OBJECT("errorCode",1,"msg","Updated Successfully") as result;
 		end if;
 	end if;
+  update stockupdate set qty = qtty,note=JSON_VALUE(request,'$.note') where sId = siid;
 END$$
 
--- delete stock update
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300003` (IN `request` JSON)   BEGIN
+	  declare siid int;
+    declare stat int;
+    declare qtty int;
+    declare itId int;
+    set siid = JSON_VALUE(request,'$.sId');
+    set stat = (select updateStatus from stockupdate where sId = siid);
+    set qtty = (select qty from stockupdate where sId = siid);
+    set itId = (select itemId  from stockupdate where sId = siid);
+    if stat = 1 then
+		    update items set tstock = tstock - qtty where itemId = itId;
+	  else
+			  update items set tstock = tstock + qtty where itemId = itId;
+	  end if;
+    delete from stockupdate where sId = siid;
+    select JSON_OBJECT("errorCode",1,"msg","deleted Successfully") as result;
+END$$
+
+
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1300005` (IN `request` JSON)   BEGIN
   SET SESSION group_concat_max_len = 1000000;
@@ -742,7 +784,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600005` (IN `request` JS
     if err = 'null' THEN
     	set mData = (SELECT JSON_ARRAY());
     end if;
-    select json_object("errorCode",1,"result",JSON_MERGE(sData,mData)) as result;
+    select json_object("errorCode",1,"result",JSON_MERGE(mData,sData)) as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600006` (IN `request` JSON)   BEGIN
@@ -1138,7 +1180,6 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JS
                           set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending', IF(pendingStock = 0, '', pendingStock))));
                           set j=j+1;
                     END LOOP;
-                    -- set fdata = (select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending',getPendingAmount(JSON_VALUE(id,'$.cId')))));
                     set datas = (select JSON_ARRAY_APPEND(datas,'$',(select JSON_ARRAY_APPEND(fdata,'$',JSON_OBJECT('pending',getPendingAmount(JSON_VALUE(id,'$.cId')))))));
                     if activeCust = 0 then
                       if getPendingAmount(JSON_VALUE(id,'$.cId')) = 0 then
@@ -1391,7 +1432,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `returnCalculate` (IN `id`
     DECLARE cnt int;
     DECLARE i int;
      SET SESSION group_concat_max_len = 1000000;
-    set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId,"hDate",rh.hDate)),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = id and rh.status=0 and rh.pending!=0);
+    set rnthsry = (select concat("[",GROUP_CONCAT(JSON_OBJECT("hId",rh.hId,"hDate",rh.hDate) order by rh.hDate),"]") from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId where rhm.cId = id and rh.status=0 and rh.pending!=0);
     if rnthsry is null then
 		  set rnthsry = (select JSON_ARRAY());
 	  end if;
@@ -1729,7 +1770,7 @@ CREATE TABLE `stockupdate` (
   `sId` int NOT NULL,
   `sDate` date DEFAULT NULL,
   `qty` int DEFAULT NULL,
-  `note` varchar(500) NOT NULL,
+  `note` varchar(500) NULL,
   `itemId` int DEFAULT NULL,
   `updateStatus` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
