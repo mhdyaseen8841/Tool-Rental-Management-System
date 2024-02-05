@@ -187,7 +187,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
     }
 
 
-    setDialog(() => (
+    setDialog(
 
       <FullScreenDialog
         onClose={handleClose}
@@ -197,7 +197,7 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
         button={button}
         data={data}
       />
-    ));
+    );
   };
 
   const deleteConfirm = (cid, name) => {

@@ -1,22 +1,14 @@
 import Head from 'next/head';
-import { Box, Container, Grid, Pagination, Snackbar, Alert, Typography } from '@mui/material';
+import { Box, Container, Snackbar, Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
-
-import { HistoryListResults } from '../components/customer-history/history-list-results';
-// import { HistoryListResults } from '../components/customer-history/history-item-results';
-
-import { ItemResult } from '../components/customer-history/item-result';
 
 import { ItemNameResult } from '../components/customer-history/item-name-result';
 
 import { HistoryListToolbar } from '../components/customer-history/history-list-toolbar';
-import { DashboardLayout } from '../components/dashboard-layout';
 import { CustomerLayout } from "../components/customer-layout";
 import requestPost from '../../serviceWorker'
 
 import { useRouter } from 'next/router';
-import { HistoryTotalResult } from '../components/customer-history/history-total-result';
-import { RateCardResult } from '../components/customer-history/RateCardResult'
 import Loader from '../components/Loader';
 import Router from 'next/router';
 const Page = () => {
@@ -28,13 +20,9 @@ const Page = () => {
   const [customers, setCustomers] = useState([])
   const [item, setItem] = useState([])
 
-  const [payment, setPayments] = useState([])
-  const [itemhistory, setItemHistory] = useState([])
   const [cId, setCid] = useState('');
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
-  const [table, setTable] = useState(1)
-  const [data, setData] = useState({})
   const [loader, setLoader] = useState(true)
 
 

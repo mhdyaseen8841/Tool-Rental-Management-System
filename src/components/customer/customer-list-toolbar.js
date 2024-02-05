@@ -5,7 +5,7 @@ import {
   CardContent,
   TextField,
   InputAdornment,
-  SvgIcon, Typography
+  SvgIcon, Typography, Snackbar
 } from '@mui/material';
 import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
@@ -14,12 +14,15 @@ import { useState, useEffect } from 'react';
 import FullScreenDialog from '../active-inactive/add-customer';
 import requestPost from '../../../serviceWorker'
 import Router from 'next/router'
-export const CustomerListToolbar = (props) => 
-{
+export const CustomerListToolbar = (props) => {
 
   const [open, setOpen] = useState(true);
 
   const [addDialog, setDialog] = useState();
+
+  const [msg, setMsg] = useState();
+
+  const [snackbarOpen, setSnackOpen] = useState(false)
 
   const handleClose = () => {
     setDialog();
@@ -40,7 +43,7 @@ export const CustomerListToolbar = (props) =>
           "coName": data.Carename,
           "coMobile": data.CareMobnum,
           "documents": [],
-          "status":0
+          "status": 0
         }
       };
 
@@ -63,7 +66,7 @@ export const CustomerListToolbar = (props) =>
         } else if (res.errorCode == 0) {
           setMsg(res.errorMsg);
           setSnackOpen(true);
-          
+
           // setDialog();
 
         } else {
@@ -93,40 +96,47 @@ export const CustomerListToolbar = (props) =>
   };
 
 
-return(
-  <Box {...props}>
-    <Box
-      sx={{
-        alignItems: 'center',
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        m: -1
-      }}
-    >
-       {addDialog}
-      <Typography
-        sx={{ m: 1 }}
-        variant="h4"
+  return (
+    <Box {...props}>
+      <Snackbar
+        open={snackbarOpen}
+        onClose={() => { setSnackOpen(false) }}
+        autoHideDuration={3000}
+        message={msg}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      />
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          m: -1
+        }}
       >
-        Customers
-      </Typography>
-      <Box sx={{ m: 1 }}>
-        
+        {addDialog}
+        <Typography
+          sx={{ m: 1 }}
+          variant="h4"
+        >
+          Customers
+        </Typography>
+        <Box sx={{ m: 1 }}>
 
-      {localStorage.getItem('usertype') === 'owner' ? (
-    null
-  ) : (<Button
-    color="primary"
-    variant="contained"
-    onClick={handleAdd}
-  >
-    Add Customer
-  </Button>)}
-       
+
+          {localStorage.getItem('usertype') === 'owner' ? (
+            null
+          ) : (<Button
+            color="primary"
+            variant="contained"
+            onClick={handleAdd}
+          >
+            Add Customer
+          </Button>)}
+
+        </Box>
       </Box>
+
     </Box>
-    
-  </Box>
-);
-            }
+  );
+}

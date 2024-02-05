@@ -75,7 +75,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
 
         dt = selectedIndex;
         dt.push(index);
-        setSelectedIndex(dt.sort());
+        setSelectedIndex(dt.sort(function(a, b){return a - b}));
       }
 
       setSelectedOptions(dt.map((opt) => heading[opt]));
@@ -118,32 +118,6 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
   useEffect(() => {
     getItems();
   }, []);
-
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
-    // setSelectedCustomerIds(newSelectedCustomerIds);
-  };
-  const handleLimitChange = (event) => {
-    setLimit(event.target.value);
-  };
-
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
 
   // total count of each label endsss///
 

@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
 
 import FileUpload from 'react-material-file-upload';
+import requestPost from '../../../serviceWorker';
 
 
 
@@ -25,6 +26,7 @@ export default function FullScreenDialog(details) {
   const [imgPreviews, setImgPreviews] = useState([]);
   const [customerPhoto, setCustomerPhoto] = useState(null);
   const [backDropOpen, setBackDropOpen] = useState(false);
+  const [errs,setErrs] = useState({})
 
 
   const getBase64 = (file) => {
@@ -107,14 +109,16 @@ export default function FullScreenDialog(details) {
     },
     validationSchema: validSchema,
     onSubmit: (values, actions) => {
-      setBackDropOpen(true)
+      if (!errs.name || !errs.name) {
+        setBackDropOpen(true)
       details.submit(values, docs, customerPhoto);
       setTimeout(() => {
         setBackDropOpen(false)
       }, 2000);
+      }
     }
   });
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
@@ -133,18 +137,56 @@ export default function FullScreenDialog(details) {
     setCustomerPhoto(null);
   };
 
-
-
-
-  const alertTimeOut = () => {
-    setTimeout(() => {
-      setAlert();
-    }, 2000);
-  };
   const onclose = () => {
     formik.resetForm();
     details.onClose();
   };
+
+  const onNameEnter = (name) => {
+    
+    if (name.length > 0 && !update) {
+      let data = {
+        "type": "SP_CALL",
+        "requestId": 1100011,
+        request: {
+          name:name
+        }
+      }
+
+      requestPost(data).then((res)=>{
+        if (res.errorCode==0) {
+          setErrs({...errs,name:res.errorMsg})
+        }
+        else{
+          const {name,...props} = errs
+          setErrs({...props})
+        }
+      })
+    }
+  }
+
+  const onMobileEnter = (mobile) => {
+    if (mobile.length > 0 && !update) {
+      let data = {
+        "type": "SP_CALL",
+        "requestId": 1100012,
+        request: {
+          mobile:mobile
+        }
+      }
+
+      requestPost(data).then((res)=>{
+        if (res.errorCode==0) {
+          setErrs({...errs,mobile:res.errorMsg})
+        }
+        else{
+          const {mobile,...props} = errs
+          console.log(props);
+          setErrs({...props})
+        }
+      })
+    }
+  }
 
   return (
     <div>
@@ -164,7 +206,7 @@ export default function FullScreenDialog(details) {
               {details.button} CUSTOMER
             </Typography>
 
-            
+
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {details.button}
             </Button>
@@ -182,8 +224,12 @@ export default function FullScreenDialog(details) {
               label="Customer Name"
               variant="outlined"
               {...getFieldProps('CustomerName')}
-              error={Boolean(touched.CustomerName && errors.CustomerName)}
-              helperText={touched.CustomerName && errors.CustomerName}
+              onChange={(e) => {
+                onNameEnter(e.target.value)
+                setFieldValue("CustomerName", e.target.value)
+              }}
+              error={Boolean(touched.CustomerName && errors.CustomerName) || Boolean(errs.name)}
+              helperText={touched.CustomerName && errors.CustomerName || errs.name}
             />
             <TextField
 
@@ -193,8 +239,12 @@ export default function FullScreenDialog(details) {
               variant="outlined"
               value={details.update ? details.data.name : ''}
               {...getFieldProps('Mobnum')}
-              error={Boolean(touched.Mobnum && errors.Mobnum || alertMsg)}
-              helperText={touched.Mobnum && errors.Mobnum || alertMsg}
+              onChange={(e) => {
+                onMobileEnter(e.target.value)
+                setFieldValue("Mobnum", e.target.value)
+              }}
+              error={Boolean(touched.Mobnum && errors.Mobnum || Boolean(errs.mobile))}
+              helperText={touched.Mobnum && errors.Mobnum || errs.mobile}
             />
             <TextField
 

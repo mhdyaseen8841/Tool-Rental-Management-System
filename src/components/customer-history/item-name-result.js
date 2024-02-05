@@ -71,8 +71,8 @@ export const ItemNameResult = ({ customers, getdata, itemName, ...rest }) => {
 
         <PerfectScrollbar>
           <Box>
-            <TableContainer>
-              <Table>
+            <TableContainer style={{ maxHeight: '1500px' }}>
+              <Table stickyHeader>
                 <TableHead>
                   <TableRow>
                     <TableCell>No.Item</TableCell>

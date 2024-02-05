@@ -249,6 +249,26 @@ WHERE cm.status = 0
 LIMIT 30;
 END$$
 
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100011` (IN `request` JSON)   BEGIN
+    DECLARE exeName varchar(100);
+    set exeName = (select cName from customermaster where cName = json_value(request,'$.name'));
+    IF exeName IS NOT NULL THEN
+        SELECT JSON_OBJECT('errorCode',0,'errorMsg','Name Already Exist!') as result;
+    ELSE
+        SELECT JSON_OBJECT('errorCode',1,'errorMsg','success') as result;
+    END IF;
+END$$
+
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100012` (IN `request` JSON)   BEGIN
+    DECLARE num varchar(20);
+    set num = (select mobile from customermaster where mobile = json_value(request,'$.mobile'));
+    IF num IS NOT NULL THEN
+        SELECT JSON_OBJECT('errorCode',0,'errorMsg','Mobile number already registered') as result;
+    ELSE
+        SELECT JSON_OBJECT('errorCode',1,'errorMsg','success') as result;
+    END IF;
+END$$
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100013` (IN `request` JSON)   BEGIN
 	DECLARE num int;
    SET SESSION group_concat_max_len = 1000000;
