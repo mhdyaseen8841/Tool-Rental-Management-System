@@ -834,7 +834,7 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700003` (IN `request` JS
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JSON)   BEGIN
-	  DECLARE datas JSON;
+	DECLARE datas JSON;
     DECLARE items JSON;
     DECLARE payments JSON;
     DECLARE rents JSON;
@@ -1001,15 +1001,18 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700005` (IN `request` JS
       set itemsFinal = (select JSON_ARRAY());
     end if;
     set datas = (select JSON_ARRAY_APPEND(datas, '$', itemsFinal));
-    set payments = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("pId",pId,"date",DATE_FORMAT(pDate, "%d-%m-%Y"),"amount",amount))) from paymentcollection where cId = JSON_VALUE(request,"$.cId"));
+    set payments = (select concat("[",GROUP_CONCAT(JSON_OBJECT("pId",pId,"date",DATE_FORMAT(pDate, "%d-%m-%Y"),"amount",amount)),"]") from paymentcollection where cId = JSON_VALUE(request,"$.cId"));
+    
     if payments is null or JSON_VALUE(payments,'$[0]') is null then
       set payments = (select JSON_ARRAY());
     end if;
+
     set datas = (select JSON_ARRAY_APPEND(datas, '$', payments));
-    set extra = (select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("expId",expId,"date",DATE_FORMAT(date, "%d-%m-%Y"),"amount",amount,"note",note,"status",status))) from extrapayment where cId = JSON_VALUE(request,"$.cId"));
+    set extra = (select concat("[",GROUP_CONCAT(JSON_OBJECT("expId",expId,"date",DATE_FORMAT(date, "%d-%m-%Y"),"amount",amount,"note",note,"status",status)),"]") from extrapayment where cId = JSON_VALUE(request,"$.cId"));
     if extra is null or JSON_VALUE(extra,'$[0]') is null then
       set extra = (select JSON_ARRAY());
     end if;
+    
     set datas = (select JSON_ARRAY_APPEND(datas, '$', extra));
     select JSON_OBJECT("errorCode",1,"result",datas,"items",JSON_OBJECT("items",total,"paid",paid)) as result;
 END$$
