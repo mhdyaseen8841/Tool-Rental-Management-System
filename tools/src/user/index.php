@@ -149,6 +149,7 @@ if (isset($_REQUEST["cId"])) {
                                             </thead>
                                             <tbody id="itemTable">
                                                 <?php
+                                                $totals = array();
                                                 foreach ($itData as $key => $value) {
                                                     echo "<tr>";
                                                     foreach ($value as $key1 => $value1) {
@@ -157,6 +158,7 @@ if (isset($_REQUEST["cId"])) {
                                                         } else {
                                                             $income = $value1->incoming;
                                                             $outgo = $value1->outgoing;
+                                                            $totals[$key1] = $totals[$key1] + ($outgo->qty - $income->qty);
                                                             echo "<td align='center'>";
                                                             if ($income->qty != 0) {
                                                                 echo "<div style='background:green;width:50px;color:white;font-weight:bold;'>" . $income->qty . "</div>";
@@ -169,12 +171,16 @@ if (isset($_REQUEST["cId"])) {
                                                     }
                                                     echo "</tr>";
                                                 } ?>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
                                             </tbody>
-
+                                            <tfoot>
+                                                <?php
+                                                echo "<tr style='background : white; position: sticky; bottom: 0;z-index:99;'> <td style='background : white; left : 0; position : sticky; z-index:98;' align ='left' nowrap='nowrap'>pending</td>";
+                                                foreach ($totals as $key => $value) {
+                                                    echo "<td align='center'><div style='width:50px;font-weight:bold;'>" . $value . "</div></td>";
+                                                }
+                                                echo "</tr>";
+                                                ?>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
