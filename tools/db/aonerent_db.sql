@@ -816,6 +816,14 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600006` (IN `request` JS
     select JSON_OBJECT('data',sData) as result;
 END$$
 
+CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1600007` (IN `request` JSON)   BEGIN
+  DECLARE sData JSON;
+  SET SESSION group_concat_max_len = 1000000;
+  select JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT("itemId",itemId,"pending",pending))) as result from
+    (select rc.itemId,SUM(rh.pending) as pending from renthistory rh inner join renthistorymaster rhm on rh.mId = rhm.mId inner join ratecard rc on rhm.cId = rc.cId and rc.itemId = rh.itemId
+    where rhm.cId = json_value(request,'$.cId') and rh.status=1 and rh.pending != 0 and DATEDIFF(curdate(),rh.hDate) > 30 group by rc.itemId) as ab;
+END$$
+
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1700001` (IN `request` JSON)   BEGIN
  SET SESSION group_concat_max_len = 1000000;
 	insert into paymentcollection(cId,pdate,amount) values(json_value(request,"$.cId"),json_value(request,"$.date"),json_value(request,"$.amount"));

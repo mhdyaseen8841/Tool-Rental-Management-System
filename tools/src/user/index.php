@@ -88,6 +88,10 @@ if (isset($_REQUEST["cId"])) {
 
         $res2 = json_decode(spCallReturn($result, 1600006));
         $result2 = $res2->data;
+
+        $result3 = json_decode(spCallReturn($result, 1600007));
+        
+        $daily_pending = array()
     ?>
         <div class="container-fluid">
             <div class="container-fluid">
@@ -140,7 +144,18 @@ if (isset($_REQUEST["cId"])) {
                                                 <tr style="background : white; position: sticky; top: 0;z-index:99;">
                                                     <th scope="col"> </th>
                                                     <?php
-                                                    foreach ($it as $key => $value) { ?>
+                                                    foreach ($it as $key => $value) { 
+                                                        $exist = false;
+                                                        foreach($result3 as $ind => $val){
+                                                            if($value->id == $val->itemId){
+                                                                $daily_pending[] = $val->pending;
+                                                                $exist = true;
+                                                            }
+                                                        }
+                                                        if(!$exist){
+                                                            $daily_pending[] = 0;
+                                                        }
+                                                        ?>
                                                         <th style="text-align: center" scope="col"><?php echo  $value->name; ?></th>
                                                     <?php
                                                     }
@@ -172,10 +187,17 @@ if (isset($_REQUEST["cId"])) {
                                                     echo "</tr>";
                                                 } ?>
                                             </tbody>
-                                            <tfoot>
+                                            <tfoot style='background : white; position: sticky; bottom: 0;z-index:99;'>
                                                 <?php
-                                                echo "<tr style='background : white; position: sticky; bottom: 0;z-index:99;'> <td style='background : white; left : 0; position : sticky; z-index:98;' align ='left' nowrap='nowrap'>pending</td>";
+                                                echo "<tr> <td style='background : white; left : 0; position : sticky; z-index:98;' align ='left' nowrap='nowrap'>Pending</td>";
                                                 foreach ($totals as $key => $value) {
+                                                    echo "<td align='center'><div style='width:50px;font-weight:bold;'>" . $value . "</div></td>";
+                                                }
+                                                echo "</tr>";
+                                                ?>
+                                                 <?php
+                                                echo "<tr'> <td style='background : white; left : 0; position : sticky; z-index:98;' align ='left' nowrap='nowrap'>30 Day more Pending</td>";
+                                                foreach ($daily_pending as $key => $value) {
                                                     echo "<td align='center'><div style='width:50px;font-weight:bold;'>" . $value . "</div></td>";
                                                 }
                                                 echo "</tr>";
