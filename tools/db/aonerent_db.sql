@@ -635,13 +635,15 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1400006` (IN `request` JS
             set rnthsry = json_extract(masterData, concat('$[',i,']'));
             set pendingsum = (select sum(pending) from renthistory where mId = JSON_VALUE(rnthsry,"$.mId"));
             set delStatus = IF((DATEDIFF(curdate(),JSON_VALUE(rnthsry,"$.updateDate"))) > 7,0,1);
-            set datas = (select JSON_ARRAY_APPEND(datas, '$', JSON_OBJECT(
+            if delStatus = 1 then 
+             set datas = (select JSON_ARRAY_APPEND(datas, '$', JSON_OBJECT(
         "mId",cast(JSON_VALUE(rnthsry,"$.mId") as unsigned),
         "Date",DATE_FORMAT(JSON_VALUE(rnthsry,"$.Date"), "%d-%m-%Y"),
          "status",cast(JSON_VALUE(rnthsry,"$.status") as unsigned),
          "pending",IFNULL(cast(pendingsum as unsigned),0),
          "deleteStatus",delStatus
          )));
+         end if;
             set i=i+1;
      END LOOP;
     select JSON_OBJECT('errorCode',1,'result',datas) as result;
@@ -1386,57 +1388,60 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300008` (IN `request` JS
     select JSON_OBJECT('errorCode',1,'result',JSON_OBJECT('label',items,'data',fdatas)) as result;
 END$$
 
-CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300010` (IN `request` JSON)   BEGIN
-	  DECLARE stockUpdates JSON;
-    DECLARE stock1 JSON;
-    DECLARE items JSON; 
-    DECLARE item1 JSON;
-    DEClARE data1 JSON;
-    DEClARE datas JSON;
-    DEClARE fdatas JSON;
-    DEClARE label JSON;
-    DEClARE j int;
-    DEClARE i int;
-    DECLARE jcnt int;
-    DECLARE icnt int;
-    SET SESSION group_concat_max_len = 1000000;
-    set label = (SELECT JSON_MERGE((select JSON_ARRAY("DATE")),(select JSON_ARRAY(GROUP_CONCAT(iName SEPARATOR '","')) from items))) ;
-    set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from items);
-    set stockUpdates = (select concat('[',GROUP_CONCAT(json_object('dsmId',dsmId,'date',date)),']') from dailyStockMaster order by date DESC);
-    if label is null then
-      set label = (select JSON_ARRAY());
-    end if;
-    if items is null then
-      set items = (select JSON_ARRAY());
-    end if;
-    if stockUpdates is null then
-      set stockUpdates = (select JSON_ARRAY());
-    end if;
-    set jcnt = JSON_LENGTH(stockUpdates)-1;
-    set icnt = JSON_LENGTH(items)-1;
-    set datas = (select JSON_ARRAY());
-    set j = 0;
-      outerloop : LOOP
-        IF j > jcnt THEN
-           LEAVE outerloop;
-        END IF;
-        set stock1 = (select json_extract(stockUpdates, concat('$[',j,']')));
-        set i=0;
-        set fDatas = (select JSON_OBJECT("DATE",DATE_FORMAT(JSON_VALUE(stock1, '$.date'), "%d-%m-%Y")));
-        innerloop : LOOP
-          IF i > icnt THEN
-            LEAVE innerloop;
+  CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300010` (IN `request` JSON)   BEGIN
+      DECLARE stockUpdates JSON;
+      DECLARE stock1 JSON;
+      DECLARE items JSON; 
+      DECLARE item1 JSON;
+      DEClARE data1 JSON;
+      DEClARE datas JSON;
+      DEClARE fdatas JSON;
+      DEClARE label JSON;
+      DEClARE j int;
+      DEClARE i int;
+      DECLARE jcnt int;
+      DECLARE icnt int;
+      SET SESSION group_concat_max_len = 1000000;
+      set label = (SELECT JSON_MERGE((select JSON_ARRAY("DATE")),(select JSON_ARRAY(GROUP_CONCAT(iName SEPARATOR '","')) from items))) ;
+      set items = (select concat('[',GROUP_CONCAT(json_object('itemId',itemId,'itemName',iName)),']') from items);
+      set stockUpdates = (select concat('[',GROUP_CONCAT(json_object('dsmId',dsmId,'date',date)),']') from dailyStockMaster order by date DESC);
+      if label is null then
+        set label = (select JSON_ARRAY());
+      end if;
+      if items is null then
+        set items = (select JSON_ARRAY());
+      end if;
+      if stockUpdates is null then
+        set stockUpdates = (select JSON_ARRAY());
+      end if;
+      set jcnt = JSON_LENGTH(stockUpdates)-1;
+      set icnt = JSON_LENGTH(items)-1;
+      set datas = (select JSON_ARRAY());
+      set j = 0;
+        outerloop : LOOP
+          IF j > jcnt THEN
+            LEAVE outerloop;
           END IF;
-          set item1 = (select json_extract(items, concat('$[',i,']')));
-          set data1 = (select JSON_OBJECT(i.iName,dsc.Stock)  from dailyStockChild dsc inner join items i on i.itemId = dsc.itemId where dsc.itemId = JSON_VALUE(item1, '$.itemId') and dsc.dsmId = JSON_VALUE(stock1, '$.dsmId'));
-          set fDatas = (select JSON_MERGE(fDatas,data1));
-          set i= i+1;
-        END LOOP;
-        set datas = (select JSON_ARRAY_APPEND(datas,'$',fDatas));
-        set j = j+1;
-    END LOOP;
-    select JSON_OBJECT('errorCode',1,'result',json_object("label",label,"data",datas)) as result;
-END$$
+          set stock1 = (select json_extract(stockUpdates, concat('$[',j,']')));
+          set i=0;
+          set fDatas = (select JSON_OBJECT("DATE",DATE_FORMAT(JSON_VALUE(stock1, '$.date'), "%d-%m-%Y")));
+          innerloop : LOOP
+            IF i > icnt THEN
+              LEAVE innerloop;
+            END IF;
+            set item1 = (select json_extract(items, concat('$[',i,']')));
+            set data1 = (select JSON_OBJECT(i.iName,dsc.Stock)  from dailyStockChild dsc inner join items i on i.itemId = dsc.itemId where dsc.itemId = JSON_VALUE(item1, '$.itemId') and dsc.dsmId = JSON_VALUE(stock1, '$.dsmId'));
+          if data1 is null then
+            set data1 = (select JSON_OBJECT(iName,'NIL')  from items where itemId = JSON_VALUE(item1, '$.itemId'));
+            end if;
+            set fDatas = (select JSON_MERGE(fDatas,data1));
+            set i= i+1;
+          END LOOP;
+          set datas = (select JSON_ARRAY_APPEND(datas,'$',fDatas));
+          set j = j+1;
+      END LOOP;
+      select JSON_OBJECT('errorCode',1,'result',json_object("label",label,"data",datas)) as result;
+  END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `newrentcalculation` (IN `item` INT(10), IN `dat` DATE, IN `redat` DATE, IN `id` INT(10), IN `qtyy` INT(10))   BEGIN
 	DECLARE pric decimal(20,2);
@@ -1512,10 +1517,11 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `dailyStockEnter` ()   BEG
 	DECLARE returnStock int;
 	DECLARE pStock int;
   DECLARE dsId int;
-
+  delete from dailyStockMaster where date < DATE_SUB(NOW(),INTERVAL 29 DAY);
   INSERT INTO dailyStockMaster VALUES();
   set dsId = (SELECT LAST_INSERT_ID());
    SET SESSION group_concat_max_len = 1000000;
+   
 	set itemData = (select concat('[',GROUP_CONCAT(JSON_OBJECT('itemId',itemId,
                                'iName',iName,
                                'mRent',mRent,

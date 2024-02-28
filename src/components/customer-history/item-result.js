@@ -33,18 +33,15 @@ import { borderBottom } from '@mui/system';
 
 
 
-export const ItemResult = ({ customers, items, getdata, ...rest }) => {
+export const ItemResult = ({ customers, items, getdata,dailyPendingsData, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [open, setOpen] = useState(true);
-  const [addDialog, setDialog] = useState();
   const [data, setData] = useState([])
   const [item, setItem] = useState([])
 
-  const handleClose = () => {
-    setDialog();
-  };
+  
+  
 
 
   const handleSelectAll = (event) => {
@@ -90,10 +87,10 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
   useEffect(() => {
     setData(customers)
     setItem(items)
-
   }, [customers]);
   const [total, setTotal] = useState([])
   let itemTotalArr = []
+  let dailyPending = []
   return (
 
     <Card {...rest}>
@@ -105,10 +102,21 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Date</TableCell>
-
-                  {item.map((itemHead, ind) => (
-                    <TableCell key={ind} sx={{ textAlign: 'center' }}>{itemHead.name}</TableCell>
-                  ))}
+                  {item.map((itemHead, ind) => {
+                    let exist = false
+                    console.log(dailyPendingsData);
+                    dailyPendingsData.map((dt)=>{
+                      if (itemHead.id ===  dt.itemId) {
+                        dailyPending.push(dt.pending)
+                        exist = true
+                      }
+                    })
+                    if (!exist) {
+                      dailyPending.push(0)
+                    }
+                    return(<TableCell key={ind} sx={{ textAlign: 'center' }}>{itemHead.name}</TableCell>)
+                  }
+                  )}
 
                 </TableRow>
               </TableHead>
@@ -165,8 +173,16 @@ export const ItemResult = ({ customers, items, getdata, ...rest }) => {
                 position: 'sticky'
               }}>
                 <TableRow style={{ backgroundColor: '#bbb' }}>
-                  <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center', fontSize: '18px' }}>Total Items</Typography></TableCell>
+                  <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center', fontSize: '18px' }}>Pending Items</Typography></TableCell>
                   {itemTotalArr.map((total, ind) => (
+                    <TableCell key={ind} sx={{ textAlign: 'center' }}>
+                      <Typography variant='h5' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center' }} >{Math.abs(total)}</Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow style={{ backgroundColor: '#bbb' }}>
+                  <TableCell ><Typography variant='button' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center', fontSize: '18px' }}>30 Days<sup>+</sup></Typography></TableCell>
+                  {dailyPending.map((total, ind) => (
                     <TableCell key={ind} sx={{ textAlign: 'center' }}>
                       <Typography variant='h5' style={{ fontWeight: 'bold', color: 'black', textAlign: 'center' }} >{Math.abs(total)}</Typography>
                     </TableCell>

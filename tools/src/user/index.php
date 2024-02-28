@@ -196,7 +196,7 @@ if (isset($_REQUEST["cId"])) {
                                                 echo "</tr>";
                                                 ?>
                                                  <?php
-                                                echo "<tr'> <td style='background : white; left : 0; position : sticky; z-index:98;' align ='left' nowrap='nowrap'>30 Day more Pending</td>";
+                                                echo "<tr'> <td style='background : white; left : 0; position : sticky; z-index:98;' align ='left' nowrap='nowrap'>30 Days<sup>+</sup></td>";
                                                 foreach ($daily_pending as $key => $value) {
                                                     echo "<td align='center'><div style='width:50px;font-weight:bold;'>" . $value . "</div></td>";
                                                 }

@@ -27,8 +27,7 @@ const Page = () => {
 
   const [customers, setCustomers] = useState([])
   const [item, setItem] = useState([])
-  const [payment, setPayments] = useState([])
-  const [itemhistory, setItemHistory] = useState([])
+  const [dailyPendigs, setDailyPendings] = useState([])
   const [cId, setCid] = useState('');
   let cName = '';
   const [phNo, setPhNo] = useState('');
@@ -61,7 +60,6 @@ const Page = () => {
       if (res.errorCode === 3) {
         Router
           .push(
-
             {
               pathname: '/',
               query: { redirect: '1' },
@@ -87,6 +85,40 @@ const Page = () => {
 
   }
 
+
+  function getDailyPending() {
+    let data = {
+      "type": "SP_CALL",
+      "requestId": 1600007,
+      request: {
+        "cId": cId
+      }
+    }
+
+    requestPost(data).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else {
+        if(res[0] !== null){
+
+          setDailyPendings(res)
+        }
+        setLoader(false)
+      }
+    })
+      .catch((err) => {
+        console.log(err);
+      })
+
+
+  }
+
   useEffect(() => {
     if (router.query.cId) {
       sessionStorage.setItem("Cid", router.query.cId)
@@ -96,6 +128,7 @@ const Page = () => {
       cName = router.query.cName
       phNo = router.query.phNo
       getCustomer()
+      getDailyPending()
     }
     else {
 
@@ -106,6 +139,7 @@ const Page = () => {
       if (id) {
         setCid(id)
         getCustomer()
+        getDailyPending()
       } else {
         Router.push('/dashboard')
       }
@@ -140,7 +174,7 @@ const Page = () => {
               </Snackbar>
 
 
-              <ItemResult customers={customers} items={item} getdata={getCustomer} />
+              {dailyPendigs && <ItemResult customers={customers} items={item} getdata={getCustomer} dailyPendingsData={dailyPendigs} />}
 
 
 
