@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Compressor from 'compressorjs';
 
 import FileUpload from 'react-material-file-upload';
-import requestPost from '../../../serviceWorker';
+import requestPost, { baseUrl } from '../../../serviceWorker';
 
 
 
@@ -28,6 +28,7 @@ export default function FullScreenDialog(details) {
   const [backDropOpen, setBackDropOpen] = useState(false);
   const [errs,setErrs] = useState({})
 
+  console.log(details);
 
   const getBase64 = (file) => {
     return new Promise((resolve) => {
@@ -295,7 +296,7 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
-            {update ? '' : <> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
+             <> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
               <label htmlFor="customer-photo-upload" style={{ display: 'block', marginBottom: '1rem' }}>
                 <input
                   id="customer-photo-upload"
@@ -305,26 +306,26 @@ export default function FullScreenDialog(details) {
                   onChange={handlePhotoChange}
                 />
                 <Button variant="contained" component="span">
-                  Upload Photo
+                  { ((update  && details.data.proof) || customerPhoto) ? 'Update' : 'Select' } Photo
                 </Button>
-              </label></>}
+              </label></>
 
             {/* Render the customer photo preview */}
-            {customerPhoto && (
+            {(update || customerPhoto) && (
               <div style={{ position: 'relative' }}>
                 <img
                   style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', cursor: 'pointer' }}
-                  src={customerPhoto}
+                  src={update && details.data.proof  ? customerPhoto ? customerPhoto  :  `${baseUrl}tools/src/uploads/images/${details.data.proof}` : customerPhoto}
                   alt="Customer Photo"
                 />
-                <Button
+               {!update && <Button
                   variant="contained"
                   color="secondary"
                   style={{ position: 'absolute', top: '5px', right: '5px' }}
                   onClick={handleRemovePhoto}
-                >
+                > 
                   Remove
-                </Button>
+                </Button>}
               </div>
             )}
 

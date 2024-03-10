@@ -178,7 +178,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
     if (filter) {
       headers = [["Name", ...selectedOptions]];
     }
-
+ let isPending = false
     const dt = [];
     const dt1 = [];
     const dt2 = [];
@@ -204,6 +204,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
           dt2.push(value.tStock);
         });
         if (selectedIndex.includes(heading.length - 1)) {
+          isPending = true
           dt1.push("Grand Amount");
           dt2.push(Math.trunc(totalPending * 100) / 100);
         }
@@ -243,7 +244,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
       createdCell: (opts) => {
         if (
           opts.column.index != 0 &&
-          opts.column.index != headers[0].length - 1 &&
+          (isPending ? opts.column.index != headers[0].length - 1 : true) &&
           opts.row.section == "body"
         ) {
           if (opts.cell.raw != "") {
@@ -263,7 +264,7 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
           opts.cell.styles.fontStyle = "bold";
           opts.cell.styles.fontSize = 12;
           if (opts.column.index == headers[0].length - 1) {
-            opts.cell.styles.fontSize = 12;
+            opts.cell.styles.fontSize = 14;
           }
         }
       },

@@ -1638,7 +1638,6 @@ ON SCHEDULE EVERY 1 DAY STARTS '2024-01-28 23:59:00'
 ON COMPLETION NOT PRESERVE ENABLE 
   COMMENT 'add last daily stocks' 
   DO CALL `dailyStockEnter`();
-
 DELIMITER ;
 
 -- --------------------------------------------------------
