@@ -26,9 +26,64 @@ export default function FullScreenDialog(details) {
   const [imgPreviews, setImgPreviews] = useState([]);
   const [customerPhoto, setCustomerPhoto] = useState(null);
   const [backDropOpen, setBackDropOpen] = useState(false);
-  const [errs,setErrs] = useState({})
+  const [uploadedDoc, setUploadedDoc] = useState([])
+  const [errs, setErrs] = useState({})
 
   console.log(details);
+  useEffect(() => {
+    getdocs()
+  }, [])
+
+  const getdocs = () => {
+    if (update) {
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1100008,
+        "request": {
+          cId: details.data.cid
+        }
+      }
+      console.log(req);
+      requestPost(req).then((res) => {
+        if (res.errorCode === 3) {
+          Router
+            .push(
+              {
+                pathname: '/',
+                query: { redirect: '1' },
+              })
+        } else {
+          setUploadedDoc(res.result)
+        }
+      })
+    }
+  }
+
+  const deletedocs = (id) => {
+    if (update) {
+      let req = {
+        "type": "SP_CALL",
+        "requestId": 1100018,
+        "request": {
+          dId: id
+        }
+      }
+      console.log(req);
+      requestPost(req).then((res) => {
+        if (res.errorCode === 3) {
+          Router
+            .push(
+              {
+                pathname: '/',
+                query: { redirect: '1' },
+              })
+        } else {
+          getdocs()
+        }
+      })
+    }
+  }
+
 
   const getBase64 = (file) => {
     return new Promise((resolve) => {
@@ -52,10 +107,9 @@ export default function FullScreenDialog(details) {
     const promises = fileObjs.map((fileObj) => {
       return new Promise((resolve, reject) => {
         new Compressor(fileObj, {
-          quality: 0.6,
+          quality: 0.5,
           success: (compressedResult) => {
             getBase64(compressedResult).then((result) => {
-
               resolve(result);
             }).catch((err) => {
               reject(err);
@@ -69,12 +123,15 @@ export default function FullScreenDialog(details) {
     });
 
     Promise.all(promises).then((results) => {
-      setImgPreviews((prevPreviews) => {
-        return [...prevPreviews, ...results];
-      });
-      setDocs((prevDocs) => {
-        return [...prevDocs, ...results];
-      });
+      // setImgPreviews((prevPreviews) => {
+      //   // console.log(prevPreviews);
+      //   return [...prevPreviews, ...results];
+      // });
+      // console.log([...imgPreviews,...results]);
+      setImgPreviews([...imgPreviews,...results])
+      // console.log(results);
+      // console.log([...docs,...results]);
+      setDocs([...docs,...results]);
     }).catch((err) => {
       console.error(err);
     });
@@ -112,10 +169,7 @@ export default function FullScreenDialog(details) {
     onSubmit: (values, actions) => {
       if (!errs.name || !errs.name) {
         setBackDropOpen(true)
-      details.submit(values, docs, customerPhoto);
-      setTimeout(() => {
-        setBackDropOpen(false)
-      }, 2000);
+        details.submit(values, docs, customerPhoto);
       }
     }
   });
@@ -144,23 +198,23 @@ export default function FullScreenDialog(details) {
   };
 
   const onNameEnter = (name) => {
-    
+
     if (name.length > 0 && !update) {
       let data = {
         "type": "SP_CALL",
         "requestId": 1100011,
         request: {
-          name:name
+          name: name
         }
       }
 
-      requestPost(data).then((res)=>{
-        if (res.errorCode==0) {
-          setErrs({...errs,name:res.errorMsg})
+      requestPost(data).then((res) => {
+        if (res.errorCode == 0) {
+          setErrs({ ...errs, name: res.errorMsg })
         }
-        else{
-          const {name,...props} = errs
-          setErrs({...props})
+        else {
+          const { name, ...props } = errs
+          setErrs({ ...props })
         }
       })
     }
@@ -172,18 +226,18 @@ export default function FullScreenDialog(details) {
         "type": "SP_CALL",
         "requestId": 1100012,
         request: {
-          mobile:mobile
+          mobile: mobile
         }
       }
 
-      requestPost(data).then((res)=>{
-        if (res.errorCode==0) {
-          setErrs({...errs,mobile:res.errorMsg})
+      requestPost(data).then((res) => {
+        if (res.errorCode == 0) {
+          setErrs({ ...errs, mobile: res.errorMsg })
         }
-        else{
-          const {mobile,...props} = errs
+        else {
+          const { mobile, ...props } = errs
           console.log(props);
-          setErrs({...props})
+          setErrs({ ...props })
         }
       })
     }
@@ -296,7 +350,7 @@ export default function FullScreenDialog(details) {
               error={Boolean(touched.Address && errors.Address)}
               helperText={touched.Address && errors.Address}
             />
-             <> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
+            <> <Typography variant="h6" sx={{ marginBottom: '0.5rem' }}>Customer Photo</Typography>
               <label htmlFor="customer-photo-upload" style={{ display: 'block', marginBottom: '1rem' }}>
                 <input
                   id="customer-photo-upload"
@@ -306,45 +360,71 @@ export default function FullScreenDialog(details) {
                   onChange={handlePhotoChange}
                 />
                 <Button variant="contained" component="span">
-                  { ((update  && details.data.proof) || customerPhoto) ? 'Update' : 'Select' } Photo
+                  {((update && details.data.proof) || customerPhoto) ? 'Update' : 'Select'} Photo
                 </Button>
               </label></>
 
             {/* Render the customer photo preview */}
-            {(update || customerPhoto) && (
+            {((update && details.data.proof != null && details.data.proof[0]) || customerPhoto) && (
               <div style={{ position: 'relative' }}>
                 <img
                   style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', cursor: 'pointer' }}
-                  src={update && details.data.proof  ? customerPhoto ? customerPhoto  :  `${baseUrl}tools/src/uploads/images/${details.data.proof}` : customerPhoto}
+                  src={update && details.data.proof ? customerPhoto ? customerPhoto : `${baseUrl}tools/src/uploads/images/${details.data.proof}` : customerPhoto}
                   alt="Customer Photo"
                 />
-               {!update && <Button
+                {!update && <Button
                   variant="contained"
                   color="secondary"
                   style={{ position: 'absolute', top: '5px', right: '5px' }}
                   onClick={handleRemovePhoto}
-                > 
+                >
                   Remove
                 </Button>}
               </div>
             )}
 
-            {imgPreviews.map((preview, index) => {
-              return (
-                <div key={index}>
-                  <img
-                    style={{ width: 150, height: 150, objectFit: 'contain', cursor: "pointer" }}
-                    src={`${preview}`}
-                    role="presentation"
-                    alt="no network"
-                  />
-                  <button onClick={() => handleRemoveImage(index)}>Remove</button>
-                </div>
-              );
-            })}
-            {update ? '' : <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
-            }
 
+            {imgPreviews.length > 0 &&
+              <><Typography>Selected Documents</Typography>
+                <Grid container>
+                  {imgPreviews.map((preview, index) => {
+                    return (
+                      <Grid item xs={12} md={4} key={index}>
+                        <img
+                          style={{ width: 150, height: 150, objectFit: 'contain', cursor: "pointer" }}
+                          src={`${preview}`}
+                          role="presentation"
+                          alt="no network"
+                        />
+                        <Button onClick={() => handleRemoveImage(index)}>Remove</Button>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </>}
+
+            <FileUpload accept="image/*" multiple value={files} onChange={handleFileChange} />
+
+            {uploadedDoc.length > 0 && uploadedDoc[0] !== null &&
+              <><Typography>Uploaded Documents</Typography>
+                <Grid container>
+                  {uploadedDoc.map((preview, index) => {
+                    if (preview != null) {
+                      return (
+                        <Grid item xs={12} md={4} key={index}>
+                          <img
+                            style={{ width: 150, height: 150, objectFit: 'contain', cursor: "pointer" }}
+                            src={`${baseUrl}tools/src/uploads/${preview.docData}`}
+                            role="presentation"
+                            alt="no network"
+                          />
+                          <Button onClick={() => deletedocs(preview.dId)}>Delete</Button>
+                        </Grid>
+                      );
+                    }
+                  })}
+                </Grid>
+              </>}
           </Stack>
         </Container>
       </Dialog>

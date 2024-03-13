@@ -46,14 +46,13 @@ export const CustomerListToolbar = (props) => {
           "status": 0
         }
       };
-
       for (let i = 0; i < file.length; i++) {
         req.request.documents.push({
           "doc": file[i]
         });
       }
 
-      const rs = requestPost(req).then((res) => {
+      requestPost(req).then((res) => {
         if (res.errorCode === 3) {
           Router
             .push(

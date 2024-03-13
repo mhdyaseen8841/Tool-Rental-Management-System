@@ -164,9 +164,9 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
     setOpen(true);
     let cid = data.cid;
 
-    const add = (data, file) => {
+    const add = (data, file, proof) => {
 
-
+      console.log(file);
       let req = {
         "type": "SP_CALL",
         "requestId": 1100002,
@@ -176,12 +176,17 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
           "mobile": data.Mobnum,
           "address": data.Address,
           "altermobile": data.AltMobnum,
-          "proof": file,
+          "proof": proof,
           "coName": data.Carename,
           "coMobile": data.CareMobnum,
+          "documents":[]
         }
       }
-
+      for (let i = 0; i < file.length; i++) {
+        req.request.documents.push({
+          "doc": file[i]
+        });
+      }
       requestPost(req).then((res) => {
         if (res.errorCode === 3) {
           Router
@@ -263,7 +268,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
 
 
   }
-  const deleteConfirm = (cid,name) => {
+  const deleteConfirm = (cid, name) => {
     setAlertOpen(true)
     setCid(cid)
     setCname(name)
@@ -300,7 +305,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
         </Card>
       </Box>
       <Card {...rest}>
-        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer} cName = {cName} />
+        <AlertDialog open={alertOpen} setOpen={setAlertOpen} deleteCustomer={deleteCustomer} cName={cName} />
         {addDialog}
 
         <GetCustomerProfile open={profileOpen}
@@ -369,7 +374,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                         {customer.altermobile}
                       </TableCell>
                       <TableCell sx={{ padding: '4px' }}>
-                        
+
                         {localStorage.getItem('usertype') === 'owner' ?
                           null
                           :
@@ -377,7 +382,7 @@ export const ActiveInactiveListResults = ({ customers, getdata, ...rest }) => {
                           <><Button
                             onClick={(e) => handleAdd(e, true, 'EDIT', { name: customer.cName, mobile: customer.mobile, altNum: customer.altermobile, address: customer.address, proof: customer.proof, cid: customer.cId, Carename: customer.coName, CareMobnum: customer.coMobile })}
                           >Edit</Button><Button color="success" onClick={() => handleActive(customer.cId)}>Active</Button>
-                            <Button color="error" onClick={() => deleteConfirm(customer.cId,customer.cName)}>Delete</Button></>
+                            <Button color="error" onClick={() => deleteConfirm(customer.cId, customer.cName)}>Delete</Button></>
 
                         }
                       </TableCell>

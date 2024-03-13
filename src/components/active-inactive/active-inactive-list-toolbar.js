@@ -34,7 +34,7 @@ export const ActiveInactiveListToolbar = (props) => {
 
   const handleAdd = (e, upd = Boolean(false), button = 'ADD', data = {}) => {
     setOpen(true);
-    const add = async (data, file, cPic) => {
+    const add = (data, file, cPic) => {
       let req = {
         "type": "SP_CALL",
         "requestId": 1100001,
@@ -56,8 +56,8 @@ export const ActiveInactiveListToolbar = (props) => {
           "doc": file[i]
         });
       }
-
-      const rs = requestPost(req).then((res) => {
+      console.log(req);
+      requestPost(req).then((res) => {
         if (res.errorCode === 3) {
           Router
             .push(

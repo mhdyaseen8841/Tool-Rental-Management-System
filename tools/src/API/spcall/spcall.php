@@ -18,15 +18,16 @@ function spCallReturn($result, $requestId)
 function sp1100001($data)
 {
   $db = new Database();
+  $documents = $data->documents;
+
   $result = $db->select("call `1100001`('" . json_encode($data) . "')");
   $result1 = $result[0]["result"];
-  $documents = $data->documents;
-  //echo $documents[0]->doc;
+  // echo $documents[0]->doc;
   $result1 = json_decode($result1);
   if ($result1->errorCode == 1) {
     $res = $result1->result;
     $cid = $res->cId;
-    if ($data->proof != null) {
+    if ($data->proof != null && $data->proof != []) {
       $fname = upload($data->proof, $cid, "../uploads/images/");
       $db->insert("update customermaster set proof='$fname' where cId = {$cid}");
     }
@@ -35,10 +36,54 @@ function sp1100001($data)
       $rs = $db->select("select LAST_INSERT_ID() as id");
       $filename = upload($value->doc, $rs[0]["id"], "../uploads/");
       $db->insert("update document set file='$filename' where dId = {$rs[0]['id']}");
-      print jsonformating($result[0]["result"]);
+
     }
+    print jsonformating($result[0]["result"]);
   } else {
     print jsonformating($result[0]["result"]);
+  }
+}
+
+
+function sp1100002($data)
+{
+  $db = new Database();
+  $documents = $data->documents;
+
+  $result = $db->select("call `1100002`('" . json_encode($data) . "')");
+  $result1 = $result[0]["result"];
+  // echo $documents[0]->doc;
+  $result1 = json_decode($result1);
+  if ($result1->errorCode == 1) {
+    $res = $result1->result;
+    $cid = $res->cId;
+    if ($data->proof != null && $data->proof != []) {
+      $fname = upload($data->proof, $cid, "../uploads/images/");
+      $db->insert("update customermaster set proof='$fname' where cId = {$cid}");
+    }
+    foreach ($documents as $value) {
+      $db->insert("insert into document(cId,file) value($cid,'')");
+      $rs = $db->select("select LAST_INSERT_ID() as id");
+      $filename = upload($value->doc, $rs[0]["id"], "../uploads/");
+      $db->insert("update document set file='$filename' where dId = {$rs[0]['id']}");
+    }
+    print jsonformating($result[0]["result"]);
+  } else {
+    print jsonformating($result[0]["result"]);
+  }
+}
+
+function deleteDocument($data)
+{
+  $db = new Database();
+  $result = $db->select("select file from document where dId = " . $data->dId);
+  $file = $result[0]["file"];
+  $path_user = "../uploads/";
+  // Create the user folder if missing
+  if (file_exists($path_user . $file)) {
+    unlink($path_user . $file);
+    $db->select("delete from document where dId = " . $data->dId);
+    print jsonformating("{errorCode:1,errorMsg:\'Successfully Deleted\'}");
   }
 }
 
@@ -61,5 +106,5 @@ function upload($data, $filename, $path)
     throw new \Exception('did not match data URI with image data');
   }
   file_put_contents("$path$filename.{$type}", $data);
-  return ($filename . "." . $type);
+  return($filename . "." . $type);
 }

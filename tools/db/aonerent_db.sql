@@ -193,9 +193,9 @@ END$$
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `1100008` (IN `request` JSON)   BEGIN
  SET SESSION group_concat_max_len = 1000000;
 	SELECT JSON_OBJECT('errorCode',1,'result',JSON_ARRAY(GROUP_CONCAT(JSON_OBJECT(
-                               'docData',docData,
+                               'docData',file,
         					   'dId',dId
-                               )))) as result from customermaster WHERE cId = JSON_VALUE(request,'$.cId');
+                               )))) as result from document WHERE cId = JSON_VALUE(request,'$.cId');
 
 END$$
 
