@@ -144,9 +144,9 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
     setOpen(true);
     let cid = data.cid;
 
-    const add = (data, file) => {
+    const add = (data, file, proof) => {
 
-
+      console.log(file);
       let req = {
         "type": "SP_CALL",
         "requestId": 1100002,
@@ -156,10 +156,16 @@ export const CustomerListResults = ({ customers, getdata, ...rest }) => {
           "mobile": data.Mobnum,
           "address": data.Address,
           "altermobile": data.AltMobnum,
-          "proof": file,
+          "proof": proof,
           "coName": data.Carename,
           "coMobile": data.CareMobnum,
+          "documents":[]
         }
+      }
+      for (let i = 0; i < file.length; i++) {
+        req.request.documents.push({
+          "doc": file[i]
+        });
       }
 
       requestPost(req).then((res) => {

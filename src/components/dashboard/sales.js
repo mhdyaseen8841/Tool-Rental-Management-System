@@ -2,7 +2,7 @@ import { Line } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, TextField, Stack, FormControl, InputLabel, Select, OutlinedInput, MenuItem, Checkbox, ListItemText } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, TextField, Stack, FormControl, InputLabel, Select, OutlinedInput, MenuItem, Checkbox, ListItemText, Table, TableHead, TableRow, TableCell, TableBody, Typography, TableContainer } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -236,6 +236,33 @@ export const Sales = (props) => {
             options={options}
           />}
         </Box>
+        <TableContainer sx={{ mt: 2, overflow: 'scroll' }}>
+          <Table >
+            <TableHead>
+              <TableRow>
+                {
+                  data && data.datasets.map((item, ind) => (
+                    <TableCell>
+                      <Typography variant='subtitle2' noWrap>{item.label}</Typography>
+                      <Box sx={{ height: 5, backgroundColor: item.backgroundColor }} />
+                    </TableCell>
+                  ))
+                }
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                {
+                  data && data.datasets.map((item, ind) => (
+                    <TableCell align='center'>
+                      <Typography variant='h6' noWrap>{item.data.reduce((a, b) => a + b, 0)}</Typography>
+                    </TableCell>
+                  ))
+                }
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
       </CardContent>
       <Divider />
       <Box

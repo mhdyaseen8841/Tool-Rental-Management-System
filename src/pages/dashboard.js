@@ -15,6 +15,7 @@ import requestPost from '../../serviceWorker';
 import Router from 'next/router';
 import Loader from '../components/Loader';
 import { PendingItems } from '../components/dashboard/pending-items';
+import { ReturnPie } from '../components/dashboard/returnPie';
 const Page = () => {
   const router = useRouter()
 
@@ -22,6 +23,8 @@ const Page = () => {
   const [graphLabel, setGraphLabel] = useState([])
   const [pieData, setPieData] = useState([])
   const [pieLabel, setPieLabel] = useState([])
+  const [returnPieData, setReturnPieData] = useState([])
+  const [returnPieLabel, setReturnPieLabel] = useState([])
   const [pendingItems, setpendingItems] = useState([])
   const [customers, setCustomers] = useState('')
   const [items, setItems] = useState('')
@@ -58,6 +61,8 @@ const Page = () => {
         setGraphLabel(res.result.graph.label)
         setPieData(res.result.pie.pieData)
         setPieLabel(res.result.pie.pieLabel)
+        setReturnPieData(res.result.returnPie.returnPieData)
+        setReturnPieLabel(res.result.returnPie.returnPieLabel)
         setLoader(false)
       }
     })
@@ -169,21 +174,30 @@ const Page = () => {
               </Grid>
               <Grid
                 item
-                lg={8}
+                lg={12}
                 md={12}
-                xl={9}
+                xl={12}
                 xs={12}
               >
                 <Sales data={graphData} label={graphLabel} />
               </Grid>
               <Grid
                 item
-                lg={4}
+                lg={6}
                 md={12}
                 xl={3}
                 xs={12}
               >
                 <TrafficByDevice data={pieData} label={pieLabel} sx={{ height: '100%' }} />
+              </Grid>
+              <Grid
+                item
+                lg={6}
+                md={12}
+                xl={3}
+                xs={12}
+              >
+                <ReturnPie data={returnPieData} label={returnPieLabel} sx={{ height: '100%' }} />
               </Grid>
             </Grid>
           </Container>

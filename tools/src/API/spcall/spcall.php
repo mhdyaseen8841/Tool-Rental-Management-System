@@ -49,14 +49,14 @@ function sp1100002($data)
 {
   $db = new Database();
   $documents = $data->documents;
-
+  $cid = $data->cId;
   $result = $db->select("call `1100002`('" . json_encode($data) . "')");
   $result1 = $result[0]["result"];
   // echo $documents[0]->doc;
   $result1 = json_decode($result1);
   if ($result1->errorCode == 1) {
     $res = $result1->result;
-    $cid = $res->cId;
+    
     if ($data->proof != null && $data->proof != []) {
       $fname = upload($data->proof, $cid, "../uploads/images/");
       $db->insert("update customermaster set proof='$fname' where cId = {$cid}");

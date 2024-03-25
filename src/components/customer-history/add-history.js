@@ -20,7 +20,6 @@ import {
   Table,
   Stack,
   Avatar,
-
   Alert,
   Checkbox,
   TableRow,
@@ -58,7 +57,7 @@ export default function FullScreenDialog(details) {
 
   const [selectedItems, setSelectedItems] = useState([...Array(noOfRows)].map(() => ''));
 
-  const [selectedQuantities, setSelectedQuantities] = useState(Array(noOfRows).fill(1));
+  const [selectedQuantities, setSelectedQuantities] = useState(Array(noOfRows).fill(0));
 
   const [selectedDate, setSelectedDate] = useState(new Date()); // Set the initial state to the current date
 
@@ -211,7 +210,7 @@ export default function FullScreenDialog(details) {
 
   const handleAddItem = () => {
     setNoOfRows(noOfRows + 1);
-    setSelectedQuantities((prevQuantities) => [...prevQuantities, 1]);
+    setSelectedQuantities((prevQuantities) => [...prevQuantities, 0]);
   };
 
 
@@ -325,7 +324,7 @@ export default function FullScreenDialog(details) {
                     // value={selectedQuantities[ind]}
                     onChange={(event) => {
                       setSelectedQuantities((prevQuantities) => {
-                        prevQuantities[ind] = event.target.value;
+                        prevQuantities[ind] = event.target.value == "" ? 0 : event.target.value;
                         return [...prevQuantities];
                       });
                     }}

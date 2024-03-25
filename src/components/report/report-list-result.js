@@ -314,30 +314,29 @@ export const ReportListResults = ({ data, label, getdata, ...rest }) => {
         </Box>
       )}
 
-      <TableContainer>
+      <TableContainer sx={{maxHeight:'600px'}}>
         <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>{label[0]}</TableCell>
+          <TableHead >
+            <TableRow >
+              <TableCell sx={{left:0,top:0,position:'sticky',backgroundColor:'#eee',zIndex:12}}>{label[0]}</TableCell>
 
               {filter
                 ? selectedOptions.map((label) => {
-                  return <TableCell key={label}>{label}</TableCell>;
+                  return <TableCell sx={{top:0,position:'sticky',backgroundColor:'#eee',zIndex:10}} key={label}>{label}</TableCell>;
                 })
                 : heading.map((label) => {
-                  return <TableCell key={label}>{label}</TableCell>;
+                  return <TableCell sx={{top:0,position:'sticky',backgroundColor:'#eee',zIndex:10}} key={label}>{label}</TableCell>;
                 })}
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((row, index) => {
               let firstValue = row[0];
-              let lastValue = row[row.length - 1];
               let middleValues = row.slice(1);
 
               return (
                 <TableRow key={index}>
-                  <TableCell sx={{ border: 1 }} key={index}>
+                  <TableCell sx={{ border: 1,position:'sticky',left:0 ,backgroundColor:'#fff',border:'1px solid #000'}} key={index}>
                     {firstValue.name}
                     <br />
                     {firstValue.mobile}

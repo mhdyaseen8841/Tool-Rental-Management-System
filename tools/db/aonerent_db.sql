@@ -1079,6 +1079,9 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300005` (IN `request` JS
     DECLARE pielabel json;
     DECLARE piedata json;
     DECLARE pie json;
+    DECLARE returnpielabel json;
+    DECLARE returnpiedata json;
+    DECLARE returnpie json;
     DECLARE cnt int;
     DECLARE i int;
     declare amt decimal(20,2);
@@ -1116,13 +1119,21 @@ CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300005` (IN `request` JS
         set piedata =(select JSON_ARRAYAGG(cast(qty as signed)) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=1 group by i.itemId) as tbl);
         if json_value(pielabel,'$[0]') = "" THEN
         	set pielabel = (select JSON_ARRAY());
-            set piedata = (select JSON_ARRAY());
+          set piedata = (select JSON_ARRAY());
          end if;
        set pie = (select JSON_OBJECT("pieLabel",pielabel,"pieData",piedata));
+
+       set returnpielabel =  (select JSON_ARRAYAGG(name) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=0 group by i.itemId) as tbl);
+        set returnpiedata =(select JSON_ARRAYAGG(cast(qty as signed)) from (select i.iName as name ,sum(rh.qty) as qty from renthistory rh INNER JOIN items i on rh.itemId = i.itemId where rh.hDate = curdate() and rh.status=0 group by i.itemId) as tbl);
+        if json_value(returnpielabel,'$[0]') = "" THEN
+        	set returnpielabel = (select JSON_ARRAY());
+          set returnpiedata = (select JSON_ARRAY());
+         end if;
+       set returnpie = (select JSON_OBJECT("returnPieLabel",returnpielabel,"returnPieData",returnpiedata));
         
    set total = (select JSON_OBJECT("tCustomer",cast(tcustomer as signed),"tItem",cast(titems as signed),"tAmount",cast(tamount as decimal(20,2)),"tuser",cast(tusers as signed)));
     set graph = (select JSON_OBJECT("label",dates,"data",grphData));
-    select JSON_OBJECT("errorCode",1,"result",JSON_OBJECT("total",total,"graph",graph,"pie",pie)) as result;
+    select JSON_OBJECT("errorCode",1,"result",JSON_OBJECT("total",total,"graph",graph,"pie",pie,"returnPie",returnpie)) as result;
 END$$
 
 CREATE DEFINER=`aonerent_admin`@`localhost` PROCEDURE `2300006` (IN `request` JSON)   BEGIN

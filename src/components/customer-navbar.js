@@ -35,6 +35,7 @@ const onClose =()=>{
     open={open}
     onClose={onClose}
     cId={sessionStorage.getItem("Cid")}
+    isDelete={true}
     />
       <DashboardNavbarRoot
         sx={{

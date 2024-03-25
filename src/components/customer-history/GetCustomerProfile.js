@@ -11,16 +11,15 @@ import { Avatar } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 
 import { Card, Divider } from "@mui/material";
-import * as Yup from "yup";
-import { useFormik } from "formik";
 import { useState, useEffect } from "react";
-import requestPost from "../../../serviceWorker";
+import requestPost, { baseUrl } from "../../../serviceWorker";
 import { Grid, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import Router from "next/router";
-import { Row } from "jspdf-autotable";
 
 export default function GetCustomerProfile(details) {
+
+
   const onclose = () => {
     details.onClose();
   };
@@ -54,18 +53,53 @@ export default function GetCustomerProfile(details) {
     });
   }, [details.open]);
 
+  const deleteCustomer = () => {
+    let req = {
+      "type": "SP_CALL",
+      "requestId": 1100013,
+      request: {
+        "cId": details.cId
+      }
+    }
+    requestPost(req).then((res) => {
+      if (res.errorCode === 3) {
+        Router
+          .push(
+
+            {
+              pathname: '/',
+              query: { redirect: '1' },
+            })
+      } else if (res.errorcode == 0) {
+
+
+      } else {
+        Router.back()
+        onclose();
+
+      }
+
+    })
+  }
+
   return (
     <div>
       <Dialog open={details.open} onClose={onclose} fullWidth={true} maxWidth={"sm"}>
         <Stack direction={"row"} justifyContent={"space-between"}></Stack>
-        <DialogTitle>Customer Profile</DialogTitle>
+        <DialogTitle>
+          <Stack direction={"row"} sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+            Customer Profile
+            {details.isDelete && <Button sx={{ color: 'red' }} onClick={deleteCustomer}>Delete</Button>}
+          </Stack>
+        </DialogTitle>
+
         <DialogContent>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} pl={3} pt={1}>
             <Grid item xs={12} align={"center"}>
               {data.proof ? (
                 <Avatar
                   sx={{ bgcolor: deepOrange[500], width: 130, height: 130 }}
-                  src={"https://aonerentals.in/tools/src/uploads/images/" + data.proof}
+                  src={`${baseUrl}tools/src/uploads/images/${data.proof}`}
                 />
               ) : (
                 <Avatar sx={{ bgcolor: deepOrange[500], width: 100, height: 100 }}>
@@ -75,29 +109,29 @@ export default function GetCustomerProfile(details) {
               )}
               <Typography variant="h5">{data.cName}</Typography>
             </Grid>
-                
+
             <Grid item xs={12}>
-              
+
               <Card sx={{ backgroundColor: "#F9FAFC" }}>
                 <Stack direction={"row"} justifyContent={"space-between"}>
                   <Typography variant="h6">Mobile Number</Typography>
                   <Typography> {data.mobile}</Typography>
                 </Stack>
                 <Divider />
-                { data.altermobile &&
-                   <Stack direction={"row"} justifyContent={"space-between"}>
-                   <Typography variant="h6">Alternative Number</Typography>
-                   <Typography> {data.mobile}</Typography>
-                 </Stack>
+                {data.altermobile &&
+                  <Stack direction={"row"} justifyContent={"space-between"}>
+                    <Typography variant="h6">Alternative Number</Typography>
+                    <Typography> {data.mobile}</Typography>
+                  </Stack>
                 }
-               
-{
-  data.address &&
-                <Stack direction={"row"} justifyContent={"space-between"}>
-                  <Typography variant="h6">Address</Typography>
-                  <Typography> {data.address}</Typography>
-                </Stack>
-}
+
+                {
+                  data.address &&
+                  <Stack direction={"row"} justifyContent={"space-between"}>
+                    <Typography variant="h6">Address</Typography>
+                    <Typography> {data.address}</Typography>
+                  </Stack>
+                }
               </Card>
 
               {/* //careof */}
@@ -106,52 +140,52 @@ export default function GetCustomerProfile(details) {
                 {
                   data.coName &&
 
-                <Stack direction={"row"} justifyContent={"space-between"}>
-                  <Typography variant="h6">C/O Name</Typography>
-                  <Typography> {data.coName}</Typography>
-                </Stack>
+                  <Stack direction={"row"} justifyContent={"space-between"}>
+                    <Typography variant="h6">C/O Name</Typography>
+                    <Typography> {data.coName}</Typography>
+                  </Stack>
 
                 }
 
-                
+
                 <Divider />
 
                 {
                   data.coMobile &&
 
-                <Stack direction={"row"} justifyContent={"space-between"}>
-                  <Typography variant="h6">C/O Mobile</Typography>
-                  <Typography> {data.coMobile}</Typography>
-                </Stack>
-                  
+                  <Stack direction={"row"} justifyContent={"space-between"}>
+                    <Typography variant="h6">C/O Mobile</Typography>
+                    <Typography> {data.coMobile}</Typography>
+                  </Stack>
+
                 }
               </Card>
             </Grid>
             {/* proof */}
-            <Grid item ALIGN={ "center"} direction={"row"}>
-             
-            <Typography variant="h6">Documents</Typography>
-           
-           {
-            data.documents && 
-            data.documents.map((doc)=>{
-              return(
-                <a
-                href={"https://aonerentals.in/tools/src/uploads/" + doc.file}
-                rel="noreferrer noopener" 
-                target="_blank"
-                key={doc}>
-              <img
-              width={250}
-              height={200}
-              style={{ objectFit: "contain" }}
-              src={"https://aonerentals.in/tools/src/uploads/" + doc.file}
-         
-            ></img>
-          </a>
-              )
-            })
-           }
+            <Grid item ALIGN={"center"} direction={"row"}>
+
+              <Typography variant="h6">Documents</Typography>
+
+              {
+                data.documents &&
+                data.documents.map((doc) => {
+                  return (
+                    <a
+                      href={"https://aonerentals.in/tools/src/uploads/" + doc.file}
+                      rel="noreferrer noopener"
+                      target="_blank"
+                      key={doc}>
+                      <img
+                        width={250}
+                        height={200}
+                        style={{ objectFit: "contain" }}
+                        src={"https://aonerentals.in/tools/src/uploads/" + doc.file}
+
+                      ></img>
+                    </a>
+                  )
+                })
+              }
             </Grid>
           </Grid>
           {/* {data.map((item) => {
